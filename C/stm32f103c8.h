@@ -1,3 +1,14 @@
+/*
+ * fichier d'entête définissant des constantes pour les registres 
+ * spéciaux  du µC stm32f103c8
+ * Auteur: PICATOUT
+ * Copyright Jacques Deschênes, 2018
+ * Date: 2018-08-29
+ * Licence: GPLv3
+ * revision:
+ */
+
+
 // constantes pour les registres spéciaux du µC STM32F103C8
 #include <stdint.h>
 

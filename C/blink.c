@@ -1,3 +1,12 @@
+/*
+ * Description: démo faisant clignoté la LED verte de la carte blue pill.
+ * Auteur: PICATOUT
+ * Date: 2018-08-29
+ * Copyright Jacques Deschênes, 2018
+ * Licence: GPLv3
+ * revision:
+ */
+ 
 #include "stm32f103c8.h"
 
 #define LED_PIN (13)
