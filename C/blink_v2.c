@@ -1,13 +1,18 @@
 /*
  * Description: démo faisant clignoté la LED verte de la carte blue pill.
  * Auteur: PICATOUT
- * Date: 2018-08-29
+ * Date: 2018-08-20
  * Copyright Jacques Deschênes, 2018
  * Licence: GPLv3
- * revision:
+ * revisions:
+ *  2018-08-30, blink_v2 version amélioré de blink
+ * 		clock HSE + PLL Fsys= 72Mhz
+ *      LED contrôlée par PWM
  */
  
 #include "stm32f103c8.h"
+#include "clock.h"
+#include "pwm.h"
 
 #define LED_PIN (13)
 #define GRN_LED (1<<LED_PIN)
