@@ -6,8 +6,10 @@
  * revision:
  */
 
+#if !defined(PWM_H)
+#define  PWM_H
 
 #include "stm32f103c8.h"
 
 
-extern void set_system_clock(clk_src,pllmul,prediv);
+#endif // PWM_H

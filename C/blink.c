@@ -8,11 +8,9 @@
  */
  
 #include "stm32f103c8.h"
+#include "gen_macros.h"
+#include "blue_pill.h"
 
-#define LED_PIN (13)
-#define GRN_LED (1<<LED_PIN)
-#define DEFAULT_PORT_CNF 0x44444444
-#define CNF_MASK 0xF
 #define _mask_cnf(cnf,bit) (cnf & ~(CNF_MASK<<((bit&7)*4)))
 #define _apply_cnf(cnf,bit,pin_cnf) (_mask_cnf(cnf,bit) | pin_cnf<<((bit&7)*4)) 
 // PC13 mode{0:1}=10, CNF{2:3}=01 -> 6

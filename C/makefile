@@ -22,7 +22,7 @@ build_debug: blink.c startup.c stm32.ld clean
 	@echo
 	@echo "Construction d'une image pour dégogage"
 	arm-none-eabi-gcc -DOPTMZ=1 -O0  -c -g -mcpu=cortex-m3 -mthumb -o blink.o blink.c
-	arm-none-eabi-gcc -DOPTMZ=1 -O0  -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
+	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
 	arm-none-eabi-ld -Tstm32.ld -o blink.elf startup.o blink.o
 	arm-none-eabi-objcopy -O binary blink.elf blink.bin
 

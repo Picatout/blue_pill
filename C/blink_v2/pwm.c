@@ -6,5 +6,6 @@
  * revision:
  */
 
-#include "stm32f103c8.h"
+#include "pwm.h"
+#include "gen_macros.h"
 

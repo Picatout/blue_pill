@@ -1,4 +1,3 @@
-#include "stm32f103c8.h"
 
 #define STACK_TOP 0x20005000
 
@@ -43,7 +42,6 @@ void startup()
         data_ram_start_p++;
         data_rom_start_p++;
     }
-
-    /* Now we are ready to start the main function */
+     /* Now we are ready to start the main function */
     main();
 }
