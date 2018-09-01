@@ -7,19 +7,19 @@
  * revision:
  */
 
-#if !defined(GEN_MACROS_H)
+#ifndef GEN_MACROS_H
 #define GEN_MACROS_H
 
 // applique champ de bits
 // v valeur à appliquer
 // p position 0-31
 // l largeur du champ 1-32
-#define _bit_field(v,p,l) (v%(1<<(l-1))<<p)
+#define _bit_field(v,p,l) ((v&((1<<l)-1))<<p)
 
 // cré un masque pour un champ
 // p position 0-31
 // l largeur du champ 1-32
-#define _field_mask(p,l) (~_bit_field(-1,p,l))
+#define _field_mask(p,l) (~_bit_field(0xffffffff,p,l))
 
 // met à 0 un bit dans un SFR
 // sfr nom du registre

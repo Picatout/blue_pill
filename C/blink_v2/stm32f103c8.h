@@ -11,7 +11,7 @@
 // REF: STMicro electronics documents RM0008 (reference manual) et DS5319 (datasheet)
 // constantes pour les registres spéciaux du µC STM32F103C8
 
-#ifndef STM32F103C8_H
+#if !defined(STM32F103C8_H)
 #define STM32F103C8_H
 #include <stdint.h>
 
@@ -175,7 +175,31 @@
 #define I2S3SRC_PLL3 1
 
 
-
+/*******************************
+ * registre interne au Cortex-M3
+ ******************************/
+ #define CORE_REGS_BASE 0xE000E010
+ // compteur à rebours
+ #define STK_CTRL _sfr(CORE_REGS_BASE) // SYSTICKS control
+ #define STK_LOAD _sfr(CORE_REGS_BASE+4) // valeur de recharge
+ #define STK_VAL _sfr(CORE_REGS_BASE+8) // valeur actuelle du compteur
+ #define STK_CALIB _sfr(CORE_REGS_BASE+12) // valeur de calibration
+ // flag de STK_CTRL
+ #define STK_ENABLE 0  // bit d'activation du compteur
+ #define STK_TICKEN 1  // activation des exception
+ #define STK_CLKSRC 2  // clock source 0=AHB, 1=AHB/8
+ #define STK_COUNTFLAG 16 // mis à un lorsque le compteur arrive à zéro
+ 
+/*************
+ * FLASH_ACR
+ ************/
+ #define FLASH_REGS_BASE 0x40022000
+ #define FLASH_ACR _sfr(FLASH_REGS_BASE) // flash access control
+ #define LATENCY 0 // champ delais accès
+ #define WAIT_0_CY 0
+ #define WAIT_1_CY 1
+ #define WAIT_2_CY 2  
+ 
 /*********
 * PORT C *
 **********/

@@ -64,8 +64,8 @@ void enable_system_clock(unsigned clk_src){
 	    RCC_CFGR=temp;
 		break;
 	case PLL_CLK:
-	    _set_sfr_bit(RCC_CR,RCC_CR_HSION);
-	    while (!(RCC_CR&(1<<RCC_CR_HSIRDY)));
+	    _set_sfr_bit(RCC_CR,RCC_CR_HSEON);
+	    while (!(RCC_CR&(1<<RCC_CR_HSERDY)));
 	    temp=RCC_CFGR;
 	    temp&=_field_mask(RCC_CFGR_SW,2);
 	    temp|=_bit_field(PLL_CLK,RCC_CFGR_SW,2);

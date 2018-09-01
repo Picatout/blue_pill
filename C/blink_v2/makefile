@@ -5,28 +5,25 @@ all:
 build: blink_v2.c startup.c stm32.ld clean
 	@echo
 	@echo "Construction de l'image de production sans optimisation"
-	arm-none-eabi-gcc -DOPTMZ=1 -c -mcpu=cortex-m3 -mthumb -o blink_v2.o blink_v2.c
+	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o blink_v2.o blink_v2.c
 	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o startup.o startup.c
-	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o clock.o clock.c
-	arm-none-eabi-ld -Tstm32.ld -o blink_v2.elf startup.o blink_v2.o clock.o
+	arm-none-eabi-ld -Tstm32.ld -o blink_v2.elf startup.o blink_v2.o
 	arm-none-eabi-objcopy -O binary blink_v2.elf blink_v2.bin
 
 build_O1: blink_v2.c startup.c stm32.ld clean
 	@echo
-	@echo "construction de l'image de production avec optimisation -O1"
-	arm-none-eabi-gcc -DOPTMZ=4 -O1 -c -mcpu=cortex-m3 -mthumb -o blink_v2.o blink_v2.c
-	arm-none-eabi-gcc  -c -O1 -mcpu=cortex-m3 -mthumb -o startup.o startup.c
-	arm-none-eabi-gcc  -c -O1 -mcpu=cortex-m3 -mthumb -o clock.o clock.c
-	arm-none-eabi-ld -Tstm32.ld -o blink_v2.elf startup.o blink_v2.o clock.o
+	@echo "construction de l'image de débogage avec optimisation -O1"
+	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o blink_v2.o blink_v2.c
+	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
+	arm-none-eabi-ld -Tstm32.ld -o blink_v2.elf startup.o blink_v2.o
 	arm-none-eabi-objcopy -O binary blink_v2.elf blink_v2.bin
 
 build_debug: blink_v2.c startup.c stm32.ld clean
 	@echo
 	@echo "Construction d'une image pour débogage"
-	arm-none-eabi-gcc -DOPTMZ=1 -O0  -c -g -mcpu=cortex-m3 -mthumb -o blink_v2.o blink_v2.c
-	arm-none-eabi-gcc -DOPTMZ=1 -O0  -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
-	arm-none-eabi-gcc -DOPTMZ=1 -O0  -c -g -mcpu=cortex-m3 -mthumb -o clock.o clock.c
-	arm-none-eabi-ld -Tstm32.ld -o blink_v2.elf startup.o blink_v2.o clock.o
+	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o blink_v2.o blink_v2.c
+	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
+	arm-none-eabi-ld -Tstm32.ld -o blink_v2.elf startup.o blink_v2.o
 	arm-none-eabi-objcopy -O binary blink_v2.elf blink_v2.bin
 
 print_gcc_assembler:
