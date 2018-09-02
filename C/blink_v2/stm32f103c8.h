@@ -6,6 +6,7 @@
  * Date: 2018-08-29
  * Licence: GPLv3
  * revision:
+ * 2018-09-01: Modification de la macro _sfr(x) pour ajouter l'attribut volatile
  */
 
 // REF: STMicro electronics documents RM0008 (reference manual) et DS5319 (datasheet)
@@ -15,8 +16,10 @@
 #define STM32F103C8_H
 #include <stdint.h>
 
-// les Special Function Registers sont de de 32 bits
-#define _sfr(x) (*((uint32_t*)(x)))
+// les Special Function Registers sont de de 32 bits.
+// Ces pointeurs doivent avoir l'attribut volatile
+// car leur contenu peut-être modifiés par hardware
+#define _sfr(x) (*((volatile uint32_t*)(x)))
 
 // adresse de base registres reset et clock control
 #define RCC_BASE 0x40021000U

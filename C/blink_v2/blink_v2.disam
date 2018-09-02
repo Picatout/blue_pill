@@ -1,0 +1,259 @@
+
+blink_v2.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <myvectors>:
+   0:	00 50 00 20 09 00 00 00                             .P. ....
+
+00000008 <startup>:
+    (unsigned int *)    STACK_TOP,  // stack pointer
+    (unsigned int *)    startup     // code entry point
+};
+
+void startup()
+{
+   8:	b508      	push	{r3, lr}
+    /* Set memory in bss segment to zeros */
+    unsigned int * bss_start_p = &_BSS_START; 
+    unsigned int * bss_end_p = &_BSS_END;
+
+    while(bss_start_p != bss_end_p)
+   a:	4b12      	ldr	r3, [pc, #72]	; (54 <startup+0x4c>)
+   c:	4a12      	ldr	r2, [pc, #72]	; (58 <startup+0x50>)
+   e:	429a      	cmp	r2, r3
+  10:	d00b      	beq.n	2a <startup+0x22>
+  12:	1d13      	adds	r3, r2, #4
+  14:	4a0f      	ldr	r2, [pc, #60]	; (54 <startup+0x4c>)
+  16:	1ad2      	subs	r2, r2, r3
+  18:	f022 0203 	bic.w	r2, r2, #3
+  1c:	441a      	add	r2, r3
+  1e:	3b04      	subs	r3, #4
+    {
+        *bss_start_p = 0;
+  20:	2100      	movs	r1, #0
+  22:	f843 1b04 	str.w	r1, [r3], #4
+{
+    /* Set memory in bss segment to zeros */
+    unsigned int * bss_start_p = &_BSS_START; 
+    unsigned int * bss_end_p = &_BSS_END;
+
+    while(bss_start_p != bss_end_p)
+  26:	4293      	cmp	r3, r2
+  28:	d1fb      	bne.n	22 <startup+0x1a>
+     * read/write memory */
+    unsigned int * data_rom_start_p = &_DATA_ROM_START;
+    unsigned int * data_ram_start_p = &_DATA_RAM_START;
+    unsigned int * data_ram_end_p = &_DATA_RAM_END;
+
+    while(data_ram_start_p != data_ram_end_p)
+  2a:	4b0c      	ldr	r3, [pc, #48]	; (5c <startup+0x54>)
+  2c:	4a0c      	ldr	r2, [pc, #48]	; (60 <startup+0x58>)
+  2e:	429a      	cmp	r2, r3
+  30:	d00d      	beq.n	4e <startup+0x46>
+  32:	4a0c      	ldr	r2, [pc, #48]	; (64 <startup+0x5c>)
+  34:	4b0c      	ldr	r3, [pc, #48]	; (68 <startup+0x60>)
+  36:	4809      	ldr	r0, [pc, #36]	; (5c <startup+0x54>)
+  38:	1ac0      	subs	r0, r0, r3
+  3a:	f020 0003 	bic.w	r0, r0, #3
+  3e:	4418      	add	r0, r3
+  40:	3b04      	subs	r3, #4
+    {
+        *data_ram_start_p = *data_rom_start_p;
+  42:	f852 1b04 	ldr.w	r1, [r2], #4
+  46:	f843 1b04 	str.w	r1, [r3], #4
+     * read/write memory */
+    unsigned int * data_rom_start_p = &_DATA_ROM_START;
+    unsigned int * data_ram_start_p = &_DATA_RAM_START;
+    unsigned int * data_ram_end_p = &_DATA_RAM_END;
+
+    while(data_ram_start_p != data_ram_end_p)
+  4a:	4283      	cmp	r3, r0
+  4c:	d1f9      	bne.n	42 <startup+0x3a>
+        data_ram_start_p++;
+        data_rom_start_p++;
+    }
+
+    /* Now we are ready to start the main function */
+    main();
+  4e:	f000 f821 	bl	94 <main>
+  52:	bd08      	pop	{r3, pc}
+  54:	20000000 	.word	0x20000000
+  58:	20000000 	.word	0x20000000
+  5c:	20000000 	.word	0x20000000
+  60:	20000000 	.word	0x20000000
+  64:	00000148 	.word	0x00000148
+  68:	20000004 	.word	0x20000004
+
+0000006c <millisec>:
+	//STK_CTRL|=1<<STK_CLKSRC; // source AHB/8
+}
+
+//délais de 1 milliseconde
+static void millisec(){
+	STK_VAL=MSEC_DLY;
+  6c:	f242 3228 	movw	r2, #9000	; 0x2328
+  70:	4b06      	ldr	r3, [pc, #24]	; (8c <millisec+0x20>)
+  72:	601a      	str	r2, [r3, #0]
+	STK_CTRL|=1<<STK_ENABLE;
+  74:	3b08      	subs	r3, #8
+  76:	681a      	ldr	r2, [r3, #0]
+	while (!(STK_CTRL&(1<<STK_COUNTFLAG)));
+  78:	f402 3380 	and.w	r3, r2, #65536	; 0x10000
+  7c:	2b00      	cmp	r3, #0
+  7e:	d0fd      	beq.n	7c <millisec+0x10>
+	STK_CTRL&=~(1<<STK_ENABLE);
+  80:	f022 0201 	bic.w	r2, r2, #1
+  84:	4b02      	ldr	r3, [pc, #8]	; (90 <millisec+0x24>)
+  86:	601a      	str	r2, [r3, #0]
+  88:	4770      	bx	lr
+  8a:	bf00      	nop
+  8c:	e000e018 	.word	0xe000e018
+  90:	e000e010 	.word	0xe000e010
+
+00000094 <main>:
+
+// configure SYSCLK à la fréquence maximale de 72 Mhz
+// en utilisant le cristal externe (HSE) et le PLL
+static void set_sysclock(){
+	 // active l'oscillateur externe
+	RCC_CR|=1<<RCC_CR_HSEON;
+  94:	4a23      	ldr	r2, [pc, #140]	; (124 <main+0x90>)
+  96:	6813      	ldr	r3, [r2, #0]
+  98:	f443 3180 	orr.w	r1, r3, #65536	; 0x10000
+  9c:	6011      	str	r1, [r2, #0]
+	 // attend que l'oscillateur soit prêt
+    while (! (RCC_CR & (1<<RCC_CR_HSERDY))){ __asm__ volatile ("nop"); }
+  9e:	f413 3f00 	tst.w	r3, #131072	; 0x20000
+  a2:	d101      	bne.n	a8 <main+0x14>
+  a4:	bf00      	nop
+  a6:	e7fd      	b.n	a4 <main+0x10>
+     // sélection PREDIV1 pour la source du PLL
+     // multiplie la fréquence HSE par 9 
+     // pour une fréquence maximale Fsysclk de 72 Mhz
+    RCC_CFGR|=(PLLSRC_PREDIV1<<RCC_CFGR_PLLSRC)|(PLLMUL9<<RCC_CFGR_PLLMUL);
+  a8:	4a1f      	ldr	r2, [pc, #124]	; (128 <main+0x94>)
+  aa:	6813      	ldr	r3, [r2, #0]
+  ac:	f443 13e8 	orr.w	r3, r3, #1900544	; 0x1d0000
+  b0:	6013      	str	r3, [r2, #0]
+    // active le PLL
+    RCC_CR|=1<<RCC_CR_PLLON;
+  b2:	3a04      	subs	r2, #4
+  b4:	6813      	ldr	r3, [r2, #0]
+  b6:	f043 7180 	orr.w	r1, r3, #16777216	; 0x1000000
+  ba:	6011      	str	r1, [r2, #0]
+    // Attend que le PLL soit prêt
+    while (! (RCC_CR & (1<<RCC_CR_PLLRDY))){ __asm__ volatile ("nop"); }
+  bc:	f013 7f00 	tst.w	r3, #33554432	; 0x2000000
+  c0:	d101      	bne.n	c6 <main+0x32>
+  c2:	bf00      	nop
+  c4:	e7fd      	b.n	c2 <main+0x2e>
+ * -DOPTMZ=4 est défini dans le
+ * makefile
+ */
+ 
+#define RATE 500
+void main(void){
+  c6:	b580      	push	{r7, lr}
+    // active le PLL
+    RCC_CR|=1<<RCC_CR_PLLON;
+    // Attend que le PLL soit prêt
+    while (! (RCC_CR & (1<<RCC_CR_PLLRDY))){ __asm__ volatile ("nop"); }
+    // ajoute délais d'accès à la mémoire flash
+    FLASH_ACR|=WAIT_2_CY;
+  c8:	4a18      	ldr	r2, [pc, #96]	; (12c <main+0x98>)
+  ca:	6813      	ldr	r3, [r2, #0]
+  cc:	f043 0302 	orr.w	r3, r3, #2
+  d0:	6013      	str	r3, [r2, #0]
+    // SélectionNE le PLL comme source pour SYSCLK
+    RCC_CFGR|=PLL_CLK<<RCC_CFGR_SW;
+	// La fréquence maximale pour APB1 doit-être de 36 Mhz
+	// donc divise SYSCLK/2
+	RCC_CFGR|=PPRECLK_DIV2;
+  d2:	f6a2 72fc 	subw	r2, r2, #4092	; 0xffc
+  d6:	6813      	ldr	r3, [r2, #0]
+  d8:	f043 0306 	orr.w	r3, r3, #6
+  dc:	6013      	str	r3, [r2, #0]
+// configure SYSTICKS pour un cycle 1 msec
+// source AHB/8
+// valeur reload 72Mhz/8/1000=9000
+#define MSEC_DLY 9000
+static void config_systicks(){
+	STK_LOAD=MSEC_DLY;
+  de:	f242 3228 	movw	r2, #9000	; 0x2328
+  e2:	4b13      	ldr	r3, [pc, #76]	; (130 <main+0x9c>)
+  e4:	601a      	str	r2, [r3, #0]
+#define _mask_cnf(cnf,bit) (cnf & ~(CNF_MASK<<((bit&7)*4)))
+#define _apply_cnf(cnf,bit,pin_cnf) (_mask_cnf(cnf,bit) | pin_cnf<<((bit&7)*4)) 
+// PC13 mode{0:1}=10, CNF{2:3}=01 -> 6
+#define PC13_CNF 6
+static void port_c_setup(){
+	RCC_APB2ENR|=1<<GPIOC_EN;
+  e6:	4a13      	ldr	r2, [pc, #76]	; (134 <main+0xa0>)
+  e8:	6813      	ldr	r3, [r2, #0]
+  ea:	f043 0310 	orr.w	r3, r3, #16
+  ee:	6013      	str	r3, [r2, #0]
+	GPIOC_CRH=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
+  f0:	4a11      	ldr	r2, [pc, #68]	; (138 <main+0xa4>)
+  f2:	4b12      	ldr	r3, [pc, #72]	; (13c <main+0xa8>)
+  f4:	601a      	str	r2, [r3, #0]
+inline static void led_on(){
+	GPIOC_BRR=GRN_LED;
+}
+
+inline static void led_off(){
+	GPIOC_BSRR=GRN_LED;
+  f6:	f8df 904c 	ldr.w	r9, [pc, #76]	; 144 <main+0xb0>
+  fa:	f44f 5600 	mov.w	r6, #8192	; 0x2000
+  fe:	46b0      	mov	r8, r6
+ 100:	f44f 75fa 	mov.w	r5, #500	; 0x1f4
+	RCC_APB2ENR|=1<<GPIOC_EN;
+	GPIOC_CRH=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
+}
+
+inline static void led_on(){
+	GPIOC_BRR=GRN_LED;
+ 104:	4f0e      	ldr	r7, [pc, #56]	; (140 <main+0xac>)
+}
+
+inline static void led_off(){
+	GPIOC_BSRR=GRN_LED;
+ 106:	f8c9 8000 	str.w	r8, [r9]
+ 10a:	462c      	mov	r4, r5
+}
+
+// délais en millisecondes
+inline static void delay(unsigned dly){
+	for (;dly;dly--)millisec();
+ 10c:	f7ff ffae 	bl	6c <millisec>
+ 110:	3c01      	subs	r4, #1
+ 112:	d1fb      	bne.n	10c <main+0x78>
+	RCC_APB2ENR|=1<<GPIOC_EN;
+	GPIOC_CRH=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
+}
+
+inline static void led_on(){
+	GPIOC_BRR=GRN_LED;
+ 114:	603e      	str	r6, [r7, #0]
+ 116:	462c      	mov	r4, r5
+	GPIOC_BSRR=GRN_LED;
+}
+
+// délais en millisecondes
+inline static void delay(unsigned dly){
+	for (;dly;dly--)millisec();
+ 118:	f7ff ffa8 	bl	6c <millisec>
+ 11c:	3c01      	subs	r4, #1
+ 11e:	d1fb      	bne.n	118 <main+0x84>
+ 120:	e7f1      	b.n	106 <main+0x72>
+ 122:	bf00      	nop
+ 124:	40021000 	.word	0x40021000
+ 128:	40021004 	.word	0x40021004
+ 12c:	40022000 	.word	0x40022000
+ 130:	e000e014 	.word	0xe000e014
+ 134:	40021018 	.word	0x40021018
+ 138:	44644444 	.word	0x44644444
+ 13c:	40011004 	.word	0x40011004
+ 140:	40011014 	.word	0x40011014
+ 144:	40011010 	.word	0x40011010

@@ -7,22 +7,21 @@
  * revisions:
  *  2018-08-30, blink_v2 version amélioré de blink
  * 		clock HSE + PLL Fsys= 72Mhz
- *      LED contrôlée par PWM
+ *      Utilisation du core timer pour créer un délais 1 milliseconde.
+ * 
  */
  
 #include "stm32f103c8.h"
 #include "gen_macros.h"
 #include "blue_pill.h"
-//#include "clock.h"
-//#include "pwm.h"
 
 // configure SYSCLK à la fréquence maximale de 72 Mhz
 // en utilisant le cristal externe (HSE) et le PLL
-static void  set_sysclock(){
+static void set_sysclock(){
 	 // active l'oscillateur externe
 	RCC_CR|=1<<RCC_CR_HSEON;
 	 // attend que l'oscillateur soit prêt
-    while (! (RCC_CR & (1<<RCC_CR_HSERDY)));
+   while (! (RCC_CR & (1<<RCC_CR_HSERDY)));
      // sélection PREDIV1 pour la source du PLL
      // multiplie la fréquence HSE par 9 
      // pour une fréquence maximale Fsysclk de 72 Mhz
@@ -79,15 +78,8 @@ inline static void delay(unsigned dly){
 	for (;dly;dly--)millisec();
 }
 
-/*
- * pour que la boucle de délais soit
- * de même durée avec "make build_O1'
- * qu'avec "make build" le symbole
- * -DOPTMZ=4 est défini dans le
- * makefile
- */
- 
-#define RATE 500
+// pour une période de 1 seconde
+#define RATE 500 // millisecondes
 void main(void){
 	set_sysclock();
 	config_systicks();
