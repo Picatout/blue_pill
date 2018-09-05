@@ -1,29 +1,36 @@
+
+INC = ../include/
+HAL = ../hal/
+
 all:
 	@echo "Construction des cibles"
 	@cat makefile | grep '^[a-zA-Z]' | sed 's/:.*//g' | sed 's/^/  /g'
 
-build: systick_demo.c startup.c stm32.ld clean
+build: systick_demo.c $(HAL)startup.c $(HAL)nvic.c stm32.ld clean
 	@echo
 	@echo "Construction de l'image de production sans optimisation"
 	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o systick_demo.o systick_demo.c
-	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o startup.o startup.c
-	arm-none-eabi-ld -Tstm32.ld -o systick_demo.elf startup.o systick_demo.o
+	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o startup.o $(HAL)startup.c
+	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o nvic.o $(HAL)nvic.c
+	arm-none-eabi-ld -Tstm32.ld -o systick_demo.elf startup.o systick_demo.o nvic.o
 	arm-none-eabi-objcopy -O binary systick_demo.elf systick_demo.bin
 
-build_O1: systick_demo.c startup.c stm32.ld clean
+build_O1: systick_demo.c $(HAL)startup.c $(HAL)nvic.c stm32.ld clean
 	@echo
 	@echo "construction de l'image de débogage avec optimisation -O1"
 	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o systick_demo.o systick_demo.c
-	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
-	arm-none-eabi-ld -Tstm32.ld -o systick_demo.elf startup.o systick_demo.o
+	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o startup.o $(HAL)startup.c
+	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o nvic.o $(HAL)nvic.c
+	arm-none-eabi-ld -Tstm32.ld -o systick_demo.elf startup.o systick_demo.o nvic.o
 	arm-none-eabi-objcopy -O binary systick_demo.elf systick_demo.bin
 
-build_debug: systick_demo.c startup.c stm32.ld clean
+build_debug: systick_demo.c $(HAL)startup.c $(HAL)nvic.c stm32.ld clean
 	@echo
 	@echo "Construction d'une image pour débogage"
 	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o systick_demo.o systick_demo.c
-	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
-	arm-none-eabi-ld -Tstm32.ld -o systick_demo.elf startup.o systick_demo.o
+	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o startup.o $(HAL)startup.c
+	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o nvic.o $(HAL)nvic.c
+	arm-none-eabi-ld -Tstm32.ld -o systick_demo.elf startup.o systick_demo.o nvic.o
 	arm-none-eabi-objcopy -O binary systick_demo.elf systick_demo.bin
 
 print_gcc_assembler:

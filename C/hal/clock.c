@@ -6,8 +6,8 @@
  * revision:
  */
 
-#include "clock.h"
-#include "gen_macros.h"
+#include "../include/clock.h"
+#include "../include/gen_macros.h"
 
 // configure le prédiviseur et le mulitplicateur
 // pll  PLL,PLL2,PLL3

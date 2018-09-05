@@ -8,5 +8,12 @@
  * 
  */
 
-#define _irq_m (irq/4)
-#define _ipr(irq)  NVIC_IPR##(_irq_m(irq))
+#ifndef NVIC_H
+#define NVIC_H
+
+void enable_interrupt(unsigned irq);
+void disable_interrupt(unsigned irq);
+void set_int_priority(unsigned irq, unsigned priority);
+
+#endif // NVIC_H
+

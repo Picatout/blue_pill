@@ -9,7 +9,7 @@
 #if !defined(PWM_H)
 #define  PWM_H
 
-#include "stm32f103c8.h"
+#include "../include/stm32f103c8.h"
 
 
 #endif // PWM_H

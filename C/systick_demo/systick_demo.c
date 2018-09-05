@@ -12,10 +12,10 @@
  * 
  */
  
-#include "stm32f103c8.h"
-#include "gen_macros.h"
-#include "blue_pill.h"
-#include "nvic.h"
+#include "../include/stm32f103c8.h"
+#include "../include/gen_macros.h"
+#include "../include/blue_pill.h"
+#include "../include/nvic.h"
 
 static volatile unsigned ticks=0;
 static volatile unsigned timer=0;

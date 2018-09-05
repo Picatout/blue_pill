@@ -6,6 +6,6 @@
  * revision:
  */
 
-#include "pwm.h"
-#include "gen_macros.h"
+#include "../include/pwm.h"
+#include "../include/gen_macros.h"
 
