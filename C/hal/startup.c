@@ -12,6 +12,7 @@ void startup();
 void main();
 void systick_int();
 void default_int();
+void SVcall_handler();
 
 // Define the vector table
 unsigned int * myvectors[76] 
@@ -19,23 +20,23 @@ __attribute__ ((section("vectors")))= {
 	// --------- core exceptions -----------
     (unsigned int *)    STACK_TOP,  // 0 stack pointer
     (unsigned int *)    startup,     // 1 reset entry point
-    (unsigned int *)  default_int, // 2 NMI, freeze
-    (unsigned int *)  default_int, // 3 Hard fault, freeze
-    (unsigned int *)  default_int, // 4 MM fault, freeze
-    (unsigned int *)  default_int, // 5 bus fault, freeze
-    (unsigned int *)  default_int, // 6 usage fault, freeze
-    (unsigned int *)  default_int, // 7 reserved, freeze
-    (unsigned int *)  default_int, // 8 reserved, freeze
-    (unsigned int *)  default_int, // 9 reserved, freeze
-    (unsigned int *)  default_int, // 10 reserved, freeze
-    (unsigned int *)  default_int, // 11 SVCall, freeze
-    (unsigned int *)  default_int, // 12 debug monitor, freeze
-    (unsigned int *)  default_int, // 13 reserved, freeze
-    (unsigned int *)  default_int, // 14 PendSV, freeze
+    (unsigned int *)  default_int, // 2 NMI
+    (unsigned int *)  default_int, // 3 Hard fault
+    (unsigned int *)  default_int, // 4 MM fault
+    (unsigned int *)  default_int, // 5 bus fault
+    (unsigned int *)  default_int, // 6 usage fault
+    (unsigned int *)  default_int, // 7 reserved
+    (unsigned int *)  default_int, // 8 reserved
+    (unsigned int *)  default_int, // 9 reserved
+    (unsigned int *)  default_int, // 10 reserved
+    (unsigned int *)  SVcall_handler, // 11 SVCall
+    (unsigned int *)  default_int, // 12 debug monitor
+    (unsigned int *)  default_int, // 13 reserved
+    (unsigned int *)  default_int, // 14 PendSV
     (unsigned int *)  systick_int, // 15 compteur systick    
     // --------  IRQ ------------
-    (unsigned int *)  default_int, // 0 WWDG, freeze
-    (unsigned int *)  default_int, // 1 PVD, freeze
+    (unsigned int *)  default_int, // 0 WWDG
+    (unsigned int *)  default_int, // 1 PVD
     (unsigned int *)  default_int, // 2 TAMPER
     (unsigned int *)  default_int, // 3 RTC
     (unsigned int *)  default_int, // 4 FLASH
@@ -96,10 +97,13 @@ __attribute__ ((section("vectors")))= {
     (unsigned int *)  default_int, // 59 DMA2CH4_5
 };
 
+#define SYSRESETREQ (2) // system reset request field, 1 bit
+#define VECTKEY (16) // unlock key field, 16 bits
+#define KEY (0x05FA) // key value
+#define AIRCR _sfr(0xE000ED0C) // Application Interrupt and Reset Control Register
 void __attribute__((__interrupt__)) default_int(){
-// blocage infini
-// reset requis pour redémarrer
-   __asm__ volatile ("b .");	
+// réinitialise le µC
+   AIRCR=(KEY<<VECTKEY)|(1<<SYSRESETREQ);
 }
 
 void startup()

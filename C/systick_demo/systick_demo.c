@@ -11,14 +11,30 @@
  *      Utilisation du core timer pour créer un délais 1 milliseconde.
  * 
  */
- 
+#include <stdlib.h> 
 #include "../include/stm32f103c8.h"
 #include "../include/gen_macros.h"
 #include "../include/blue_pill.h"
 #include "../include/nvic.h"
 
+typedef struct svcall_struct{
+	uint32_t fn; // no. de fonction
+	uint32_t argc; // nombre d'arguments
+	void **argv; // liste de pointer vers les arguments
+} t_svcall_struct;
+
 static volatile unsigned ticks=0;
 static volatile unsigned timer=0;
+
+// interruption SVcall
+
+void __attribute__((naked)) SVcall_handler(){
+	asm volatile ("ldr r0,[sp,#24]\n"
+	"sub r0,r0,#2\n"
+    "ldrb r0, [r0]\n"
+    );
+		
+}
 
 // interruption coretimer
 void __attribute__((__interrupt__)) systick_int(){
@@ -83,12 +99,17 @@ inline static void delay(unsigned dly){
 	while (timer);
 }
 
+#define svc_call(svc) ({asm volatile ("svc %[svc_id]\n"::[svc_id] "I" ((svc)&0xff));})
+
+
 // pour une période de 1 seconde
 #define RATE 500 // millisecondes
 void main(void){
 	set_sysclock();
 	config_systicks();
 	port_c_setup();
+	svc_call(0x5a);
+// fin test
 	while (1){
 		led_off();
 		delay(RATE);

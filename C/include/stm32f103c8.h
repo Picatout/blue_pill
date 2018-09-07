@@ -250,6 +250,9 @@
 #define NVIC_IPR20  _sfr(NVIC_BASE_ADR+0x350)
 #define NVIC_STIR _sfr(0xE000EF00)
 
+#define ICSR _sfr(0xE000ED04)
+#define PENDSVSET 28
+
 /***********
  *  IRQ no
  **********/
@@ -323,13 +326,13 @@
 #define GPIOC_BASE_ADR 0X40011000U 
 
 typedef struct gpio{
-	uint32_t crl;
-	uint32_t crh;
-	uint32_t idr;
-	uint32_t odr;
-	uint32_t bsrr;
-	uint32_t brr;
-	uint32_t lckr;
+	volatile uint32_t crl;
+	volatile uint32_t crh;
+	volatile uint32_t idr;
+	volatile uint32_t odr;
+	volatile uint32_t bsrr;
+	volatile uint32_t brr;
+	volatile uint32_t lckr;
 } t_gpio;
 
 
