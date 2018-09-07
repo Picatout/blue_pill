@@ -1,6 +1,18 @@
 #include "../include/stm32f103c8.h"
 
-#define STACK_TOP 0x20005000
+/* NOTE:
+ * A la réinitialisation le µC est en mode thread privilégié
+ * et utlise la pile MSP (pile principale) dont l'adresse
+ * est en position zéro de la table des vecteurs d'interruptions
+ * Cependant ARM recommande d'utiliser la pile PSP (pile programme)
+ * lorsque de µC est en mode thread.
+ * Donc avant de lancer la fonction main on initialise la pile PSP 
+ */
+// MSP Main Stack Pointer
+#define STACK_TOP 0x20005000  // MSP top
+#define MSP_SIZE 1024 // grandeur de la pile MSP
+// PSP Program Stack Pointer
+#define PSP_TOP (STACK_TOP-MSP_SIZE) 
 
 extern unsigned int _BSS_START;
 extern unsigned int _BSS_END;
@@ -131,7 +143,17 @@ void startup()
         data_ram_start_p++;
         data_rom_start_p++;
     }
-
+    // initialisaton de la pile PSP et commutation 
+    // vers cette pile.
+    asm volatile(
+    "mov r0, %[psp_top]\n"
+    "msr PSP,r0\n"
+    "mrs r0,CONTROL\n"
+    "orr r0,#2\n"
+    "msr CONTROL,r0\n"
+    "ISB\n"
+    :: [psp_top] "r" (PSP_TOP)
+    );
     /* Now we are ready to start the main function */
     main();
 }

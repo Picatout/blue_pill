@@ -34,11 +34,13 @@ static volatile unsigned timer=0;
 void __attribute__((naked)) SVcall_handler(){
 	unsigned svc_id, argc;
 	void **argv; 
-	asm volatile ("ldr r0,[sp,#24]\n"
-	"sub r0,r0,#2\n"
-    "ldrb %[svc_id], [r0]\n"
-    "ldr %[argc],[sp]\n"
-    "ldr %[argv],[sp,#4]\n"
+	asm volatile (
+	"mrs r0,PSP\n" // optient la valeur de PSP
+	"ldr r1,[r0,#24]\n"
+	"sub r1,r1,#2\n"
+    "ldrb %[svc_id], [r1]\n"
+    "ldr %[argc],[r0]\n"
+    "ldr %[argv],[r0,#4]\n"
     : [svc_id] "=r" (svc_id), [argc] "=r" (argc), [argv] "=r" (argv) 
     );
 	switch (svc_id){
@@ -117,6 +119,16 @@ inline static void delay(unsigned dly){
 	while (timer);
 }
 
+// supprime le mode d'exécution
+// prévilégié au programme.
+#define _remove_privileges() ({\
+	asm volatile (\
+	"mrs r0, CONTROL\n"\
+	"orr r0,#1\n"\
+	"msr CONTROL,r0\n"\
+	"isb\n"\
+	);})
+	
 #define _svc_call(svc_no,nb_args,args_array) ({asm volatile (\
 	"ldr r0, =%[argc]\n"\
 	"mov r1, %[argv]\n"\
@@ -134,8 +146,10 @@ void main(void){
 	set_sysclock();
 	config_systicks();
 	port_c_setup();
+	_remove_privileges();
 	while (1){
-		_svc_call(SVC_LED_OFF,0,argv);
+		//_svc_call(SVC_LED_OFF,0,argv);
+		led_off();
 		_svc_call(SVC_TIMER,RATE,argv);
 		_wait_timeout();
 		_svc_call(SVC_LED_ON,0,argv);
