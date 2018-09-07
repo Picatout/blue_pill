@@ -27,7 +27,31 @@ static volatile unsigned ticks=0;
 static volatile unsigned timer=0;
 
 // interruption SVcall
+#define SVC_LED_ON (1) // allume la LED verte
+#define SVC_LED_OFF (2) // éteint la LED verte
+#define SVC_TIMER (3) // démarre la minuterie
+
 void __attribute__((naked)) SVcall_handler(){
+	unsigned svc_id, argc;
+	void **argv; 
+	asm volatile ("ldr r0,[sp,#24]\n"
+	"sub r0,r0,#2\n"
+    "ldrb %[svc_id], [r0]\n"
+    "ldr %[argc],[sp]\n"
+    "ldr %[argv],[sp,#4]\n"
+    : [svc_id] "=r" (svc_id), [argc] "=r" (argc), [argv] "=r" (argv) 
+    );
+	switch (svc_id){
+	case SVC_LED_ON: 
+		GPIOC_BRR=GRN_LED;
+		break;
+	case SVC_LED_OFF:
+		GPIOC_BSRR=GRN_LED;
+		break;
+	case SVC_TIMER: 
+		timer=argc;
+		break;
+	}	
 }
 
 // interruption coretimer
@@ -93,18 +117,29 @@ inline static void delay(unsigned dly){
 	while (timer);
 }
 
+#define _svc_call(svc_no,nb_args,args_array) ({asm volatile (\
+	"ldr r0, =%[argc]\n"\
+	"mov r1, %[argv]\n"\
+	"svc %[svc_id]\n":: [svc_id] "I" ((svc_no)&0xff),\
+	[argc] "I" (nb_args),\
+	[argv] "r" (args_array)\
+	);})
 
+#define _wait_svc_completion() while (ICSR & (1<<PENDSVSET)|(1<<);
+#define _wait_timeout() ({while (timer);})
 // pour une période de 1 seconde
 #define RATE 500 // millisecondes
 void main(void){
-	void **argv;
+	void **argv=NULL;
 	set_sysclock();
 	config_systicks();
 	port_c_setup();
 	while (1){
-		led_off();
-		delay(RATE);
-		led_on();
-		delay(RATE);
+		_svc_call(SVC_LED_OFF,0,argv);
+		_svc_call(SVC_TIMER,RATE,argv);
+		_wait_timeout();
+		_svc_call(SVC_LED_ON,0,argv);
+		_svc_call(SVC_TIMER,RATE,argv);
+		_wait_timeout();
 	}
 }
