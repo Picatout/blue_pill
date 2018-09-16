@@ -30,15 +30,17 @@ static volatile unsigned timer=0;
 #define SVC_LED_ON (1) // allume la LED verte
 #define SVC_LED_OFF (2) // éteint la LED verte
 #define SVC_TIMER (3) // démarre la minuterie
+#define SVC_PRIVILED (4) // active l'exécution prévilégiée
+#define SVC_RESET (5) // réinialise le MCU
 
 void __attribute__((naked)) SVcall_handler(){
 	unsigned svc_id, argc;
 	void **argv; 
 	asm volatile (
 	"mrs r0,PSP\n" // optient la valeur de PSP
-	"ldr r1,[r0,#24]\n"
-	"sub r1,r1,#2\n"
-    "ldrb %[svc_id], [r1]\n"
+	"ldr r1,[r0,#24]\n" // obtient le PC
+	"sub r1,r1,#2\n" // PC avant le SVC
+    "ldrb %[svc_id], [r1]\n" // charge l'octet faible i.e. no de service
     "ldr %[argc],[r0]\n"
     "ldr %[argv],[r0,#4]\n"
     : [svc_id] "=r" (svc_id), [argc] "=r" (argc), [argv] "=r" (argv) 
@@ -53,6 +55,16 @@ void __attribute__((naked)) SVcall_handler(){
 	case SVC_TIMER: 
 		timer=argc;
 		break;
+	case SVC_PRIVILED:
+		asm volatile(
+		"mrs r0,CONTROL\n"
+		"bic r0,#0\n"       // bit 0 sélectionne le niveau de privilège
+		"msr CONTROL, r0\n"
+		);
+		break;
+    case SVC_RESET:
+	    _reset_mcu();
+	    break;
 	}	
 }
 
@@ -121,7 +133,8 @@ inline static void delay(unsigned dly){
 
 // supprime le mode d'exécution
 // prévilégié au programme.
-#define _remove_privileges() ({\
+// REF: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0552a/CHDIGFCA.html
+#define _unprivileged() ({\
 	asm volatile (\
 	"mrs r0, CONTROL\n"\
 	"orr r0,#1\n"\
@@ -137,7 +150,7 @@ inline static void delay(unsigned dly){
 	[argv] "r" (args_array)\
 	);})
 
-#define _wait_svc_completion() while (ICSR & (1<<PENDSVSET)|(1<<);
+//#define _wait_svc_completion() while (ICSR & (1<<PENDSVSET)|(1<<);
 #define _wait_timeout() ({while (timer);})
 // pour une période de 1 seconde
 #define RATE 500 // millisecondes
@@ -146,10 +159,9 @@ void main(void){
 	set_sysclock();
 	config_systicks();
 	port_c_setup();
-	_remove_privileges();
+	_unprivileged(); // à partir d'ici exécution sans privilèges.
 	while (1){
-		//_svc_call(SVC_LED_OFF,0,argv);
-		led_off();
+		_svc_call(SVC_LED_OFF,0,argv);
 		_svc_call(SVC_TIMER,RATE,argv);
 		_wait_timeout();
 		_svc_call(SVC_LED_ON,0,argv);

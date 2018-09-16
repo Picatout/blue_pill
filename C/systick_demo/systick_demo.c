@@ -1,5 +1,5 @@
 /*
- * Description: Utilisation du coretime pour implémenter un systemtick qui est incrémenté
+ * Description: Utilisation du coretime pour implémenter un system tick qui est incrémenté
  * à la milliseconde. Utilisation d'une interruption.
  * Auteur: PICATOUT
  * Date: 2018-08-20

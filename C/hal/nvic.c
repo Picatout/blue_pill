@@ -31,20 +31,6 @@ void disable_interrupt(unsigned irq){
 	
 }
 
-/*
-typedef volatile uint32_t* t_ipr;
-
-void set_int_priority(unsigned irq, unsigned priority){
-	t_ipr ipr=(t_ipr)NVIC_IPR0_ADR;
-	unsigned slot;
-	
-	if (irq>LAST_IRQ) return;
-	slot=(irq%4)*8;
-	ipr[irq/4]&=~(0xff<<slot);
-	priority=(priority&15)<<4; 
-	ipr[irq]|=priority<<slot;
-}
-*/
 
 typedef uint8_t* t_ipr;
 

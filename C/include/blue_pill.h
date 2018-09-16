@@ -14,6 +14,7 @@
 #define HSI_FREQ  8000000 
 // cristal 32768 hertz installé
 #define OSC32_PRESENT 1
+#define LSE_FREQ 32768
 // LED verte sur PC13
 #define LED_GPIO GPIOC
 #define LED_PIN (13)

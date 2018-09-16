@@ -10,6 +10,18 @@
 #ifndef GEN_MACROS_H
 #define GEN_MACROS_H
 
+// CMSIS macros
+#define __enable_irq() ({asm volatile("cpsie i");})
+#define __disable_irq() ({asm volatile("cpsid i");})
+#define __enable_fault_irq() ({asm volatile("cpsie f");})
+#define __disable_fault_irq() ({asm volatile("cpsid f");})
+
+// les Special Function Registers sont de de 32 bits.
+// Ces pointeurs doivent avoir l'attribut volatile
+// car leur contenu peut-être modifiés par hardware
+#define _sfr(x) (*((volatile uint32_t*)(x)))
+
+
 // applique champ de bits
 // v valeur à appliquer
 // p position 0-31
@@ -30,5 +42,6 @@
 // sfr nom du registre
 // bit position 0-31
 #define _set_sfr_bit(sfr,bit) sfr|=(1<<bit)
+
 
 #endif // GEN_MACROS_H

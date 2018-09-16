@@ -1,0 +1,1142 @@
+
+Imprime code assembleur contenu dans rtc_demo.elf avec objdump
+arm-none-eabi-objdump -S --disassemble rtc_demo.elf
+
+rtc_demo.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <myvectors>:
+   0:	00 50 00 20 51 01 00 00 41 01 00 00 41 01 00 00     .P. Q...A...A...
+  10:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  20:	41 01 00 00 41 01 00 00 41 01 00 00 31 01 00 00     A...A...A...1...
+  30:	41 01 00 00 41 01 00 00 41 01 00 00 dd 01 00 00     A...A...A.......
+  40:	41 01 00 00 41 01 00 00 41 01 00 00 15 02 00 00     A...A...A.......
+  50:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  60:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  70:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  80:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  90:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  a0:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  b0:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  c0:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  d0:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  e0:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+  f0:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+ 100:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+ 110:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+ 120:	41 01 00 00 41 01 00 00 41 01 00 00 41 01 00 00     A...A...A...A...
+
+00000130 <SVcall_handler>:
+void systick_int();
+void RTC_handler();
+
+void __attribute__((naked,weak)) SVcall_handler(){
+// réinitialise le µC
+   AIRCR=(KEY<<VECTKEY)|(1<<SYSRESETREQ);
+ 130:	4b01      	ldr	r3, [pc, #4]	; (138 <SVcall_handler+0x8>)
+ 132:	4a02      	ldr	r2, [pc, #8]	; (13c <SVcall_handler+0xc>)
+ 134:	601a      	str	r2, [r3, #0]
+ 136:	bf00      	nop
+ 138:	e000ed0c 	.word	0xe000ed0c
+ 13c:	05fa0004 	.word	0x05fa0004
+
+00000140 <reset_mcu>:
+}
+
+void __attribute__((naked)) reset_mcu(){
+// réinitialise le µC
+   AIRCR=(KEY<<VECTKEY)|(1<<SYSRESETREQ);
+ 140:	4b01      	ldr	r3, [pc, #4]	; (148 <reset_mcu+0x8>)
+ 142:	4a02      	ldr	r2, [pc, #8]	; (14c <reset_mcu+0xc>)
+ 144:	601a      	str	r2, [r3, #0]
+ 146:	bf00      	nop
+ 148:	e000ed0c 	.word	0xe000ed0c
+ 14c:	05fa0004 	.word	0x05fa0004
+
+00000150 <startup>:
+    (unsigned int *)  reset_mcu, // 59 DMA2CH4_5
+};
+
+
+void startup()
+{
+ 150:	b580      	push	{r7, lr}
+ 152:	b086      	sub	sp, #24
+ 154:	af00      	add	r7, sp, #0
+    /* Set memory in bss segment to zeros */
+    unsigned int * bss_start_p = &_BSS_START; 
+ 156:	4b1b      	ldr	r3, [pc, #108]	; (1c4 <startup+0x74>)
+ 158:	617b      	str	r3, [r7, #20]
+    unsigned int * bss_end_p = &_BSS_END;
+ 15a:	4b1b      	ldr	r3, [pc, #108]	; (1c8 <startup+0x78>)
+ 15c:	60bb      	str	r3, [r7, #8]
+
+    while(bss_start_p != bss_end_p)
+ 15e:	e005      	b.n	16c <startup+0x1c>
+    {
+        *bss_start_p = 0;
+ 160:	697b      	ldr	r3, [r7, #20]
+ 162:	2200      	movs	r2, #0
+ 164:	601a      	str	r2, [r3, #0]
+        bss_start_p++;
+ 166:	697b      	ldr	r3, [r7, #20]
+ 168:	3304      	adds	r3, #4
+ 16a:	617b      	str	r3, [r7, #20]
+{
+    /* Set memory in bss segment to zeros */
+    unsigned int * bss_start_p = &_BSS_START; 
+    unsigned int * bss_end_p = &_BSS_END;
+
+    while(bss_start_p != bss_end_p)
+ 16c:	697a      	ldr	r2, [r7, #20]
+ 16e:	68bb      	ldr	r3, [r7, #8]
+ 170:	429a      	cmp	r2, r3
+ 172:	d1f5      	bne.n	160 <startup+0x10>
+    }
+
+    /* Copy memory in data segment from its position
+     * in the flash image to its position in the
+     * read/write memory */
+    unsigned int * data_rom_start_p = &_DATA_ROM_START;
+ 174:	4b15      	ldr	r3, [pc, #84]	; (1cc <startup+0x7c>)
+ 176:	613b      	str	r3, [r7, #16]
+    unsigned int * data_ram_start_p = &_DATA_RAM_START;
+ 178:	4b15      	ldr	r3, [pc, #84]	; (1d0 <startup+0x80>)
+ 17a:	60fb      	str	r3, [r7, #12]
+    unsigned int * data_ram_end_p = &_DATA_RAM_END;
+ 17c:	4b15      	ldr	r3, [pc, #84]	; (1d4 <startup+0x84>)
+ 17e:	607b      	str	r3, [r7, #4]
+
+    while(data_ram_start_p != data_ram_end_p)
+ 180:	e009      	b.n	196 <startup+0x46>
+    {
+        *data_ram_start_p = *data_rom_start_p;
+ 182:	693b      	ldr	r3, [r7, #16]
+ 184:	681a      	ldr	r2, [r3, #0]
+ 186:	68fb      	ldr	r3, [r7, #12]
+ 188:	601a      	str	r2, [r3, #0]
+        data_ram_start_p++;
+ 18a:	68fb      	ldr	r3, [r7, #12]
+ 18c:	3304      	adds	r3, #4
+ 18e:	60fb      	str	r3, [r7, #12]
+        data_rom_start_p++;
+ 190:	693b      	ldr	r3, [r7, #16]
+ 192:	3304      	adds	r3, #4
+ 194:	613b      	str	r3, [r7, #16]
+     * read/write memory */
+    unsigned int * data_rom_start_p = &_DATA_ROM_START;
+    unsigned int * data_ram_start_p = &_DATA_RAM_START;
+    unsigned int * data_ram_end_p = &_DATA_RAM_END;
+
+    while(data_ram_start_p != data_ram_end_p)
+ 196:	68fa      	ldr	r2, [r7, #12]
+ 198:	687b      	ldr	r3, [r7, #4]
+ 19a:	429a      	cmp	r2, r3
+ 19c:	d1f1      	bne.n	182 <startup+0x32>
+        *data_ram_start_p = *data_rom_start_p;
+        data_ram_start_p++;
+        data_rom_start_p++;
+    }
+    // active les interruptions et les fault handler
+    __enable_irq();
+ 19e:	b662      	cpsie	i
+    __enable_fault_irq();
+ 1a0:	b661      	cpsie	f
+    // initialisaton de la pile PSP et commutation 
+    // vers cette pile.
+    asm volatile(
+ 1a2:	4b0d      	ldr	r3, [pc, #52]	; (1d8 <startup+0x88>)
+ 1a4:	4618      	mov	r0, r3
+ 1a6:	f380 8809 	msr	PSP, r0
+ 1aa:	f3ef 8014 	mrs	r0, CONTROL
+ 1ae:	f040 0002 	orr.w	r0, r0, #2
+ 1b2:	f380 8814 	msr	CONTROL, r0
+ 1b6:	f3bf 8f6f 	isb	sy
+    "msr CONTROL,r0\n"
+    "ISB\n"
+    :: [psp_top] "r" (PSP_TOP)
+    );
+    /* Now we are ready to start the main function */
+    main();
+ 1ba:	f000 f8b9 	bl	330 <main>
+}
+ 1be:	3718      	adds	r7, #24
+ 1c0:	46bd      	mov	sp, r7
+ 1c2:	bd80      	pop	{r7, pc}
+ 1c4:	20000000 	.word	0x20000000
+ 1c8:	20000008 	.word	0x20000008
+ 1cc:	0000056c 	.word	0x0000056c
+ 1d0:	20000000 	.word	0x20000000
+ 1d4:	20000000 	.word	0x20000000
+ 1d8:	20004c00 	.word	0x20004c00
+
+000001dc <systick_int>:
+
+static volatile unsigned ticks=0;
+static volatile unsigned timer=0;
+
+// interruption coretimer
+void __attribute__((__interrupt__)) systick_int(){
+ 1dc:	4668      	mov	r0, sp
+ 1de:	f020 0107 	bic.w	r1, r0, #7
+ 1e2:	468d      	mov	sp, r1
+ 1e4:	b481      	push	{r0, r7}
+ 1e6:	af00      	add	r7, sp, #0
+	ticks++;
+ 1e8:	4b08      	ldr	r3, [pc, #32]	; (20c <systick_int+0x30>)
+ 1ea:	681b      	ldr	r3, [r3, #0]
+ 1ec:	3301      	adds	r3, #1
+ 1ee:	4a07      	ldr	r2, [pc, #28]	; (20c <systick_int+0x30>)
+ 1f0:	6013      	str	r3, [r2, #0]
+	if (timer) {timer--;}
+ 1f2:	4b07      	ldr	r3, [pc, #28]	; (210 <systick_int+0x34>)
+ 1f4:	681b      	ldr	r3, [r3, #0]
+ 1f6:	2b00      	cmp	r3, #0
+ 1f8:	d004      	beq.n	204 <systick_int+0x28>
+ 1fa:	4b05      	ldr	r3, [pc, #20]	; (210 <systick_int+0x34>)
+ 1fc:	681b      	ldr	r3, [r3, #0]
+ 1fe:	3b01      	subs	r3, #1
+ 200:	4a03      	ldr	r2, [pc, #12]	; (210 <systick_int+0x34>)
+ 202:	6013      	str	r3, [r2, #0]
+}
+ 204:	46bd      	mov	sp, r7
+ 206:	bc81      	pop	{r0, r7}
+ 208:	4685      	mov	sp, r0
+ 20a:	4770      	bx	lr
+ 20c:	20000000 	.word	0x20000000
+ 210:	20000004 	.word	0x20000004
+
+00000214 <RTC_handler>:
+
+// interruption RTC
+void __attribute__((__interrupt__)) RTC_handler(){
+ 214:	4668      	mov	r0, sp
+ 216:	f020 0107 	bic.w	r1, r0, #7
+ 21a:	468d      	mov	sp, r1
+ 21c:	b481      	push	{r0, r7}
+ 21e:	af00      	add	r7, sp, #0
+	// n'agit que sur les interruption SECF
+	if (RTC_CRL&(1<<RTC_CRL_SECF)){	
+ 220:	4b0a      	ldr	r3, [pc, #40]	; (24c <RTC_handler+0x38>)
+ 222:	681b      	ldr	r3, [r3, #0]
+ 224:	f003 0301 	and.w	r3, r3, #1
+ 228:	2b00      	cmp	r3, #0
+ 22a:	d00b      	beq.n	244 <RTC_handler+0x30>
+		GPIOC_ODR^=GRN_LED;  // bascule état LED
+ 22c:	4a08      	ldr	r2, [pc, #32]	; (250 <RTC_handler+0x3c>)
+ 22e:	4b08      	ldr	r3, [pc, #32]	; (250 <RTC_handler+0x3c>)
+ 230:	681b      	ldr	r3, [r3, #0]
+ 232:	f483 5300 	eor.w	r3, r3, #8192	; 0x2000
+ 236:	6013      	str	r3, [r2, #0]
+		RTC_CRL&=~(1<<RTC_CRL_SECF); // RAZ indicateur d'interruption
+ 238:	4a04      	ldr	r2, [pc, #16]	; (24c <RTC_handler+0x38>)
+ 23a:	4b04      	ldr	r3, [pc, #16]	; (24c <RTC_handler+0x38>)
+ 23c:	681b      	ldr	r3, [r3, #0]
+ 23e:	f023 0301 	bic.w	r3, r3, #1
+ 242:	6013      	str	r3, [r2, #0]
+	}
+}
+ 244:	46bd      	mov	sp, r7
+ 246:	bc81      	pop	{r0, r7}
+ 248:	4685      	mov	sp, r0
+ 24a:	4770      	bx	lr
+ 24c:	40002804 	.word	0x40002804
+ 250:	4001100c 	.word	0x4001100c
+
+00000254 <set_sysclock>:
+
+
+// configure SYSCLK à la fréquence maximale de 72 Mhz
+// en utilisant le cristal externe (HSE) et le PLL
+static void set_sysclock(){
+ 254:	b480      	push	{r7}
+ 256:	af00      	add	r7, sp, #0
+	 // active l'oscillateur externe
+	RCC_CR|=1<<RCC_CR_HSEON;
+ 258:	4a1a      	ldr	r2, [pc, #104]	; (2c4 <set_sysclock+0x70>)
+ 25a:	4b1a      	ldr	r3, [pc, #104]	; (2c4 <set_sysclock+0x70>)
+ 25c:	681b      	ldr	r3, [r3, #0]
+ 25e:	f443 3380 	orr.w	r3, r3, #65536	; 0x10000
+ 262:	6013      	str	r3, [r2, #0]
+	 // attend que l'oscillateur soit prêt
+   while (! (RCC_CR & (1<<RCC_CR_HSERDY)));
+ 264:	bf00      	nop
+ 266:	4b17      	ldr	r3, [pc, #92]	; (2c4 <set_sysclock+0x70>)
+ 268:	681b      	ldr	r3, [r3, #0]
+ 26a:	f403 3300 	and.w	r3, r3, #131072	; 0x20000
+ 26e:	2b00      	cmp	r3, #0
+ 270:	d0f9      	beq.n	266 <set_sysclock+0x12>
+     // sélection PREDIV1 pour la source du PLL
+     // multiplie la fréquence HSE par 9 
+     // pour une fréquence maximale Fsysclk de 72 Mhz
+    RCC_CFGR|=(PLLSRC_PREDIV1<<RCC_CFGR_PLLSRC)|(PLLMUL9<<RCC_CFGR_PLLMUL);
+ 272:	4a15      	ldr	r2, [pc, #84]	; (2c8 <set_sysclock+0x74>)
+ 274:	4b14      	ldr	r3, [pc, #80]	; (2c8 <set_sysclock+0x74>)
+ 276:	681b      	ldr	r3, [r3, #0]
+ 278:	f443 13e8 	orr.w	r3, r3, #1900544	; 0x1d0000
+ 27c:	6013      	str	r3, [r2, #0]
+    // active le PLL
+    RCC_CR|=1<<RCC_CR_PLLON;
+ 27e:	4a11      	ldr	r2, [pc, #68]	; (2c4 <set_sysclock+0x70>)
+ 280:	4b10      	ldr	r3, [pc, #64]	; (2c4 <set_sysclock+0x70>)
+ 282:	681b      	ldr	r3, [r3, #0]
+ 284:	f043 7380 	orr.w	r3, r3, #16777216	; 0x1000000
+ 288:	6013      	str	r3, [r2, #0]
+    // Attend que le PLL soit prêt
+    while (! (RCC_CR & (1<<RCC_CR_PLLRDY)));
+ 28a:	bf00      	nop
+ 28c:	4b0d      	ldr	r3, [pc, #52]	; (2c4 <set_sysclock+0x70>)
+ 28e:	681b      	ldr	r3, [r3, #0]
+ 290:	f003 7300 	and.w	r3, r3, #33554432	; 0x2000000
+ 294:	2b00      	cmp	r3, #0
+ 296:	d0f9      	beq.n	28c <set_sysclock+0x38>
+    // ajoute délais d'accès à la mémoire flash
+    FLASH_ACR|=WAIT_2_CY;
+ 298:	4a0c      	ldr	r2, [pc, #48]	; (2cc <set_sysclock+0x78>)
+ 29a:	4b0c      	ldr	r3, [pc, #48]	; (2cc <set_sysclock+0x78>)
+ 29c:	681b      	ldr	r3, [r3, #0]
+ 29e:	f043 0302 	orr.w	r3, r3, #2
+ 2a2:	6013      	str	r3, [r2, #0]
+    // SélectionNE le PLL comme source pour SYSCLK
+    RCC_CFGR|=PLL_CLK<<RCC_CFGR_SW;
+ 2a4:	4a08      	ldr	r2, [pc, #32]	; (2c8 <set_sysclock+0x74>)
+ 2a6:	4b08      	ldr	r3, [pc, #32]	; (2c8 <set_sysclock+0x74>)
+ 2a8:	681b      	ldr	r3, [r3, #0]
+ 2aa:	f043 0302 	orr.w	r3, r3, #2
+ 2ae:	6013      	str	r3, [r2, #0]
+	// La fréquence maximale pour APB1 doit-être de 36 Mhz
+	// donc divise SYSCLK/2
+	RCC_CFGR|=PPRECLK_DIV2;
+ 2b0:	4a05      	ldr	r2, [pc, #20]	; (2c8 <set_sysclock+0x74>)
+ 2b2:	4b05      	ldr	r3, [pc, #20]	; (2c8 <set_sysclock+0x74>)
+ 2b4:	681b      	ldr	r3, [r3, #0]
+ 2b6:	f043 0304 	orr.w	r3, r3, #4
+ 2ba:	6013      	str	r3, [r2, #0]
+}
+ 2bc:	46bd      	mov	sp, r7
+ 2be:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 2c2:	4770      	bx	lr
+ 2c4:	40021000 	.word	0x40021000
+ 2c8:	40021004 	.word	0x40021004
+ 2cc:	40022000 	.word	0x40022000
+
+000002d0 <config_systicks>:
+
+// configure SYSTICKS pour un cycle 1 msec
+// source AHB/8
+// valeur reload 72Mhz/8/1000=9000
+#define MSEC_DLY 9000
+static void config_systicks(){
+ 2d0:	b480      	push	{r7}
+ 2d2:	af00      	add	r7, sp, #0
+	STK_LOAD=MSEC_DLY-1;
+ 2d4:	4b05      	ldr	r3, [pc, #20]	; (2ec <config_systicks+0x1c>)
+ 2d6:	f242 3227 	movw	r2, #8999	; 0x2327
+ 2da:	601a      	str	r2, [r3, #0]
+	STK_CTRL=(1<<STK_TICKINT)|(1<<STK_ENABLE);
+ 2dc:	4b04      	ldr	r3, [pc, #16]	; (2f0 <config_systicks+0x20>)
+ 2de:	2203      	movs	r2, #3
+ 2e0:	601a      	str	r2, [r3, #0]
+}
+ 2e2:	46bd      	mov	sp, r7
+ 2e4:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 2e8:	4770      	bx	lr
+ 2ea:	bf00      	nop
+ 2ec:	e000e014 	.word	0xe000e014
+ 2f0:	e000e010 	.word	0xe000e010
+
+000002f4 <port_c_setup>:
+
+#define _mask_cnf(cnf,bit) (cnf & ~(CNF_MASK<<((bit&7)*4)))
+#define _apply_cnf(cnf,bit,pin_cnf) (_mask_cnf(cnf,bit) | pin_cnf<<((bit&7)*4)) 
+// PC13 mode{0:1}=10, CNF{2:3}=01 -> 6
+#define PC13_CNF 6
+static void port_c_setup(){
+ 2f4:	b480      	push	{r7}
+ 2f6:	af00      	add	r7, sp, #0
+	RCC_APB2ENR|=1<<GPIOC_EN;
+ 2f8:	4a09      	ldr	r2, [pc, #36]	; (320 <port_c_setup+0x2c>)
+ 2fa:	4b09      	ldr	r3, [pc, #36]	; (320 <port_c_setup+0x2c>)
+ 2fc:	681b      	ldr	r3, [r3, #0]
+ 2fe:	f043 0310 	orr.w	r3, r3, #16
+ 302:	6013      	str	r3, [r2, #0]
+	GPIOC_CRH=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
+ 304:	4b07      	ldr	r3, [pc, #28]	; (324 <port_c_setup+0x30>)
+ 306:	4a08      	ldr	r2, [pc, #32]	; (328 <port_c_setup+0x34>)
+ 308:	601a      	str	r2, [r3, #0]
+	GPIOC_ODR^=GRN_LED; // éteint LED
+ 30a:	4a08      	ldr	r2, [pc, #32]	; (32c <port_c_setup+0x38>)
+ 30c:	4b07      	ldr	r3, [pc, #28]	; (32c <port_c_setup+0x38>)
+ 30e:	681b      	ldr	r3, [r3, #0]
+ 310:	f483 5300 	eor.w	r3, r3, #8192	; 0x2000
+ 314:	6013      	str	r3, [r2, #0]
+}
+ 316:	46bd      	mov	sp, r7
+ 318:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 31c:	4770      	bx	lr
+ 31e:	bf00      	nop
+ 320:	40021018 	.word	0x40021018
+ 324:	40011004 	.word	0x40011004
+ 328:	44644444 	.word	0x44644444
+ 32c:	4001100c 	.word	0x4001100c
+
+00000330 <main>:
+
+#define HALF_PERIOD 250
+void main(){
+ 330:	b580      	push	{r7, lr}
+ 332:	b082      	sub	sp, #8
+ 334:	af00      	add	r7, sp, #0
+	unsigned loop_cnt=0;
+ 336:	2300      	movs	r3, #0
+ 338:	607b      	str	r3, [r7, #4]
+		set_sysclock();
+ 33a:	f7ff ff8b 	bl	254 <set_sysclock>
+		config_systicks();
+ 33e:	f7ff ffc7 	bl	2d0 <config_systicks>
+		port_c_setup();
+ 342:	f7ff ffd7 	bl	2f4 <port_c_setup>
+		enable_rtc(HALF_PERIOD,RTC_SECIE);
+ 346:	20fa      	movs	r0, #250	; 0xfa
+ 348:	2101      	movs	r1, #1
+ 34a:	f000 f867 	bl	41c <enable_rtc>
+		while (1){
+			loop_cnt++;
+ 34e:	687b      	ldr	r3, [r7, #4]
+ 350:	3301      	adds	r3, #1
+ 352:	607b      	str	r3, [r7, #4]
+			// tombe en sommeil en attendant la prochaine interruption
+			//asm volatile ("wfi");
+		}
+ 354:	e7fb      	b.n	34e <main+0x1e>
+ 356:	bf00      	nop
+
+00000358 <enable_interrupt>:
+
+
+
+
+typedef volatile uint32_t* t_iser;
+void enable_interrupt(unsigned irq){
+ 358:	b480      	push	{r7}
+ 35a:	b085      	sub	sp, #20
+ 35c:	af00      	add	r7, sp, #0
+ 35e:	6078      	str	r0, [r7, #4]
+	t_iser iser=(t_iser)(NVIC_ISER0_ADR);
+ 360:	4b0d      	ldr	r3, [pc, #52]	; (398 <enable_interrupt+0x40>)
+ 362:	60fb      	str	r3, [r7, #12]
+	if (irq>LAST_IRQ) return ;
+ 364:	687b      	ldr	r3, [r7, #4]
+ 366:	2b3b      	cmp	r3, #59	; 0x3b
+ 368:	d900      	bls.n	36c <enable_interrupt+0x14>
+ 36a:	e010      	b.n	38e <enable_interrupt+0x36>
+	iser[irq/32]|=1<<(irq%32);
+ 36c:	687b      	ldr	r3, [r7, #4]
+ 36e:	095b      	lsrs	r3, r3, #5
+ 370:	009a      	lsls	r2, r3, #2
+ 372:	68f9      	ldr	r1, [r7, #12]
+ 374:	440a      	add	r2, r1
+ 376:	009b      	lsls	r3, r3, #2
+ 378:	68f9      	ldr	r1, [r7, #12]
+ 37a:	440b      	add	r3, r1
+ 37c:	681b      	ldr	r3, [r3, #0]
+ 37e:	6879      	ldr	r1, [r7, #4]
+ 380:	f001 011f 	and.w	r1, r1, #31
+ 384:	2001      	movs	r0, #1
+ 386:	fa00 f101 	lsl.w	r1, r0, r1
+ 38a:	430b      	orrs	r3, r1
+ 38c:	6013      	str	r3, [r2, #0]
+	
+}
+ 38e:	3714      	adds	r7, #20
+ 390:	46bd      	mov	sp, r7
+ 392:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 396:	4770      	bx	lr
+ 398:	e000e100 	.word	0xe000e100
+
+0000039c <disable_interrupt>:
+
+typedef volatile uint32_t* t_icer;
+void disable_interrupt(unsigned irq){
+ 39c:	b480      	push	{r7}
+ 39e:	b085      	sub	sp, #20
+ 3a0:	af00      	add	r7, sp, #0
+ 3a2:	6078      	str	r0, [r7, #4]
+	t_icer icer=(t_icer)(NVIC_ICER0_ADR);
+ 3a4:	4b0e      	ldr	r3, [pc, #56]	; (3e0 <disable_interrupt+0x44>)
+ 3a6:	60fb      	str	r3, [r7, #12]
+	if (irq>LAST_IRQ) return ;
+ 3a8:	687b      	ldr	r3, [r7, #4]
+ 3aa:	2b3b      	cmp	r3, #59	; 0x3b
+ 3ac:	d900      	bls.n	3b0 <disable_interrupt+0x14>
+ 3ae:	e011      	b.n	3d4 <disable_interrupt+0x38>
+	icer[irq/32]&=~(1<<(irq%32));
+ 3b0:	687b      	ldr	r3, [r7, #4]
+ 3b2:	095b      	lsrs	r3, r3, #5
+ 3b4:	009a      	lsls	r2, r3, #2
+ 3b6:	68f9      	ldr	r1, [r7, #12]
+ 3b8:	440a      	add	r2, r1
+ 3ba:	009b      	lsls	r3, r3, #2
+ 3bc:	68f9      	ldr	r1, [r7, #12]
+ 3be:	440b      	add	r3, r1
+ 3c0:	681b      	ldr	r3, [r3, #0]
+ 3c2:	6879      	ldr	r1, [r7, #4]
+ 3c4:	f001 011f 	and.w	r1, r1, #31
+ 3c8:	2001      	movs	r0, #1
+ 3ca:	fa00 f101 	lsl.w	r1, r0, r1
+ 3ce:	43c9      	mvns	r1, r1
+ 3d0:	400b      	ands	r3, r1
+ 3d2:	6013      	str	r3, [r2, #0]
+	
+}
+ 3d4:	3714      	adds	r7, #20
+ 3d6:	46bd      	mov	sp, r7
+ 3d8:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 3dc:	4770      	bx	lr
+ 3de:	bf00      	nop
+ 3e0:	e000e180 	.word	0xe000e180
+
+000003e4 <set_int_priority>:
+}
+*/
+
+typedef uint8_t* t_ipr;
+
+void set_int_priority(unsigned irq, unsigned priority){
+ 3e4:	b480      	push	{r7}
+ 3e6:	b085      	sub	sp, #20
+ 3e8:	af00      	add	r7, sp, #0
+ 3ea:	6078      	str	r0, [r7, #4]
+ 3ec:	6039      	str	r1, [r7, #0]
+	t_ipr ipr=(t_ipr)NVIC_IPR0_ADR;
+ 3ee:	4b09      	ldr	r3, [pc, #36]	; (414 <set_int_priority+0x30>)
+ 3f0:	60fb      	str	r3, [r7, #12]
+	if (irq>LAST_IRQ) return;
+ 3f2:	687b      	ldr	r3, [r7, #4]
+ 3f4:	2b3b      	cmp	r3, #59	; 0x3b
+ 3f6:	d900      	bls.n	3fa <set_int_priority+0x16>
+ 3f8:	e007      	b.n	40a <set_int_priority+0x26>
+	ipr[irq]=(priority&15)<<4;
+ 3fa:	68fa      	ldr	r2, [r7, #12]
+ 3fc:	687b      	ldr	r3, [r7, #4]
+ 3fe:	4413      	add	r3, r2
+ 400:	683a      	ldr	r2, [r7, #0]
+ 402:	b2d2      	uxtb	r2, r2
+ 404:	0112      	lsls	r2, r2, #4
+ 406:	b2d2      	uxtb	r2, r2
+ 408:	701a      	strb	r2, [r3, #0]
+}
+ 40a:	3714      	adds	r7, #20
+ 40c:	46bd      	mov	sp, r7
+ 40e:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 412:	4770      	bx	lr
+ 414:	e000e400 	.word	0xe000e400
+#include "../include/stm32f103c8.h"
+#include "../include/rtc.h"
+
+
+void __attribute__((naked,weak)) RTC_handler(){
+   _reset_mcu();
+ 418:	f7ff be92 	b.w	140 <reset_mcu>
+
+0000041c <enable_rtc>:
+}
+
+
+// activation du RTC avec LSE comme source
+// ref: note applicative AN2821
+void enable_rtc(unsigned period, unsigned interrupts){
+ 41c:	b480      	push	{r7}
+ 41e:	b083      	sub	sp, #12
+ 420:	af00      	add	r7, sp, #0
+ 422:	6078      	str	r0, [r7, #4]
+ 424:	6039      	str	r1, [r7, #0]
+	// activation signaux clock sur power interface et backup domain interface
+	RCC_APB1ENR|=(1<APB1ENR_BKPEN)|(1<<APB1ENR_PWREN);
+ 426:	4a34      	ldr	r2, [pc, #208]	; (4f8 <enable_rtc+0xdc>)
+ 428:	4b33      	ldr	r3, [pc, #204]	; (4f8 <enable_rtc+0xdc>)
+ 42a:	681b      	ldr	r3, [r3, #0]
+ 42c:	f043 5380 	orr.w	r3, r3, #268435456	; 0x10000000
+ 430:	f043 0301 	orr.w	r3, r3, #1
+ 434:	6013      	str	r3, [r2, #0]
+	// donne un accès en modification à RCC_DBCR
+	PWR_CR|=1<<PWR_CR_DBP;
+ 436:	4a31      	ldr	r2, [pc, #196]	; (4fc <enable_rtc+0xe0>)
+ 438:	4b30      	ldr	r3, [pc, #192]	; (4fc <enable_rtc+0xe0>)
+ 43a:	681b      	ldr	r3, [r3, #0]
+ 43c:	f443 7380 	orr.w	r3, r3, #256	; 0x100
+ 440:	6013      	str	r3, [r2, #0]
+	// active l'oscillateur LSE
+	RCC_BDCR|=1<<BDCR_LSEON;
+ 442:	4a2f      	ldr	r2, [pc, #188]	; (500 <enable_rtc+0xe4>)
+ 444:	4b2e      	ldr	r3, [pc, #184]	; (500 <enable_rtc+0xe4>)
+ 446:	681b      	ldr	r3, [r3, #0]
+ 448:	f043 0301 	orr.w	r3, r3, #1
+ 44c:	6013      	str	r3, [r2, #0]
+	// attend qu'il soit prêt
+	while (!(RCC_BDCR & (1<<BDCR_LSERDY)));
+ 44e:	bf00      	nop
+ 450:	4b2b      	ldr	r3, [pc, #172]	; (500 <enable_rtc+0xe4>)
+ 452:	681b      	ldr	r3, [r3, #0]
+ 454:	f003 0302 	and.w	r3, r3, #2
+ 458:	2b00      	cmp	r3, #0
+ 45a:	d0f9      	beq.n	450 <enable_rtc+0x34>
+	// sélection LSE clock et active le RTC
+	RCC_BDCR|=(1<<BDCR_RTCEN)|(RTC_LSECLK<<BDCR_RTCSEL);
+ 45c:	4a28      	ldr	r2, [pc, #160]	; (500 <enable_rtc+0xe4>)
+ 45e:	4b28      	ldr	r3, [pc, #160]	; (500 <enable_rtc+0xe4>)
+ 460:	681b      	ldr	r3, [r3, #0]
+ 462:	f443 4301 	orr.w	r3, r3, #33024	; 0x8100
+ 466:	6013      	str	r3, [r2, #0]
+	// attend la synchronisation de l'horloge LSE et du clock de APB1 
+	while (! (RTC_CRL & (1<<RTC_CRL_RSF)));
+ 468:	bf00      	nop
+ 46a:	4b26      	ldr	r3, [pc, #152]	; (504 <enable_rtc+0xe8>)
+ 46c:	681b      	ldr	r3, [r3, #0]
+ 46e:	f003 0308 	and.w	r3, r3, #8
+ 472:	2b00      	cmp	r3, #0
+ 474:	d0f9      	beq.n	46a <enable_rtc+0x4e>
+	// attend que la dernière opération d'écriture dans RTC_CRL soit complétée.
+	_wait_rtc_write();
+ 476:	bf00      	nop
+ 478:	4b22      	ldr	r3, [pc, #136]	; (504 <enable_rtc+0xe8>)
+ 47a:	681b      	ldr	r3, [r3, #0]
+ 47c:	f003 0320 	and.w	r3, r3, #32
+ 480:	2b00      	cmp	r3, #0
+ 482:	d0f9      	beq.n	478 <enable_rtc+0x5c>
+//	RTC_CRL|=(1<<RTC_CRL_CNF);
+//	_wait_rtc_write();
+	// activation des interruptions désirées.
+	RTC_CRH |= interrupts;
+ 484:	4920      	ldr	r1, [pc, #128]	; (508 <enable_rtc+0xec>)
+ 486:	4b20      	ldr	r3, [pc, #128]	; (508 <enable_rtc+0xec>)
+ 488:	681a      	ldr	r2, [r3, #0]
+ 48a:	683b      	ldr	r3, [r7, #0]
+ 48c:	4313      	orrs	r3, r2
+ 48e:	600b      	str	r3, [r1, #0]
+	_wait_rtc_write();
+ 490:	bf00      	nop
+ 492:	4b1c      	ldr	r3, [pc, #112]	; (504 <enable_rtc+0xe8>)
+ 494:	681b      	ldr	r3, [r3, #0]
+ 496:	f003 0320 	and.w	r3, r3, #32
+ 49a:	2b00      	cmp	r3, #0
+ 49c:	d0f9      	beq.n	492 <enable_rtc+0x76>
+	// configuration de la valeur du prescaler
+	RTC_PRLL=_rtc_period_msec(period)&0xffff;
+ 49e:	4a1b      	ldr	r2, [pc, #108]	; (50c <enable_rtc+0xf0>)
+ 4a0:	687b      	ldr	r3, [r7, #4]
+ 4a2:	03db      	lsls	r3, r3, #15
+ 4a4:	491a      	ldr	r1, [pc, #104]	; (510 <enable_rtc+0xf4>)
+ 4a6:	fba1 1303 	umull	r1, r3, r1, r3
+ 4aa:	099b      	lsrs	r3, r3, #6
+ 4ac:	3b01      	subs	r3, #1
+ 4ae:	b29b      	uxth	r3, r3
+ 4b0:	6013      	str	r3, [r2, #0]
+	_wait_rtc_write();
+ 4b2:	bf00      	nop
+ 4b4:	4b13      	ldr	r3, [pc, #76]	; (504 <enable_rtc+0xe8>)
+ 4b6:	681b      	ldr	r3, [r3, #0]
+ 4b8:	f003 0320 	and.w	r3, r3, #32
+ 4bc:	2b00      	cmp	r3, #0
+ 4be:	d0f9      	beq.n	4b4 <enable_rtc+0x98>
+	RTC_PRLH=(_rtc_period_msec(period)>>16) && 0xffff;
+ 4c0:	4a14      	ldr	r2, [pc, #80]	; (514 <enable_rtc+0xf8>)
+ 4c2:	687b      	ldr	r3, [r7, #4]
+ 4c4:	03db      	lsls	r3, r3, #15
+ 4c6:	4912      	ldr	r1, [pc, #72]	; (510 <enable_rtc+0xf4>)
+ 4c8:	fba1 1303 	umull	r1, r3, r1, r3
+ 4cc:	099b      	lsrs	r3, r3, #6
+ 4ce:	3b01      	subs	r3, #1
+ 4d0:	0c1b      	lsrs	r3, r3, #16
+ 4d2:	2b00      	cmp	r3, #0
+ 4d4:	bf14      	ite	ne
+ 4d6:	2301      	movne	r3, #1
+ 4d8:	2300      	moveq	r3, #0
+ 4da:	b2db      	uxtb	r3, r3
+ 4dc:	6013      	str	r3, [r2, #0]
+	_wait_rtc_write();
+ 4de:	bf00      	nop
+ 4e0:	4b08      	ldr	r3, [pc, #32]	; (504 <enable_rtc+0xe8>)
+ 4e2:	681b      	ldr	r3, [r3, #0]
+ 4e4:	f003 0320 	and.w	r3, r3, #32
+ 4e8:	2b00      	cmp	r3, #0
+ 4ea:	d0f9      	beq.n	4e0 <enable_rtc+0xc4>
+//	RTC_CRL&=~(1<<RTC_CRL_CNF);
+//	_wait_rtc_write();
+//	PWR_CR&=~(1<<PWR_CR_DBP);
+}
+ 4ec:	370c      	adds	r7, #12
+ 4ee:	46bd      	mov	sp, r7
+ 4f0:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 4f4:	4770      	bx	lr
+ 4f6:	bf00      	nop
+ 4f8:	4002101c 	.word	0x4002101c
+ 4fc:	40007000 	.word	0x40007000
+ 500:	40021020 	.word	0x40021020
+ 504:	40002804 	.word	0x40002804
+ 508:	40002800 	.word	0x40002800
+ 50c:	4000280c 	.word	0x4000280c
+ 510:	10624dd3 	.word	0x10624dd3
+ 514:	40002808 	.word	0x40002808
+
+00000518 <reset_backup_domain>:
+
+// réinitialise le backup domain
+inline void reset_backup_domain(){
+ 518:	b480      	push	{r7}
+ 51a:	af00      	add	r7, sp, #0
+	RCC_BDCR |= (1<<BDCR_BDRST);
+ 51c:	4a04      	ldr	r2, [pc, #16]	; (530 <reset_backup_domain+0x18>)
+ 51e:	4b04      	ldr	r3, [pc, #16]	; (530 <reset_backup_domain+0x18>)
+ 520:	681b      	ldr	r3, [r3, #0]
+ 522:	f443 3380 	orr.w	r3, r3, #65536	; 0x10000
+ 526:	6013      	str	r3, [r2, #0]
+}
+ 528:	46bd      	mov	sp, r7
+ 52a:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 52e:	4770      	bx	lr
+ 530:	40021020 	.word	0x40021020
+
+00000534 <set_date_time>:
+
+// initialise date et heure dans RTC_CNT
+void set_date_time(t_date_time dt){
+ 534:	b480      	push	{r7}
+ 536:	b083      	sub	sp, #12
+ 538:	af00      	add	r7, sp, #0
+ 53a:	6078      	str	r0, [r7, #4]
+	uint32_t rtc_cnt;
+}
+ 53c:	370c      	adds	r7, #12
+ 53e:	46bd      	mov	sp, r7
+ 540:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 544:	4770      	bx	lr
+ 546:	bf00      	nop
+
+00000548 <get_date_time>:
+
+// retourne la date et l'heure
+t_date_time get_date_time(){
+ 548:	b480      	push	{r7}
+ 54a:	af00      	add	r7, sp, #0
+	uint32_t rtc_cnt;
+}
+ 54c:	4618      	mov	r0, r3
+ 54e:	46bd      	mov	sp, r7
+ 550:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 554:	4770      	bx	lr
+ 556:	bf00      	nop
+
+00000558 <set_rtc_alarm>:
+
+// configure l'alarme RTC.
+void set_rtc_alarm(t_date_time dt){
+ 558:	b480      	push	{r7}
+ 55a:	b083      	sub	sp, #12
+ 55c:	af00      	add	r7, sp, #0
+ 55e:	6078      	str	r0, [r7, #4]
+}
+ 560:	370c      	adds	r7, #12
+ 562:	46bd      	mov	sp, r7
+ 564:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 568:	4770      	bx	lr
+ 56a:	bf00      	nop
+
+Imprime le code assembleur de rtc_demo.o avec objdump
+arm-none-eabi-objdump -S --disassemble rtc_demo.o
+
+rtc_demo.o:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <systick_int>:
+
+static volatile unsigned ticks=0;
+static volatile unsigned timer=0;
+
+// interruption coretimer
+void __attribute__((__interrupt__)) systick_int(){
+   0:	4668      	mov	r0, sp
+   2:	f020 0107 	bic.w	r1, r0, #7
+   6:	468d      	mov	sp, r1
+   8:	b481      	push	{r0, r7}
+   a:	af00      	add	r7, sp, #0
+	ticks++;
+   c:	4b08      	ldr	r3, [pc, #32]	; (30 <systick_int+0x30>)
+   e:	681b      	ldr	r3, [r3, #0]
+  10:	3301      	adds	r3, #1
+  12:	4a07      	ldr	r2, [pc, #28]	; (30 <systick_int+0x30>)
+  14:	6013      	str	r3, [r2, #0]
+	if (timer) {timer--;}
+  16:	4b07      	ldr	r3, [pc, #28]	; (34 <systick_int+0x34>)
+  18:	681b      	ldr	r3, [r3, #0]
+  1a:	2b00      	cmp	r3, #0
+  1c:	d004      	beq.n	28 <systick_int+0x28>
+  1e:	4b05      	ldr	r3, [pc, #20]	; (34 <systick_int+0x34>)
+  20:	681b      	ldr	r3, [r3, #0]
+  22:	3b01      	subs	r3, #1
+  24:	4a03      	ldr	r2, [pc, #12]	; (34 <systick_int+0x34>)
+  26:	6013      	str	r3, [r2, #0]
+}
+  28:	46bd      	mov	sp, r7
+  2a:	bc81      	pop	{r0, r7}
+  2c:	4685      	mov	sp, r0
+  2e:	4770      	bx	lr
+  30:	00000000 	.word	0x00000000
+  34:	00000004 	.word	0x00000004
+
+00000038 <RTC_handler>:
+
+// interruption RTC
+void __attribute__((__interrupt__)) RTC_handler(){
+  38:	4668      	mov	r0, sp
+  3a:	f020 0107 	bic.w	r1, r0, #7
+  3e:	468d      	mov	sp, r1
+  40:	b481      	push	{r0, r7}
+  42:	af00      	add	r7, sp, #0
+	// n'agit que sur les interruption SECF
+	if (RTC_CRL&(1<<RTC_CRL_SECF)){	
+  44:	4b0a      	ldr	r3, [pc, #40]	; (70 <RTC_handler+0x38>)
+  46:	681b      	ldr	r3, [r3, #0]
+  48:	f003 0301 	and.w	r3, r3, #1
+  4c:	2b00      	cmp	r3, #0
+  4e:	d00b      	beq.n	68 <RTC_handler+0x30>
+		GPIOC_ODR^=GRN_LED;  // bascule état LED
+  50:	4a08      	ldr	r2, [pc, #32]	; (74 <RTC_handler+0x3c>)
+  52:	4b08      	ldr	r3, [pc, #32]	; (74 <RTC_handler+0x3c>)
+  54:	681b      	ldr	r3, [r3, #0]
+  56:	f483 5300 	eor.w	r3, r3, #8192	; 0x2000
+  5a:	6013      	str	r3, [r2, #0]
+		RTC_CRL&=~(1<<RTC_CRL_SECF); // RAZ indicateur d'interruption
+  5c:	4a04      	ldr	r2, [pc, #16]	; (70 <RTC_handler+0x38>)
+  5e:	4b04      	ldr	r3, [pc, #16]	; (70 <RTC_handler+0x38>)
+  60:	681b      	ldr	r3, [r3, #0]
+  62:	f023 0301 	bic.w	r3, r3, #1
+  66:	6013      	str	r3, [r2, #0]
+	}
+}
+  68:	46bd      	mov	sp, r7
+  6a:	bc81      	pop	{r0, r7}
+  6c:	4685      	mov	sp, r0
+  6e:	4770      	bx	lr
+  70:	40002804 	.word	0x40002804
+  74:	4001100c 	.word	0x4001100c
+
+00000078 <set_sysclock>:
+
+
+// configure SYSCLK à la fréquence maximale de 72 Mhz
+// en utilisant le cristal externe (HSE) et le PLL
+static void set_sysclock(){
+  78:	b480      	push	{r7}
+  7a:	af00      	add	r7, sp, #0
+	 // active l'oscillateur externe
+	RCC_CR|=1<<RCC_CR_HSEON;
+  7c:	4a1a      	ldr	r2, [pc, #104]	; (e8 <set_sysclock+0x70>)
+  7e:	4b1a      	ldr	r3, [pc, #104]	; (e8 <set_sysclock+0x70>)
+  80:	681b      	ldr	r3, [r3, #0]
+  82:	f443 3380 	orr.w	r3, r3, #65536	; 0x10000
+  86:	6013      	str	r3, [r2, #0]
+	 // attend que l'oscillateur soit prêt
+   while (! (RCC_CR & (1<<RCC_CR_HSERDY)));
+  88:	bf00      	nop
+  8a:	4b17      	ldr	r3, [pc, #92]	; (e8 <set_sysclock+0x70>)
+  8c:	681b      	ldr	r3, [r3, #0]
+  8e:	f403 3300 	and.w	r3, r3, #131072	; 0x20000
+  92:	2b00      	cmp	r3, #0
+  94:	d0f9      	beq.n	8a <set_sysclock+0x12>
+     // sélection PREDIV1 pour la source du PLL
+     // multiplie la fréquence HSE par 9 
+     // pour une fréquence maximale Fsysclk de 72 Mhz
+    RCC_CFGR|=(PLLSRC_PREDIV1<<RCC_CFGR_PLLSRC)|(PLLMUL9<<RCC_CFGR_PLLMUL);
+  96:	4a15      	ldr	r2, [pc, #84]	; (ec <set_sysclock+0x74>)
+  98:	4b14      	ldr	r3, [pc, #80]	; (ec <set_sysclock+0x74>)
+  9a:	681b      	ldr	r3, [r3, #0]
+  9c:	f443 13e8 	orr.w	r3, r3, #1900544	; 0x1d0000
+  a0:	6013      	str	r3, [r2, #0]
+    // active le PLL
+    RCC_CR|=1<<RCC_CR_PLLON;
+  a2:	4a11      	ldr	r2, [pc, #68]	; (e8 <set_sysclock+0x70>)
+  a4:	4b10      	ldr	r3, [pc, #64]	; (e8 <set_sysclock+0x70>)
+  a6:	681b      	ldr	r3, [r3, #0]
+  a8:	f043 7380 	orr.w	r3, r3, #16777216	; 0x1000000
+  ac:	6013      	str	r3, [r2, #0]
+    // Attend que le PLL soit prêt
+    while (! (RCC_CR & (1<<RCC_CR_PLLRDY)));
+  ae:	bf00      	nop
+  b0:	4b0d      	ldr	r3, [pc, #52]	; (e8 <set_sysclock+0x70>)
+  b2:	681b      	ldr	r3, [r3, #0]
+  b4:	f003 7300 	and.w	r3, r3, #33554432	; 0x2000000
+  b8:	2b00      	cmp	r3, #0
+  ba:	d0f9      	beq.n	b0 <set_sysclock+0x38>
+    // ajoute délais d'accès à la mémoire flash
+    FLASH_ACR|=WAIT_2_CY;
+  bc:	4a0c      	ldr	r2, [pc, #48]	; (f0 <set_sysclock+0x78>)
+  be:	4b0c      	ldr	r3, [pc, #48]	; (f0 <set_sysclock+0x78>)
+  c0:	681b      	ldr	r3, [r3, #0]
+  c2:	f043 0302 	orr.w	r3, r3, #2
+  c6:	6013      	str	r3, [r2, #0]
+    // SélectionNE le PLL comme source pour SYSCLK
+    RCC_CFGR|=PLL_CLK<<RCC_CFGR_SW;
+  c8:	4a08      	ldr	r2, [pc, #32]	; (ec <set_sysclock+0x74>)
+  ca:	4b08      	ldr	r3, [pc, #32]	; (ec <set_sysclock+0x74>)
+  cc:	681b      	ldr	r3, [r3, #0]
+  ce:	f043 0302 	orr.w	r3, r3, #2
+  d2:	6013      	str	r3, [r2, #0]
+	// La fréquence maximale pour APB1 doit-être de 36 Mhz
+	// donc divise SYSCLK/2
+	RCC_CFGR|=PPRECLK_DIV2;
+  d4:	4a05      	ldr	r2, [pc, #20]	; (ec <set_sysclock+0x74>)
+  d6:	4b05      	ldr	r3, [pc, #20]	; (ec <set_sysclock+0x74>)
+  d8:	681b      	ldr	r3, [r3, #0]
+  da:	f043 0304 	orr.w	r3, r3, #4
+  de:	6013      	str	r3, [r2, #0]
+}
+  e0:	46bd      	mov	sp, r7
+  e2:	f85d 7b04 	ldr.w	r7, [sp], #4
+  e6:	4770      	bx	lr
+  e8:	40021000 	.word	0x40021000
+  ec:	40021004 	.word	0x40021004
+  f0:	40022000 	.word	0x40022000
+
+000000f4 <config_systicks>:
+
+// configure SYSTICKS pour un cycle 1 msec
+// source AHB/8
+// valeur reload 72Mhz/8/1000=9000
+#define MSEC_DLY 9000
+static void config_systicks(){
+  f4:	b480      	push	{r7}
+  f6:	af00      	add	r7, sp, #0
+	STK_LOAD=MSEC_DLY-1;
+  f8:	4b05      	ldr	r3, [pc, #20]	; (110 <config_systicks+0x1c>)
+  fa:	f242 3227 	movw	r2, #8999	; 0x2327
+  fe:	601a      	str	r2, [r3, #0]
+	STK_CTRL=(1<<STK_TICKINT)|(1<<STK_ENABLE);
+ 100:	4b04      	ldr	r3, [pc, #16]	; (114 <config_systicks+0x20>)
+ 102:	2203      	movs	r2, #3
+ 104:	601a      	str	r2, [r3, #0]
+}
+ 106:	46bd      	mov	sp, r7
+ 108:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 10c:	4770      	bx	lr
+ 10e:	bf00      	nop
+ 110:	e000e014 	.word	0xe000e014
+ 114:	e000e010 	.word	0xe000e010
+
+00000118 <port_c_setup>:
+
+#define _mask_cnf(cnf,bit) (cnf & ~(CNF_MASK<<((bit&7)*4)))
+#define _apply_cnf(cnf,bit,pin_cnf) (_mask_cnf(cnf,bit) | pin_cnf<<((bit&7)*4)) 
+// PC13 mode{0:1}=10, CNF{2:3}=01 -> 6
+#define PC13_CNF 6
+static void port_c_setup(){
+ 118:	b480      	push	{r7}
+ 11a:	af00      	add	r7, sp, #0
+	RCC_APB2ENR|=1<<GPIOC_EN;
+ 11c:	4a09      	ldr	r2, [pc, #36]	; (144 <port_c_setup+0x2c>)
+ 11e:	4b09      	ldr	r3, [pc, #36]	; (144 <port_c_setup+0x2c>)
+ 120:	681b      	ldr	r3, [r3, #0]
+ 122:	f043 0310 	orr.w	r3, r3, #16
+ 126:	6013      	str	r3, [r2, #0]
+	GPIOC_CRH=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
+ 128:	4b07      	ldr	r3, [pc, #28]	; (148 <port_c_setup+0x30>)
+ 12a:	4a08      	ldr	r2, [pc, #32]	; (14c <port_c_setup+0x34>)
+ 12c:	601a      	str	r2, [r3, #0]
+	GPIOC_ODR^=GRN_LED; // éteint LED
+ 12e:	4a08      	ldr	r2, [pc, #32]	; (150 <port_c_setup+0x38>)
+ 130:	4b07      	ldr	r3, [pc, #28]	; (150 <port_c_setup+0x38>)
+ 132:	681b      	ldr	r3, [r3, #0]
+ 134:	f483 5300 	eor.w	r3, r3, #8192	; 0x2000
+ 138:	6013      	str	r3, [r2, #0]
+}
+ 13a:	46bd      	mov	sp, r7
+ 13c:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 140:	4770      	bx	lr
+ 142:	bf00      	nop
+ 144:	40021018 	.word	0x40021018
+ 148:	40011004 	.word	0x40011004
+ 14c:	44644444 	.word	0x44644444
+ 150:	4001100c 	.word	0x4001100c
+
+00000154 <main>:
+
+#define HALF_PERIOD 250
+void main(){
+ 154:	b580      	push	{r7, lr}
+ 156:	b082      	sub	sp, #8
+ 158:	af00      	add	r7, sp, #0
+	unsigned loop_cnt=0;
+ 15a:	2300      	movs	r3, #0
+ 15c:	607b      	str	r3, [r7, #4]
+		set_sysclock();
+ 15e:	f7ff ff8b 	bl	78 <set_sysclock>
+		config_systicks();
+ 162:	f7ff ffc7 	bl	f4 <config_systicks>
+		port_c_setup();
+ 166:	f7ff ffd7 	bl	118 <port_c_setup>
+		enable_rtc(HALF_PERIOD,RTC_SECIE);
+ 16a:	20fa      	movs	r0, #250	; 0xfa
+ 16c:	2101      	movs	r1, #1
+ 16e:	f7ff fffe 	bl	0 <enable_rtc>
+		while (1){
+			loop_cnt++;
+ 172:	687b      	ldr	r3, [r7, #4]
+ 174:	3301      	adds	r3, #1
+ 176:	607b      	str	r3, [r7, #4]
+			// tombe en sommeil en attendant la prochaine interruption
+			//asm volatile ("wfi");
+		}
+ 178:	e7fb      	b.n	172 <main+0x1e>
+ 17a:	bf00      	nop
+
+Imprime le code assembleur de startup.o avec objdump
+arm-none-eabi-objdump -S --disassemble startup.o
+
+startup.o:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <SVcall_handler>:
+void systick_int();
+void RTC_handler();
+
+void __attribute__((naked,weak)) SVcall_handler(){
+// réinitialise le µC
+   AIRCR=(KEY<<VECTKEY)|(1<<SYSRESETREQ);
+   0:	4b01      	ldr	r3, [pc, #4]	; (8 <SVcall_handler+0x8>)
+   2:	4a02      	ldr	r2, [pc, #8]	; (c <SVcall_handler+0xc>)
+   4:	601a      	str	r2, [r3, #0]
+   6:	bf00      	nop
+   8:	e000ed0c 	.word	0xe000ed0c
+   c:	05fa0004 	.word	0x05fa0004
+
+00000010 <reset_mcu>:
+}
+
+void __attribute__((naked)) reset_mcu(){
+// réinitialise le µC
+   AIRCR=(KEY<<VECTKEY)|(1<<SYSRESETREQ);
+  10:	4b01      	ldr	r3, [pc, #4]	; (18 <reset_mcu+0x8>)
+  12:	4a02      	ldr	r2, [pc, #8]	; (1c <reset_mcu+0xc>)
+  14:	601a      	str	r2, [r3, #0]
+  16:	bf00      	nop
+  18:	e000ed0c 	.word	0xe000ed0c
+  1c:	05fa0004 	.word	0x05fa0004
+
+00000020 <startup>:
+    (unsigned int *)  reset_mcu, // 59 DMA2CH4_5
+};
+
+
+void startup()
+{
+  20:	b580      	push	{r7, lr}
+  22:	b086      	sub	sp, #24
+  24:	af00      	add	r7, sp, #0
+    /* Set memory in bss segment to zeros */
+    unsigned int * bss_start_p = &_BSS_START; 
+  26:	4b1b      	ldr	r3, [pc, #108]	; (94 <startup+0x74>)
+  28:	617b      	str	r3, [r7, #20]
+    unsigned int * bss_end_p = &_BSS_END;
+  2a:	4b1b      	ldr	r3, [pc, #108]	; (98 <startup+0x78>)
+  2c:	60bb      	str	r3, [r7, #8]
+
+    while(bss_start_p != bss_end_p)
+  2e:	e005      	b.n	3c <startup+0x1c>
+    {
+        *bss_start_p = 0;
+  30:	697b      	ldr	r3, [r7, #20]
+  32:	2200      	movs	r2, #0
+  34:	601a      	str	r2, [r3, #0]
+        bss_start_p++;
+  36:	697b      	ldr	r3, [r7, #20]
+  38:	3304      	adds	r3, #4
+  3a:	617b      	str	r3, [r7, #20]
+{
+    /* Set memory in bss segment to zeros */
+    unsigned int * bss_start_p = &_BSS_START; 
+    unsigned int * bss_end_p = &_BSS_END;
+
+    while(bss_start_p != bss_end_p)
+  3c:	697a      	ldr	r2, [r7, #20]
+  3e:	68bb      	ldr	r3, [r7, #8]
+  40:	429a      	cmp	r2, r3
+  42:	d1f5      	bne.n	30 <startup+0x10>
+    }
+
+    /* Copy memory in data segment from its position
+     * in the flash image to its position in the
+     * read/write memory */
+    unsigned int * data_rom_start_p = &_DATA_ROM_START;
+  44:	4b15      	ldr	r3, [pc, #84]	; (9c <startup+0x7c>)
+  46:	613b      	str	r3, [r7, #16]
+    unsigned int * data_ram_start_p = &_DATA_RAM_START;
+  48:	4b15      	ldr	r3, [pc, #84]	; (a0 <startup+0x80>)
+  4a:	60fb      	str	r3, [r7, #12]
+    unsigned int * data_ram_end_p = &_DATA_RAM_END;
+  4c:	4b15      	ldr	r3, [pc, #84]	; (a4 <startup+0x84>)
+  4e:	607b      	str	r3, [r7, #4]
+
+    while(data_ram_start_p != data_ram_end_p)
+  50:	e009      	b.n	66 <startup+0x46>
+    {
+        *data_ram_start_p = *data_rom_start_p;
+  52:	693b      	ldr	r3, [r7, #16]
+  54:	681a      	ldr	r2, [r3, #0]
+  56:	68fb      	ldr	r3, [r7, #12]
+  58:	601a      	str	r2, [r3, #0]
+        data_ram_start_p++;
+  5a:	68fb      	ldr	r3, [r7, #12]
+  5c:	3304      	adds	r3, #4
+  5e:	60fb      	str	r3, [r7, #12]
+        data_rom_start_p++;
+  60:	693b      	ldr	r3, [r7, #16]
+  62:	3304      	adds	r3, #4
+  64:	613b      	str	r3, [r7, #16]
+     * read/write memory */
+    unsigned int * data_rom_start_p = &_DATA_ROM_START;
+    unsigned int * data_ram_start_p = &_DATA_RAM_START;
+    unsigned int * data_ram_end_p = &_DATA_RAM_END;
+
+    while(data_ram_start_p != data_ram_end_p)
+  66:	68fa      	ldr	r2, [r7, #12]
+  68:	687b      	ldr	r3, [r7, #4]
+  6a:	429a      	cmp	r2, r3
+  6c:	d1f1      	bne.n	52 <startup+0x32>
+        *data_ram_start_p = *data_rom_start_p;
+        data_ram_start_p++;
+        data_rom_start_p++;
+    }
+    // active les interruptions et les fault handler
+    __enable_irq();
+  6e:	b662      	cpsie	i
+    __enable_fault_irq();
+  70:	b661      	cpsie	f
+    // initialisaton de la pile PSP et commutation 
+    // vers cette pile.
+    asm volatile(
+  72:	4b0d      	ldr	r3, [pc, #52]	; (a8 <startup+0x88>)
+  74:	4618      	mov	r0, r3
+  76:	f380 8809 	msr	PSP, r0
+  7a:	f3ef 8014 	mrs	r0, CONTROL
+  7e:	f040 0002 	orr.w	r0, r0, #2
+  82:	f380 8814 	msr	CONTROL, r0
+  86:	f3bf 8f6f 	isb	sy
+    "msr CONTROL,r0\n"
+    "ISB\n"
+    :: [psp_top] "r" (PSP_TOP)
+    );
+    /* Now we are ready to start the main function */
+    main();
+  8a:	f7ff fffe 	bl	0 <main>
+}
+  8e:	3718      	adds	r7, #24
+  90:	46bd      	mov	sp, r7
+  92:	bd80      	pop	{r7, pc}
+	...
+  a8:	20004c00 	.word	0x20004c00

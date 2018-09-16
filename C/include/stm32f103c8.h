@@ -15,11 +15,40 @@
 #if !defined(STM32F103C8_H)
 #define STM32F103C8_H
 #include <stdint.h>
+#include "gen_macros.h"
 
-// les Special Function Registers sont de de 32 bits.
-// Ces pointeurs doivent avoir l'attribut volatile
-// car leur contenu peut-être modifiés par hardware
-#define _sfr(x) (*((volatile uint32_t*)(x)))
+// réinitialisation du MCU
+// voir fonction reset_mcu() dans startup.c
+#define _reset_mcu() asm volatile ("b reset_mcu\n")
+
+//  gestion de la consommation électrique
+// adresse de base registres PWR_
+#define PWR_BASE_ADR 0x40007000
+#define PWR_CR _sfr(PWR_BASE_ADR)
+//champ du registe PWR_CR
+#define PWR_CR_LPDS (0) // 1 bit, lower deep sleep
+#define PWR_CR_PPDS (1) // 1 bit, power down deep sleep
+#define PWR_CR_CWUF (2) // 1 bit, clear wake up flag
+#define PWR_CR_CSBF (3) //  1 bit, clear standby flag
+#define PWR_CR_PVDE (4) // 1 bit, power voltage dectector enable
+#define PWR_CR_PLS  (5) // 3 bits, PVD level selection
+#define PWR_CR_DBP  (8) // 1 bit, disable backup domain protection
+// niveaux de détection PVD (2.2 ... 2.9 volts)
+#define PLS_22 0
+#define PLS_23 1
+#define PLS_24 2
+#define PLS_25 3
+#define PLS_26 4
+#define PLS_27 5
+#define PLS_28 6
+#define PLS_29 7
+// régitre d'état 
+#define PWR_CSR _sfr(PWR_BASE_ADR+4)
+//champs du registres PWR_CSR
+#define PWR_CSR_WUF  (0) // 1 bit, wakeup flag
+#define PWR_CSR_SBF  (1) // 1 bit, standby flag
+#define PWR_CSR_PVDO (2) // 1 bit, PVD output
+#define PWR_CSR_EWUP (8) // 1 bit, enable wakeup pin
 
 // adresse de base registres reset et clock control
 #define RCC_BASE 0x40021000U
@@ -35,6 +64,10 @@
 #define RCC_CSR _sfr(RCC_BASE+36) // contrôle et status
 #define RCC_AHBRSTR _sfr(RCC_BASE+40) // AHB clock reset
 #define RCC_CFGR2 _sfr(RCC_BASE+44) // configuration 2
+
+// position des champs du registre RCC_APB1ENR
+#define APB1ENR_BKPEN (27)
+#define APB1ENR_PWREN (28)
 
 // position des champs du registre RCC_CR
 #define RCC_CR_HSION  (0) // 1 bit
@@ -317,6 +350,10 @@
 #define IRQ_DMA2CH3 58
 #define IRQ_DMA2CH4_5 59
   
+#define SYSRESETREQ (2) // system reset request field, 1 bit
+#define VECTKEY (16) // unlock key field, 16 bits
+#define KEY (0x05FA) // key value
+#define AIRCR _sfr(0xE000ED0C) // Application Interrupt and Reset Control Register
  
   
 /*********

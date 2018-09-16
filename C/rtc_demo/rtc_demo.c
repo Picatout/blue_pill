@@ -1,20 +1,34 @@
 /*
- * Description: démo faisant clignoté la LED verte de la carte blue pill.
- *    Cette version utilise le core timer pour générer un délais 1 millisonde.
+ * Description: RTC (Real Time Clock)  demo
  * Auteur: PICATOUT
- * Date: 2018-08-20
+ * Date: 2018-09-10
  * Copyright Jacques Deschênes, 2018
  * Licence: GPLv3
  * revisions:
- *  2018-08-30, blink_v2 version amélioré de blink
- * 		clock HSE + PLL Fsys= 72Mhz
- *      Utilisation du core timer pour créer un délais 1 milliseconde.
  * 
  */
- 
-#include "stm32f103c8.h"
-#include "gen_macros.h"
-#include "blue_pill.h"
+
+#include "../include/rtc.h"
+#include "../include/blue_pill.h"
+
+static volatile unsigned ticks=0;
+static volatile unsigned timer=0;
+
+// interruption coretimer
+void __attribute__((__interrupt__)) systick_int(){
+	ticks++;
+	if (timer) {timer--;}
+}
+
+// interruption RTC
+void __attribute__((__interrupt__)) RTC_handler(){
+	// n'agit que sur les interruption SECF
+	if (RTC_CRL&(1<<RTC_CRL_SECF)){	
+		GPIOC_ODR^=GRN_LED;  // bascule état LED
+		RTC_CRL&=~(1<<RTC_CRL_SECF); // RAZ indicateur d'interruption
+	}
+}
+
 
 // configure SYSCLK à la fréquence maximale de 72 Mhz
 // en utilisant le cristal externe (HSE) et le PLL
@@ -45,16 +59,8 @@ static void set_sysclock(){
 // valeur reload 72Mhz/8/1000=9000
 #define MSEC_DLY 9000
 static void config_systicks(){
-	STK_LOAD=MSEC_DLY;
-	//STK_CTRL|=1<<STK_CLKSRC; // source AHB/8
-}
-
-//délais de 1 milliseconde
-static void millisec(){
-	STK_VAL=MSEC_DLY;
-	STK_CTRL|=1<<STK_ENABLE;
-	while (!(STK_CTRL&(1<<STK_COUNTFLAG)));
-	STK_CTRL&=~(1<<STK_ENABLE);
+	STK_LOAD=MSEC_DLY-1;
+	STK_CTRL=(1<<STK_TICKINT)|(1<<STK_ENABLE);
 }
 
 #define _mask_cnf(cnf,bit) (cnf & ~(CNF_MASK<<((bit&7)*4)))
@@ -64,31 +70,19 @@ static void millisec(){
 static void port_c_setup(){
 	RCC_APB2ENR|=1<<GPIOC_EN;
 	GPIOC_CRH=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
+	GPIOC_ODR^=GRN_LED; // éteint LED
 }
 
-inline static void led_on(){
-	GPIOC_BRR=GRN_LED;
+#define HALF_PERIOD 1000
+void main(){
+		set_sysclock();
+		config_systicks();
+		port_c_setup();
+		enable_rtc(HALF_PERIOD,RTC_SECIE);
+		enable_interrupt(3); // active l'interruption RTC
+		while (1){
+			// tombe en sommeil en attendant la prochaine interruption
+			asm volatile ("wfi");
+		}
 }
 
-inline static void led_off(){
-	GPIOC_BSRR=GRN_LED;
-}
-
-// délais en millisecondes
-inline static void delay(unsigned dly){
-	for (;dly;dly--)millisec();
-}
-
-// pour une période de 1 seconde
-#define RATE 500 // millisecondes
-void main(void){
-	set_sysclock();
-	config_systicks();
-	port_c_setup();
-	while (1){
-		led_off();
-		delay(RATE);
-		led_on();
-		delay(RATE);
-	}
-}
