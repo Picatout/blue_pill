@@ -27,6 +27,6 @@ Le gestionnaire d'interruption **SVcall_handler()** requière aussi du code en a
 demandée et ses arguments nécessite des manipulations impossible à faire en **C**.  
 
 Encore une fois le fichier **startup.c** a du être modifié. **SVcall_handler** a été ajouté à la table des vecteurs d'interruption et **startup()** a été modifée
-pour créer une pile programme différende le la pile principale. Dans la fonction **main()** une fois la configuration complétée la macro _unpriviliged** est 
+pour créer une pile programme différende le la pile principale. Dans la fonction **main()** une fois la configuration complétée la macro **_unpriviliged()** est 
 invoquée pour enlever les privilège au programme. Normalement dans un système d'exploitation protège les resssources en donnant un accès limité au programmes. 
 Ces manipulations doivent aussi être faites en assembleur.
