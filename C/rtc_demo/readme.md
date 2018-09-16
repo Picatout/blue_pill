@@ -8,11 +8,12 @@ RTC demo
   
   Dans ce démo j'utilise simplement le RTC pour créer un délais pour faire clignoter la LED verte à une période de 2 secondes. Avec ce démo on voit comment
   
-  * configurer le RTC, fonction **enable_rtc()** dans **rct.c**
+  * configurer le RTC, fonction **enable_rtc()** dans **rtc.c**
   * utiliser les registres RCC_ISERx pour activer une interruption, fonction **enable_interrupt()** dans **nvic.c**
   * utiliser l'instruction machine **WFI** pour placer le µC en mode sleep jusqu'à la prochaine interruption. Ce qui permet de réduire la consommation.
   * activer le bit **SLEEPONEXIT** pour placer le µC en mode sleep à la sortie d'une interruption. Ce mode est utilisé lorsqu'une application est 
-  pilotée par les interruptions et que la fonction **main()** n'a rien à faire. De cette façon le µC sort du mode sleep seulement pour traiter les interruptions.
+  pilotée par les interruptions et que la fonction **main()** n'a rien à faire. De cette façon le µC sort du mode sleep seulement pour traiter 
+  les interruptions et retourne en mode sleep à la sortie de l'interruption.
   
   
   

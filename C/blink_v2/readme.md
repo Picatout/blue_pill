@@ -6,8 +6,8 @@ blink version 2
   
   Deux nouveautés par rapport à la version 1.
   
-  * Le µC est configuré pour fonctionné avec le cristal externe et le PLL pour fonctionner à sa fréquence maximale de 72Mhz. Voir fonction
+  * Le µC est configuré pour fonctionner avec le cristal externe et le PLL pour **Fcpu** à sa fréquence maximale de 72Mhz. Voir fonction
     **set_sysclock()**.
 
-  * Un délais de 1milliseconde est créé en utlisant le coretimer du CPU Cortex-M3. Cette fonction s'appelle **millisec()**. 
+  * Un délais de 1 milliseconde est créé en utlisant le coretimer du CPU Cortex-M3. Cette fonction s'appelle **millisec()**. 
     La fonction **delay()** appelle en boucle autant de fois que nécessaire la fonction **millisec()** pour créer le délais requis.
