@@ -30,8 +30,13 @@ static volatile unsigned timer=0;
 #define SVC_LED_ON (1) // allume la LED verte
 #define SVC_LED_OFF (2) // éteint la LED verte
 #define SVC_TIMER (3) // démarre la minuterie
-#define SVC_PRIVILED (4) // active l'exécution prévilégiée
+#define SVC_PRIVILIGED (4) // active l'exécution prévilégiée
 #define SVC_RESET (5) // réinialise le MCU
+
+// coquille vide
+// pas utilisé dans ce démo
+void __attribute__((naked,weak)) RTC_handler(){
+}
 
 void __attribute__((naked)) SVcall_handler(){
 	unsigned svc_id, argc;
@@ -55,7 +60,7 @@ void __attribute__((naked)) SVcall_handler(){
 	case SVC_TIMER: 
 		timer=argc;
 		break;
-	case SVC_PRIVILED:
+	case SVC_PRIVILIGED:
 		asm volatile(
 		"mrs r0,CONTROL\n"
 		"bic r0,#0\n"       // bit 0 sélectionne le niveau de privilège

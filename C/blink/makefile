@@ -1,3 +1,5 @@
+# fichier tel que créé par Jacob Mossberg
+# ref: https://jacobmossberg.se/posts/2018/08/11/run-c-program-bare-metal-on-arm-cortex-m3.html
 all:
 	@echo "Make targets"
 	@cat makefile | grep '^[a-zA-Z]' | sed 's/:.*//g' | sed 's/^/  /g'
@@ -10,6 +12,7 @@ build: blink.c startup.c stm32.ld clean
 	arm-none-eabi-ld -Tstm32.ld -o blink.elf startup.o blink.o
 	arm-none-eabi-objcopy -O binary blink.elf blink.bin
 
+# recette ajouté par PICATOUT
 build_O1:  blink.c startup.c stm32.ld clean
 	@echo
 	@echo "Build production image withi O1 optimization"

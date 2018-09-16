@@ -1,5 +1,8 @@
-#include "stm32f103c8.h"
-
+/*
+ * Fichier startup tel que créé par Jacob Mossberg
+ * REF: https://jacobmossberg.se/posts/2018/08/11/run-c-program-bare-metal-on-arm-cortex-m3.html 
+ */
+ 
 #define STACK_TOP 0x20005000
 
 extern unsigned int _BSS_START;
@@ -43,7 +46,6 @@ void startup()
         data_ram_start_p++;
         data_rom_start_p++;
     }
-
     /* Now we are ready to start the main function */
     main();
 }

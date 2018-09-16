@@ -5,6 +5,7 @@
  * Date: 2018-08-30
  * Licence: GPLv3
  * revision:
+ * 		2018-09-16, Renommé OSC32_PRESENT en LSE_PRESENT. Ajout de LSE_FREQ
  */
 
 #if  !defined(BLUE_PILL_H)
@@ -13,7 +14,7 @@
 // cristal 8Mhz
 #define HSI_FREQ  8000000 
 // cristal 32768 hertz installé
-#define OSC32_PRESENT 1
+#define LSE_PRESENT 1
 #define LSE_FREQ 32768
 // LED verte sur PC13
 #define LED_GPIO GPIOC

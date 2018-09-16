@@ -1,4 +1,15 @@
-#include "stm32f103c8.h"
+/*
+ * Description: Démonstration configuration GPIO
+ * 	L'objectif est de faire clignoter la LED verte qui est sur la carte.
+ * Auteur: PICATOUT
+ * Date: 2018-08-31
+ * Copyright Jacques Deschênes, 2018
+ * Licence: GPLv3
+ * revisions:
+ * 
+ */
+ 
+#include "../include/stm32f103c8.h"
 
 #define LED_PIN (13)
 #define GRN_LED (1<<LED_PIN)

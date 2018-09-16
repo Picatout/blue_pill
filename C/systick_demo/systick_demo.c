@@ -27,8 +27,15 @@ static volatile unsigned ticks=0;
 static volatile unsigned timer=0;
 
 // interruption SVcall
-void __attribute__((naked)) SVcall_handler(){
+// pas utilisé dans ce démo
+void __attribute__((naked,weak)) SVcall_handler(){
 }
+
+// interruption RTC_handler
+// pas utilisé dans ce démo
+void __attribute__((naked,weak)) RTC_handler(){
+}
+
 
 // interruption coretimer
 void __attribute__((__interrupt__)) systick_int(){

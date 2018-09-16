@@ -9,6 +9,7 @@
  *  2018-08-30, blink_v2 version amélioré de blink
  * 		clock HSE + PLL Fsys= 72Mhz
  *      Utilisation du core timer pour créer un délais 1 milliseconde.
+ *  2018-09-16,  suppression de config_systicks() qui était inutile.
  * 
  */
  
@@ -41,16 +42,11 @@ static void set_sysclock(){
 }
 
 // configure SYSTICKS pour un cycle 1 msec
-// source AHB/8
-// valeur reload 72Mhz/8/1000=9000
+// source AHB/8 
+// valeur:  72000000/8/1000=9000
 #define MSEC_DLY 9000
-static void config_systicks(){
-	STK_LOAD=MSEC_DLY;
-	//STK_CTRL|=1<<STK_CLKSRC; // source AHB/8
-}
-
-//délais de 1 milliseconde
 static void millisec(){
+	STK_LOAD=MSEC_DLY;
 	STK_VAL=MSEC_DLY;
 	STK_CTRL|=1<<STK_ENABLE;
 	while (!(STK_CTRL&(1<<STK_COUNTFLAG)));
@@ -83,7 +79,6 @@ inline static void delay(unsigned dly){
 #define RATE 500 // millisecondes
 void main(void){
 	set_sysclock();
-	config_systicks();
 	port_c_setup();
 	while (1){
 		led_off();

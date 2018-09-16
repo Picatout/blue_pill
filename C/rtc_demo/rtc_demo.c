@@ -73,6 +73,8 @@ static void port_c_setup(){
 	GPIOC_ODR^=GRN_LED; // éteint LED
 }
 
+
+
 #define HALF_PERIOD 1000
 void main(){
 		set_sysclock();
@@ -80,9 +82,11 @@ void main(){
 		port_c_setup();
 		enable_rtc(HALF_PERIOD,RTC_SECIE);
 		enable_interrupt(3); // active l'interruption RTC
-		while (1){
+		_sleep_on_exit();
+		asm volatile ("wfi");
+//		while (1){
 			// tombe en sommeil en attendant la prochaine interruption
-			asm volatile ("wfi");
-		}
+//			asm volatile ("wfi");
+//		}
 }
 

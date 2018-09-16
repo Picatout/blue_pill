@@ -355,6 +355,28 @@
 #define KEY (0x05FA) // key value
 #define AIRCR _sfr(0xE000ED0C) // Application Interrupt and Reset Control Register
  
+/*************************
+ * SCB
+ * System Control block
+ *************************/
+#define SCB_BASE_ADR 0xE000ED00 
+#define SCB_CPUID _sfr(SCB_BASE_ADR)
+#define SCB_ICSR _sfr(SCB_BASE_ADR+4)
+#define SCB_VTOR _sfr(SCB_BASE_ADR+8)
+#define SCB_AIRCR _sfr(SCB_BASE_ADR+12)
+#define SCB_SCR _sfr(SCB_BASE_ADR+16)
+#define SCB_CCR _sfr(SCB_BASE_ADR+20)
+#define SCB_SHPR1 _sfr(SCB_BASE_ADR+24)
+#define SCB_SHPR2 _sfr(SCB_BASE_ADR+28)
+#define SCB_SHPR3 _sfr(SCB_BASE_ADR+32)
+#define SCB_SHCRS _sfr(SCB_BASE_ADR+36)
+#define SCB_CFSR _sfr(SCB_BASE_ADR+40)
+#define SCB_HFSR _sfr(SCB_BASE_ADR+44)
+#define SCB_MMAR _sfr(SCB_BASE_ADR+0x34)
+#define SCB_BFAR _sfr(SCB_BASE_ADR+0x38)
+
+#define SLEEPONEXIT (1) 
+#define _sleep_on_exit() ({SCB_SCR|=(1<<SLEEPONEXIT);})
   
 /*********
 * PORT C *
