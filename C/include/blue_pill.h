@@ -13,6 +13,10 @@
 
 // cristal 8Mhz
 #define HSI_FREQ  8000000 
+#define FCLK 72000000U
+#define FAHB  FCLK
+#define FAPB2 FCLK
+#define FAPB1 (FCLK/2)
 // cristal 32768 hertz installé
 #define LSE_PRESENT 1
 #define LSE_FREQ 32768
@@ -20,6 +24,7 @@
 #define LED_GPIO GPIOC
 #define LED_PIN (13)
 #define GRN_LED (1<<LED_PIN)
+
 
 #endif // BLUE_PILL_H
 

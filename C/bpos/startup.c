@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include "../include/stm32f103c8.h"
 #include "../include/nvic.h"
 
@@ -60,6 +61,10 @@ _default_handler(EXTI3_handler) // 9
 _default_handler(EXTI4_handler) // 10
 _default_handler(DMA1CH1_handler) // 11
 _default_handler(DMA1CH2_handler) // 12
+
+_default_handler(USART1_handler) // 37
+_default_handler(USART2_handler) // 38
+_default_handler(USART3_handler) // 39
 
 void __attribute__((naked)) reset_mcu(){
 // réinitialise le µC
@@ -128,9 +133,9 @@ __attribute__ ((section("vectors")))= {
     (unsigned int *)  reset_mcu, // 34 I2C2_ER
     (unsigned int *)  reset_mcu, // 35 SPI1
     (unsigned int *)  reset_mcu, // 36 SPI2
-    (unsigned int *)  reset_mcu, // 37 USART1
-    (unsigned int *)  reset_mcu, // 38 USART2
-    (unsigned int *)  reset_mcu, // 39 USART3
+    (unsigned int *)  USART1_handler, // 37 USART1
+    (unsigned int *)  USART2_handler, // 38 USART2
+    (unsigned int *)  USART3_handler, // 39 USART3
     (unsigned int *)  reset_mcu, // 40 EXTI15_10
     (unsigned int *)  reset_mcu, // 41 RTCArlarm
     (unsigned int *)  reset_mcu, // 42 USBWakeup

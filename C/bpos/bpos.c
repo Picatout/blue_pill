@@ -1,15 +1,11 @@
 /*
- * Description: Utilisation du coretime pour implémenter un systemtick qui est incrémenté
- * à la milliseconde. Utilisation d'une interruption.
+ * Description: un petit système d'exploitation inspiré de CP/M
+ * 
  * Auteur: PICATOUT
- * Date: 2018-08-20
+ * Date: 2018-09-28
  * Copyright Jacques Deschênes, 2018
  * Licence: GPLv3
  * revisions:
- *  2018-08-30, blink_v2 version amélioré de blink
- * 		clock HSE + PLL Fsys= 72Mhz
- *      Utilisation du core timer pour créer un délais 1 milliseconde.
- *  2018-09-18, modification nom et prototype de SVC_handler
  * 
  */
 #include <stdlib.h> 
@@ -17,22 +13,14 @@
 #include "../include/gen_macros.h"
 #include "../include/blue_pill.h"
 #include "../include/nvic.h"
+#include "../include/usart.h"
+#include "svcall.h"
 
-typedef struct svcall_struct{
-	uint32_t fn; // no. de fonction
-	uint32_t argc; // nombre d'arguments
-	void **argv; // liste de pointer vers les arguments
-} t_svcall_struct;
+
+#define CON USART2 // console utilise USART2
 
 static volatile unsigned ticks=0;
 static volatile unsigned timer=0;
-
-// interruption SVcall
-#define SVC_LED_ON (1) // allume la LED verte
-#define SVC_LED_OFF (2) // éteint la LED verte
-#define SVC_TIMER (3) // démarre la minuterie
-#define SVC_PRIVILIGED (4) // active l'exécution prévilégiée
-#define SVC_RESET (5) // réinialise le MCU
 
 
 void __attribute__((__interrupt__)) SVC_handler(){
@@ -75,6 +63,20 @@ void __attribute__((__interrupt__)) STK_handler(){
 	ticks++;
 	if (timer) {timer--;}
 }
+
+#define RX_QUEUE_SIZE 32
+static volatile char rx_queue[RX_QUEUE_SIZE];
+static volatile unsigned head;
+static volatile unsigned tail;
+
+// interruption USART2 (console)
+void __attribute__((__interrupt__)) USART2_handler(){
+	if (USART2_SR&(1<<USART_SR_RXNE)){
+		rx_queue[head++]=USART2_DR&0x7f;
+		head&=RX_QUEUE_SIZE-1;
+	}
+}
+
 
 // configure SYSCLK à la fréquence maximale de 72 Mhz
 // en utilisant le cristal externe (HSE) et le PLL
@@ -155,18 +157,34 @@ inline static void delay(unsigned dly){
 #define _wait_timeout() ({while (timer);})
 // pour une période de 1 seconde
 #define RATE 500 // millisecondes
+const char *PROMPT="bpos version 0.1\n";
+
+char getc(){
+	char c=0;
+	if (head!=tail){
+		c=rx_queue[tail++];
+		tail&=RX_QUEUE_SIZE-1;
+	}
+	return c;
+}
+
 void main(void){
 	void **argv=NULL;
 	set_sysclock();
 	config_systicks();
 	port_c_setup();
+	con_open_channel(CON,115200,FLOW_HARD);
 	_unprivileged(); // à partir d'ici exécution sans privilèges.
+	const char *msg=PROMPT;
+	while (*msg){conout(CON,*msg++);}
+	char c;
 	while (1){
+		
 		_svc_call(SVC_LED_OFF,0,argv);
 		_svc_call(SVC_TIMER,RATE,argv);
-		_wait_timeout();
+		while(timer)if ((c=getc())) {conout(CON,c);}
 		_svc_call(SVC_LED_ON,0,argv);
 		_svc_call(SVC_TIMER,RATE,argv);
-		_wait_timeout();
+		while(timer)if ((c=getc())) {conout(CON,c);}
 	}
 }

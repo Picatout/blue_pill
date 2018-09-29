@@ -12,11 +12,6 @@
 #include "../include/rtc.h"
 
 
-void __attribute__((naked,weak)) RTC_handler(){
-   _reset_mcu();
-}
-
-
 // activation du RTC avec LSE comme source
 // ref: note applicative AN2821
 void enable_rtc(unsigned period, unsigned interrupts){

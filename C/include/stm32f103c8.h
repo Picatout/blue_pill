@@ -17,9 +17,6 @@
 #include <stdint.h>
 #include "gen_macros.h"
 
-// réinitialisation du MCU
-// voir fonction reset_mcu() dans startup.c
-#define _reset_mcu() asm volatile ("b reset_mcu\n")
 
 //  gestion de la consommation électrique
 // adresse de base registres PWR_
@@ -68,6 +65,13 @@
 // position des champs du registre RCC_APB1ENR
 #define APB1ENR_BKPEN (27)
 #define APB1ENR_PWREN (28)
+#define RCC_APB1ENR_USART2EN (17)
+#define RCC_APB1ENR_USART3EN (18)
+// position des champs du registre RCC_APB2ENR
+#define RCC_APB2ENR_IOPAEN (2)
+#define RCC_APB2ENR_IOPBEN (3)
+#define RCC_APB2ENR_IOPCEN (4)
+#define RCC_APB2ENR_USART1EN (14)
 
 // position des champs du registre RCC_CR
 #define RCC_CR_HSION  (0) // 1 bit
@@ -376,6 +380,7 @@
 #define SCB_BFAR _sfr(SCB_BASE_ADR+0x38)
 
 #define SLEEPONEXIT (1) 
+// configure le µC pour passe en mode sleep à la sortie d'une interruption
 #define _sleep_on_exit() ({SCB_SCR|=(1<<SLEEPONEXIT);})
   
 /*********
@@ -393,6 +398,51 @@ typedef struct gpio{
 	volatile uint32_t brr;
 	volatile uint32_t lckr;
 } t_gpio;
+
+// champs mode et config registre CRL 
+#define GPIO_MODE0  0
+#define GPIO_CNF0 2
+#define GPIO_MODE1 4
+#define GPIO_CNF1 6
+#define GPIO_MODE2  8
+#define GPIO_CNF2   10
+#define GPIO_MODE3 12
+#define GPIO_CNF3 14
+#define GPIO_MODE4 16
+#define GPIO_CNF4 18
+#define GPIO_MODE5 20
+#define GPIO_CNF5 22
+#define GPIO_MODE6 24
+#define GPIO_CNF6 26
+#define GPIO_MODE7 28
+#define GPIO_CNF7 30
+// champs mode et config registre CRH
+#define GPIO_MODE8  0
+#define GPIO_CNF8 2
+#define GPIO_MODE9 4
+#define GPIO_CNF9 6
+#define GPIO_MODE10  8
+#define GPIO_CNF10   10
+#define GPIO_MODE11 12
+#define GPIO_CNF11 14
+#define GPIO_MODE12 16
+#define GPIO_CNF12 18
+#define GPIO_MODE13 20
+#define GPIO_CNF13 22
+#define GPIO_MODE14 24
+#define GPIO_CNF14 26
+#define GPIO_MODE15 28
+#define GPIO_CNF15 30
+
+// registres port A
+#define GPIOA_BASE_ADR 0x40010800
+#define GPIOA_CRL _sfr(GPIOA_BASE_ADR)
+#define GPIOA_CRH _sfr(GPIOA_BASE_ADR+4)
+
+// registre port B
+#define GPIOB_BASE_ADR 0x40010C00
+#define GPIOB_CRL _sfr(GPIOB_BASE_ADR)
+#define GPIOB_CRH _sfr(GPIOB_BASE_ADR+4)
 
 
 // registres port C
