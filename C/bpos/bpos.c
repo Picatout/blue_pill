@@ -14,6 +14,7 @@
 #include "../include/blue_pill.h"
 #include "../include/nvic.h"
 #include "../include/usart.h"
+#include "../include/ascii.h"
 #include "svcall.h"
 
 
@@ -65,15 +66,23 @@ void __attribute__((__interrupt__)) STK_handler(){
 }
 
 #define RX_QUEUE_SIZE 32
+typedef struct{
+	volatile char queue[RX_QUEUE_SIZE];
+	volatile unsigned head;
+	volatile unsigned tail;
+} rx_queue_t;
+
+/*
 static volatile char rx_queue[RX_QUEUE_SIZE];
 static volatile unsigned head;
 static volatile unsigned tail;
-
+*/
+static rx_queue_t rx_queue;
 // interruption USART2 (console)
 void __attribute__((__interrupt__)) USART2_handler(){
 	if (USART2_SR&(1<<USART_SR_RXNE)){
-		rx_queue[head++]=USART2_DR&0x7f;
-		head&=RX_QUEUE_SIZE-1;
+		rx_queue.queue[rx_queue.head++]=USART2_DR&0x7f;
+		rx_queue.head&=RX_QUEUE_SIZE-1;
 	}
 }
 
@@ -157,16 +166,87 @@ inline static void delay(unsigned dly){
 #define _wait_timeout() ({while (timer);})
 // pour une période de 1 seconde
 #define RATE 500 // millisecondes
-const char *PROMPT="bpos version 0.1\n";
+const char *VERSION="bpos version 0.1\n";
 
 char getc(){
 	char c=0;
-	if (head!=tail){
-		c=rx_queue[tail++];
-		tail&=RX_QUEUE_SIZE-1;
+	if (rx_queue.head!=rx_queue.tail){
+		c=rx_queue.queue[rx_queue.tail++];
+		rx_queue.tail&=RX_QUEUE_SIZE-1;
 	}
-	return c;
+	return c&0x7f;
 }
+
+void print(const char *str){
+	while (*str) {conout(CON,*str++);}
+}
+
+void beep(){
+	_svc_call(SVC_LED_OFF,0,0);
+	_svc_call(SVC_TIMER,40,0);
+	while(timer);
+	_svc_call(SVC_LED_ON,0,0);
+}
+
+void delete_back(){
+	conout(CON,BS);
+	conout(CON,SPACE);
+	conout(CON,BS);
+}
+
+// reçoit une ligne de texte de la console
+unsigned read_line(char *buffer,unsigned buf_len){
+	unsigned line_len=0;
+	char c=0;
+	
+	buf_len--;
+	while (c!=13){
+			c=getc();
+			switch(c){
+				case NUL:
+				break;
+				case CR:
+				case LF:
+				c=CR;
+				conout(CON,c);
+				break;
+				case CTRL_X:
+				case CTRL_U:
+				while (line_len){delete_back();line_len--;}
+				break;
+				case CTRL_W:
+				while (line_len && (buffer[line_len-1]!=SPACE)){
+					delete_back();
+					line_len--;
+				}
+				break;
+				case BS:
+				if (line_len){
+					delete_back();
+					line_len--;
+				}
+				break;
+				case TAB:
+				c=SPACE;
+				default:
+				if ((line_len<buf_len) && (c>=32)){
+					buffer[line_len++]=c;
+					conout(CON,c);
+				}else{
+					beep();
+				}
+			}
+	}
+	buffer[line_len]=0;
+	return line_len;
+}
+
+void parse_line(char *buffer, unsigned buf_len){
+	print(buffer);
+	conout(CON,13);
+}
+
+#define CMD_MAX_LEN 80
 
 void main(void){
 	void **argv=NULL;
@@ -175,16 +255,12 @@ void main(void){
 	port_c_setup();
 	con_open_channel(CON,115200,FLOW_HARD);
 	_unprivileged(); // à partir d'ici exécution sans privilèges.
-	const char *msg=PROMPT;
-	while (*msg){conout(CON,*msg++);}
-	char c;
+	print(VERSION);
+	_svc_call(SVC_LED_ON,0,argv);
+	char cmd[CMD_MAX_LEN];
+	unsigned llen;
 	while (1){
-		
-		_svc_call(SVC_LED_OFF,0,argv);
-		_svc_call(SVC_TIMER,RATE,argv);
-		while(timer)if ((c=getc())) {conout(CON,c);}
-		_svc_call(SVC_LED_ON,0,argv);
-		_svc_call(SVC_TIMER,RATE,argv);
-		while(timer)if ((c=getc())) {conout(CON,c);}
+		llen=read_line(cmd,CMD_MAX_LEN);
+		parse_line(cmd,llen);
 	}
 }
