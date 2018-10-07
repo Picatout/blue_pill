@@ -15,7 +15,7 @@
 
 
 // vitesse de transmission
-void usart_set_baud(unsigned channel, unsigned baud){
+void uart_set_baud(unsigned channel, unsigned baud){
 	uint32_t *brr;
 	uint32_t rate;
 
@@ -36,7 +36,7 @@ void usart_set_baud(unsigned channel, unsigned baud){
 
 // configure l'USART pour communication selon protocole RS-232
 // 8 bit 1 stop pas de parité
-void con_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
+void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
 	uint32_t *cr1, *cr3;
 	
 	switch(channel){ // activation du périphérique USART et du PORT
@@ -73,7 +73,7 @@ void con_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
 		enable_interrupt(USART3_IRQ);
 		break;
 	}
-	usart_set_baud(channel,baud);
+	uart_set_baud(channel,baud);
 	if (flow_ctrl==FLOW_HARD){
 		cr3=(uint32_t*)(channel+USART_CR3_OFS);
 		*cr3=(1<<USART_CR3_CTSE)|(1<<USART_CR3_RTSE);
@@ -85,7 +85,7 @@ void con_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
 // status de la console récepction
 // retourne 0 si pas de caractère disponible
 // retourne -1 si caractère disponible
-char constat(unsigned channel){
+int uart_stat(unsigned channel){
 	uint32_t *sr;
 	
 	sr=(uint32_t*)(channel+USART_SR_OFS);
@@ -93,7 +93,7 @@ char constat(unsigned channel){
 }
 
 // reçoit un caractère de la console
-char conin(unsigned channel){
+char uart_getc(unsigned channel){
 	uint32_t *dr;
 	
 	dr=(uint32_t*)(channel+USART_DR_OFS);
@@ -101,7 +101,7 @@ char conin(unsigned channel){
 }
 
 // transmet un caractère à la console
-void conout(unsigned channel, char c){
+void uart_putc(unsigned channel, char c){
 	uint32_t *dr, *sr;
 	
 	sr=(uint32_t*)(channel+USART_SR_OFS);

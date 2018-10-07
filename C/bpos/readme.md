@@ -10,7 +10,8 @@ bpos demo
    1 | SVC_LED_ON | aucun | allume la LED verte
    2 | SVC_LED_OFF | aucun | éteint la LED verte
    3 | SVC_TIMER | durée en msec | démarre la minuterie
-   4 | SVC_PRIVILIGED | aucun | accorde tous les privilèges au programme
+   4 | SVC_TIMEOUT | aucun | attend expiration minuterie
+   5 | SVC_PRIVILIGED | aucun | accorde tous les privilèges au programme
    
    
 La macro **_svc_call()** code en assembleur les appels système. Le registre cpu **r0** contient le premier argument et le registre **r1** le deuxième.

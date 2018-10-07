@@ -23,3 +23,15 @@ SVC_LED_OFF, // éteint la LED verte
 SVC_TIMER, // démarre la minuterie
 SVC_PRIVILIGED, // active l'exécution prévilégiée
 } syscall_t;
+
+#define _svc_call(svc_no,nb_args,args_array) ({asm volatile (\
+	"ldr r0, =%[argc]\n"\
+	"mov r1, %[argv]\n"\
+	"svc %[svc_id]\n":: [svc_id] "I" ((svc_no)&0xff),\
+	[argc] "I" (nb_args),\
+	[argv] "r" (args_array)\
+	);})
+
+
+#define _wait_timeout() ({while (timer);})
+

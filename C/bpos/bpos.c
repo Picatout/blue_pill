@@ -14,11 +14,9 @@
 #include "../include/blue_pill.h"
 #include "../include/nvic.h"
 #include "../include/usart.h"
-#include "../include/ascii.h"
+#include "../include/console.h"
 #include "svcall.h"
 
-
-#define CON USART2 // console utilise USART2
 
 static volatile unsigned ticks=0;
 static volatile unsigned timer=0;
@@ -65,27 +63,6 @@ void __attribute__((__interrupt__)) STK_handler(){
 	if (timer) {timer--;}
 }
 
-#define RX_QUEUE_SIZE 32
-typedef struct{
-	volatile char queue[RX_QUEUE_SIZE];
-	volatile unsigned head;
-	volatile unsigned tail;
-} rx_queue_t;
-
-/*
-static volatile char rx_queue[RX_QUEUE_SIZE];
-static volatile unsigned head;
-static volatile unsigned tail;
-*/
-static rx_queue_t rx_queue;
-// interruption USART2 (console)
-void __attribute__((__interrupt__)) USART2_handler(){
-	if (USART2_SR&(1<<USART_SR_RXNE)){
-		rx_queue.queue[rx_queue.head++]=USART2_DR&0x7f;
-		rx_queue.head&=RX_QUEUE_SIZE-1;
-	}
-}
-
 
 // configure SYSCLK à la fréquence maximale de 72 Mhz
 // en utilisant le cristal externe (HSE) et le PLL
@@ -129,19 +106,6 @@ static void port_c_setup(){
 	GPIOC_CRH=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
 }
 
-inline static void led_on(){
-	GPIOC_BRR=GRN_LED;
-}
-
-inline static void led_off(){
-	GPIOC_BSRR=GRN_LED;
-}
-
-// délais en millisecondes
-inline static void delay(unsigned dly){
-	timer=dly;
-	while (timer);
-}
 
 // supprime le mode d'exécution
 // prévilégié au programme.
@@ -154,13 +118,6 @@ inline static void delay(unsigned dly){
 	"isb\n"\
 	);})
 	
-#define _svc_call(svc_no,nb_args,args_array) ({asm volatile (\
-	"ldr r0, =%[argc]\n"\
-	"mov r1, %[argv]\n"\
-	"svc %[svc_id]\n":: [svc_id] "I" ((svc_no)&0xff),\
-	[argc] "I" (nb_args),\
-	[argv] "r" (args_array)\
-	);})
 
 //#define _wait_svc_completion() while (ICSR & (1<<PENDSVSET)|(1<<);
 #define _wait_timeout() ({while (timer);})
@@ -168,94 +125,24 @@ inline static void delay(unsigned dly){
 #define RATE 500 // millisecondes
 const char *VERSION="bpos version 0.1\n";
 
-char getc(){
-	char c=0;
-	if (rx_queue.head!=rx_queue.tail){
-		c=rx_queue.queue[rx_queue.tail++];
-		rx_queue.tail&=RX_QUEUE_SIZE-1;
-	}
-	return c&0x7f;
-}
-
-void print(const char *str){
-	while (*str) {conout(CON,*str++);}
-}
-
-void beep(){
-	_svc_call(SVC_LED_OFF,0,0);
-	_svc_call(SVC_TIMER,40,0);
-	while(timer);
-	_svc_call(SVC_LED_ON,0,0);
-}
-
-void delete_back(){
-	conout(CON,BS);
-	conout(CON,SPACE);
-	conout(CON,BS);
-}
-
-// reçoit une ligne de texte de la console
-unsigned read_line(char *buffer,unsigned buf_len){
-	unsigned line_len=0;
-	char c=0;
-	
-	buf_len--;
-	while (c!=13){
-			c=getc();
-			switch(c){
-				case NUL:
-				break;
-				case CR:
-				case LF:
-				c=CR;
-				conout(CON,c);
-				break;
-				case CTRL_X:
-				case CTRL_U:
-				while (line_len){delete_back();line_len--;}
-				break;
-				case CTRL_W:
-				while (line_len && (buffer[line_len-1]!=SPACE)){
-					delete_back();
-					line_len--;
-				}
-				break;
-				case BS:
-				if (line_len){
-					delete_back();
-					line_len--;
-				}
-				break;
-				case TAB:
-				c=SPACE;
-				default:
-				if ((line_len<buf_len) && (c>=32)){
-					buffer[line_len++]=c;
-					conout(CON,c);
-				}else{
-					beep();
-				}
-			}
-	}
-	buffer[line_len]=0;
-	return line_len;
-}
 
 void parse_line(char *buffer, unsigned buf_len){
 	print(buffer);
-	conout(CON,13);
+	conout(CR);
 }
 
 #define CMD_MAX_LEN 80
+
 
 void main(void){
 	void **argv=NULL;
 	set_sysclock();
 	config_systicks();
 	port_c_setup();
-	con_open_channel(CON,115200,FLOW_HARD);
+	uart_open_channel(CON,115200,FLOW_HARD);
 	_unprivileged(); // à partir d'ici exécution sans privilèges.
-	print(VERSION);
+	cls();
+	print(VERSION); 
 	_svc_call(SVC_LED_ON,0,argv);
 	char cmd[CMD_MAX_LEN];
 	unsigned llen;

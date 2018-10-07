@@ -20,9 +20,9 @@
 
 #define USART_COUNT 3 // 3 périphériques
 
-#define USART1_BASE_ADR 0x40013800
-#define USART2_BASE_ADR 0x40004400
-#define USART3_BASE_ADR 0x40004800
+#define USART1_BASE_ADR 0x40013800U
+#define USART2_BASE_ADR 0x40004400U
+#define USART3_BASE_ADR 0x40004800U
 
 #define USART1 USART1_BASE_ADR
 #define USART2 USART2_BASE_ADR
@@ -132,21 +132,21 @@
  ************************/
  
 // vitesse de transmission
-void usart_set_baud(unsigned channel, unsigned baud); 
+void uart_set_baud(unsigned channel, unsigned baud); 
  
 // configure l'USART pour comminication selon protocole RS-232
 // 8 bit 1 stop pas de parité
-void con_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl);
+void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl);
 
 // status récepction
 // retourne 0 si pas de caractère disponible
 // retourne -1 si caractère disponible
-char constat(unsigned channel);
+int uart_stat(unsigned channel);
 
 // reçoit un caractère de la console
-char conin(unsigned channel);
+char uart_getc(unsigned channel);
 
 // transmet un caractère à la console
-void conout(unsigned channel,char c);
+void uart_putc(unsigned channel,char c);
 		
 #endif // USART_H
