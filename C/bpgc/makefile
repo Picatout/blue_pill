@@ -2,13 +2,11 @@
 
 NAME = bpos
 
-PREFIX = arm-none-eabi-
-CC = $(PREFIX)gcc
-LD = $(PREFIX)ld
-NM = $(PREFIX)nm
-OBJCOPY = $(PREFIX)objcopy
-OBJDUMP = $(PREFIX)objdump
-DBG = $(PREFIX)gdb
+CC = arm-none-eabi-gcc
+LD = arm-none-eabi-ld
+NM = arm-none-eabi-nm
+OBJCOPY = arm-none-eabi-objcopy
+OBJDUMP = arm-none-eabi-objdump
 CFLAGS = -mcpu=cortex-m3 -mthumb
 INC = ../include/
 HAL = ../hal/
@@ -88,12 +86,6 @@ print_sections:
 	@echo "Liste des sections de $(NAME).elf en utilisant objdump"
 	$(OBJDUMP) -h $(NAME).elf
 
-debug:
-	$(DBG) -tui --eval-command="target remote localhost:4242" $(NAME).elf
-	
-flash:
-	st-flash write $(NAME).bin 0x8000000
-	
 .PHONY: clean
 	
 	

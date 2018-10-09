@@ -66,7 +66,7 @@ typedef union{
 	uint32_t cr1;
 	struct{
 		uint32_t cpha:1;
-		uint32_t cpop:1;
+		uint32_t cpol:1;
 		uint32_t mstr:1
 		uint32_t br:3;
 		uint32_t spe:1

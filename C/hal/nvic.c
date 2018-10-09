@@ -15,27 +15,31 @@
 
 
 
-typedef volatile uint32_t* t_iser;
+typedef volatile uint32_t* iser_t;
 void enable_interrupt(unsigned irq){
-	t_iser iser=(t_iser)(NVIC_ISER0_ADR);
+	iser_t iser=(iser_t)(NVIC_ISER0_ADR);
 	if (irq>LAST_IRQ) return ;
 	iser[irq/32]|=1<<(irq%32);
 	
 }
 
-typedef volatile uint32_t* t_icer;
+typedef volatile uint32_t* icer_t;
 void disable_interrupt(unsigned irq){
-	t_icer icer=(t_icer)(NVIC_ICER0_ADR);
+	icer_t icer=(icer_t)(NVIC_ICER0_ADR);
 	if (irq>LAST_IRQ) return ;
 	icer[irq/32]&=~(1<<(irq%32));
 	
 }
 
 
-typedef uint8_t* t_ipr;
-
-void set_int_priority(unsigned irq, unsigned priority){
-	t_ipr ipr=(t_ipr)NVIC_IPR0_ADR;
-	if (irq>LAST_IRQ) return;
-	ipr[irq]=(priority&15)<<4;
+typedef uint8_t* ipr_t;
+typedef uint8_t* shpr_t;
+void set_int_priority(int32_t irq, unsigned priority){
+	volatile ipr_t ipr=(ipr_t)NVIC_IPR0_ADR;
+	volatile shpr_t shpr=(shpr_t)(SCB_BASE_ADR+24);
+	if ((irq>=0) && (irq<=LAST_IRQ)){
+		ipr[irq]=(uint8_t)((priority&15)<<4);
+	}else if ((irq<0) && (irq>-16)){
+		shpr[-(irq+4)]=(uint8_t)((priority&15)<<4);
+	}
 }

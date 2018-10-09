@@ -97,6 +97,10 @@ unsigned read_line(char *buffer,unsigned buf_len){
 				line_len=0;
 				break;
 				case CTRL_W:
+				while (line_len && (buffer[line_len-1]==SPACE)){
+					delete_back();
+					line_len--;
+				}
 				while (line_len && (buffer[line_len-1]!=SPACE)){
 					delete_back();
 					line_len--;
@@ -150,16 +154,18 @@ void print_int(int i, unsigned base){
 
 // imprime un entier non signé en hexadécimal
 void print_hex(unsigned u){
-	char fmt[12];
-	int pos=10;
-	fmt[11]=0;
+	char fmt[14];
+	int pos=12;
+	fmt[13]=0;
 	while (u){
 		fmt[pos]=u%16+'0';
 		if (fmt[pos]>'9'){fmt[pos]+=7;}
 		pos--;
 		u/=16;
 	}
-	if (pos==10){fmt[pos--]='0';}
+	if (pos==13){fmt[pos--]='0';}
+	fmt[pos--]='x';
+	fmt[pos--]='0';
 	fmt[pos]=' ';
 	print(&fmt[pos]);
 }

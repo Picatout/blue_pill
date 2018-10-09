@@ -195,7 +195,7 @@ void startup()
     "mrs r0,CONTROL\n"
     "orr r0,#2\n"
     "msr CONTROL,r0\n"
-    "isb\n"
+    "ISB\n"
     :: [psp_top] "r" (PSP_TOP)
     );
     /* Now we are ready to start the main function */
