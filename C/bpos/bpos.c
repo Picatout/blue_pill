@@ -17,7 +17,14 @@
 #include "../include/nvic.h"
 #include "../include/usart.h"
 #include "../include/console.h"
+#include "../include/gpio.h"
 #include "svcall.h"
+
+extern unsigned int _TCA_START;
+extern unsigned int _FLASH_FREE;
+extern unsigned int _DATA_ROM_START;
+
+uint32_t proga;
 
 int strcmp(const char * s1, const char * s2){
 	int result=0;
@@ -46,19 +53,37 @@ int digit(char c){
    return ((c>='0') && (c<='9'));
 }
 
+int hexdigit(char c){
+	if (c>='a') c-=32;
+	return (digit(c) || (c>='A' && c<='F'));
+}
+
 int atoi(const char *str){
-	int n=0,sign=1;
+	int n=0,sign=1,base=10;
+    char c;
+    
 	while (*str && (*str==SPACE)) str++;
 	if (*str=='-'){
 		sign=-1;
 		str++;
 	}
-	while (*str && digit(*str)){
-		n=n*10+(*str-'0');
+	if (*str=='0' && ((*(str+1)=='x')||(*(str+1)=='X'))){
+		base=16;
+		str+=2;
+	}
+	while ((c=*str) && base==10?digit(c):hexdigit(c)){
+		if (c>='a'){c-=32;}
+		c-='0';
+		if (c>9){c-=7;}
+		n=n*base+c;
 		str++;
 	}
 	return sign*n;
 }
+
+
+typedef void (*fn)(void);
+
 
 
 static volatile unsigned ticks=0;
@@ -73,29 +98,32 @@ static void word();
 
 
 void __attribute__((__interrupt__)) SVC_handler(){
-	int svc_id, *arg1;
-	void **argv; 
+	int svc_id;
+	void *arg1, *argv; 
 	asm volatile (
 	"mrs r0,PSP\n" // optient la valeur de PSP
 	"ldr r1,[r0,#24]\n" // obtient le PC
-	"sub r1,r1,#2\n" // PC avant le SVC
-    "ldrb %[svc_id], [r1]\n" // charge l'octet faible i.e. no de service
+	//"sub r1,r1,#2\n" // PC avant le SVC
+    "ldrb %[svc_id], [r1,#-2]\n" // charge l'octet faible i.e. no de service
     "ldr %[arg1],[r0]\n"
     "ldr %[argv],[r0,#4]\n"
     : [svc_id] "=r" (svc_id), [arg1] "=r" (arg1), [argv] "=r" (argv) 
     );
 	switch (svc_id){
 	case SVC_LED_ON: 
-		GPIOC_BRR=GRN_LED;
+		GPIOC_BRR->brr=GRN_LED;
 		break;
 	case SVC_LED_OFF:
-		GPIOC_BSRR=GRN_LED;
+		GPIOC_BSRR->bsrr=GRN_LED;
 		break;
 	case SVC_TIMER: 
 		timer=*(unsigned*)arg1;
 		break;
 	case SVC_GET_TIMER:
 		*(unsigned*)arg1=timer;
+		break;
+	case SVC_WAIT_TIMER:
+		while (timer);
 		break;
 	case SVC_CONIN:
 		*(char *)arg1=conin();
@@ -109,6 +137,31 @@ void __attribute__((__interrupt__)) SVC_handler(){
 	case SVC_PRINT:
 		print((const char*)arg1);
 		break;
+	case SVC_PRINT_INT:
+		print_int(*(int32_t*)arg1,10);
+		break;
+	case SVC_PRINT_HEX:
+		print_hex(*(uint32_t*)arg1);
+		break;
+	case SVC_PEEK8:
+	    *(uint8_t *)arg1=*(uint8_t*)(*(uint32_t*)arg1);
+		break;
+	case SVC_PEEK16:
+		*(uint16_t*)arg1=*(uint16_t*)(*(uint32_t*)arg1);
+		break;
+	case SVC_PEEK32:
+		*(uint32_t*)arg1=*(uint32_t*)(*(uint32_t*)arg1);
+		break;
+	case SVC_POKE8:
+		*(uint8_t*)(*(uint32_t*)arg1)=*(uint8_t*)argv;
+		break;
+	case SVC_POKE16:
+		*(uint16_t*)(*(uint32_t*)arg1)=*(uint16_t*)argv;
+		break;
+	case SVC_POKE32:
+		*(uint32_t*)(*(uint32_t*)arg1)=*(uint32_t*)argv;
+		break;
+/*	
 	case SVC_PRIVILIGED:
 		asm volatile(
 		"mrs r0,CONTROL\n"
@@ -116,6 +169,7 @@ void __attribute__((__interrupt__)) SVC_handler(){
 		"msr CONTROL, r0\n"
 		);
 		break;
+*/ 
     case SVC_RESET:
 	    _reset_mcu();
 	    break;
@@ -123,7 +177,7 @@ void __attribute__((__interrupt__)) SVC_handler(){
 }
 
 // interruption coretimer
-void __attribute__((__interrupt__)) STK_handler(){
+void __attribute__((naked)) STK_handler(){
 	ticks++;
 	if (timer) {timer--;}
 }
@@ -168,13 +222,14 @@ static void config_systicks(){
 #define PC13_CNF 6
 static void port_c_setup(){
 	RCC_APB2ENR|=1<<GPIOC_EN;
-	GPIOC_CRH=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
+	GPIOC_CRH->cr=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
 }
 
 
 // supprime le mode d'exécution
 // prévilégié au programme.
 // REF: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0552a/CHDIGFCA.html
+/*
 #define _unprivileged() ({\
 	asm volatile (\
 	"mrs r0, CONTROL\n"\
@@ -183,6 +238,7 @@ static void port_c_setup(){
 	"isb\n"\
 	);})
 	
+*/
 
 //#define _wait_svc_completion() while (ICSR & (1<<PENDSVSET)|(1<<);
 #define _wait_timeout() ({while (timer);})
@@ -227,12 +283,13 @@ static void cmd_set_timer(){
 	_svc_call(SVC_TIMER,&n,NUL);
 }
 
+static void cmd_get_timer(){
+	_svc_call(SVC_GET_TIMER,&pad,NUL);
+}
+
 // attend l'expiration de la minuterie
 static void cmd_wait_time_out(){
-	unsigned t=1;
-	while (t){
-		_svc_call(SVC_GET_TIMER,&t,NUL);
-	}
+	_svc_call(SVC_WAIT_TIMER,NUL,NUL);
 }
 
 // reçoit un caractère dans pad
@@ -266,6 +323,73 @@ static void cmd_print(){
 	while (tib[in]) in++;
 }
 
+
+
+static void cmd_run(){
+	((fn)proga)();
+	
+}
+
+static void cmd_peek8(){
+	uint32_t u;
+	word();
+	u=atoi(pad);
+	_svc_call(SVC_PEEK8,&u,NUL);
+	pad[0]=(unsigned char)u;
+}
+
+static void cmd_peek16(){
+	uint32_t u;
+	word();
+	u=atoi(pad);
+	_svc_call(SVC_PEEK16,&u,NUL);
+	pad[0]=(unsigned char)(u&0xff);
+	pad[1]=(unsigned char)((u>>8)&0xff);
+}
+
+static void cmd_peek32(){
+	uint32_t u;
+	int i;
+	word();
+	u=atoi(pad);
+	_svc_call(SVC_PEEK32,&u,NUL);
+	for (i=0;i<4;i++){
+		pad[i]=(unsigned char)(u&0xff);
+		u>>=8;
+	}
+}
+
+static void cmd_poke8(){
+	uint32_t adr;
+	uint8_t u8;
+	word();
+	adr=atoi(pad);
+	word();
+	u8=atoi(pad);
+	_svc_call(SVC_POKE8,&adr,&u8);
+}
+
+static void cmd_poke16(){
+	uint32_t adr;
+	uint16_t u16;
+	word();
+	adr=atoi(pad);
+	word();
+	u16=atoi(pad);
+	_svc_call(SVC_POKE16,&adr,&u16);
+}
+
+static void cmd_poke32(){
+	uint32_t adr,u32;
+	
+	word();
+	adr=atoi(pad);
+	word();
+	u32=atoi(pad);
+	_svc_call(SVC_POKE32,&adr,&u32);
+}
+
+
 static const shell_cmd_t commands[]={
 	{"rst",cmd_reset},
 	{"ledon",cmd_led_on},
@@ -276,6 +400,13 @@ static const shell_cmd_t commands[]={
 	{"putc",cmd_putc},
 	{"readln",cmd_readln},
 	{"print",cmd_print},
+	{"run",cmd_run},
+	{"peek8",cmd_peek8},
+	{"peek16",cmd_peek16},
+	{"peek32",cmd_peek32},
+	{"poke8",cmd_poke8},
+	{"poke16",cmd_poke16},
+	{"poke32",cmd_poke32}, 
 	{NUL,NUL}
 };
 
@@ -350,16 +481,47 @@ static void parse_line(unsigned llen){
 }
 
 
+void __attribute__((section(".user_code"),noinline,used)) blink(){
+	volatile unsigned int  delay;
+	volatile char c=0;
+	
+	delay=500;
+	while(1){
+		_svc_call(SVC_LED_OFF,NUL,NUL);
+		_svc_call(SVC_TIMER,&delay,NUL);
+		_svc_call(SVC_WAIT_TIMER,NUL,NUL);
+		_svc_call(SVC_LED_ON,NUL,NUL);
+		_svc_call(SVC_TIMER,&delay,NUL);
+		_svc_call(SVC_WAIT_TIMER,NUL,NUL);
+		_svc_call(SVC_CONIN,&c,NUL);
+		if (c) break;
+	}
+}
+
+void copy_blink_in_ram(){
+	volatile uint32_t *start;
+	uint32_t *end,*ram_fn;
+	start=(uint32_t*)&_FLASH_FREE;
+	end=(uint32_t*)&_DATA_ROM_START;
+	ram_fn=(uint32_t*)&_TCA_START;
+	while (start<end){
+		*ram_fn++=*start++;
+	}
+}
+
 void main(void){
 	set_sysclock();
 	set_int_priority(IRQ_SVC,15);
 	config_systicks();
 	port_c_setup();
 	uart_open_channel(CON,115200,FLOW_HARD);
-	_unprivileged(); // à partir d'ici exécution sans privilèges.
 	cls();
 	print(VERSION); 
+	copy_blink_in_ram();
+	print("Transient program address: ");print_hex(proga); conout(CR);
+//	((fn)proga)();
 	_svc_call(SVC_LED_ON,NUL,NUL);
+	flush_rx_queue();
 	unsigned llen;
 	while (1){
 		llen=read_line(tib,CMD_MAX_LEN);

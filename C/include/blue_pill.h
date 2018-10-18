@@ -8,7 +8,7 @@
  * 		2018-09-16, Renommé OSC32_PRESENT en LSE_PRESENT. Ajout de LSE_FREQ
  */
 
-#if  !defined(BLUE_PILL_H)
+#ifndef  BLUE_PILL_H
 #define  BLUE_PILL_H
 
 // cristal 8Mhz

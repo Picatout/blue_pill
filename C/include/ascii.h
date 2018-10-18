@@ -8,6 +8,8 @@
  * 
  */
 
+#ifndef ASCII_H
+#define ASCII_H
 
 enum ASCII_CTRL{
 	NUL=0,
@@ -71,3 +73,5 @@ enum ASCII_CTRL{
 #define CTRL_X CAN
 #define CTRL_Y EM
 #define CTRL_Z SUB
+
+#endif // ASCII_H

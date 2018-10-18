@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "../include/stm32f103c8.h"
 #include "../include/nvic.h"
+#include "../include/console.h"
 
 /* NOTE:
  * A la réinitialisation le µC est en mode thread privilégié
@@ -23,14 +24,19 @@ extern unsigned int _BSS_END;
 extern unsigned int _DATA_ROM_START;
 extern unsigned int _DATA_RAM_START;
 extern unsigned int _DATA_RAM_END;
+extern unsigned int _TCA_START;
+extern unsigned int _FLASH_FREE;
+
+extern uint32_t proga;
 
 void startup();
 void main();
 
 
+#define _exception(name) void __attribute__((interrupt,weak,section(".text.exception"))) name()
 
 
-#define _default_handler(name)  void __attribute__((naked,weak)) name(){_reset_mcu();}
+#define _default_handler(name)  void __attribute__((naked,weak,section(".text.handler"))) name(){_reset_mcu();}
 
 // les gestionnaires d'interruption par défaut
 // réinitialise le µC
@@ -39,13 +45,36 @@ void main();
 
 // core exceptions
 _default_handler(NMI_handler) // 2
-_default_handler(HARD_FAULT_handler) // 3
-_default_handler(MM_FAULT_handler)  // 4
-_default_handler(BUS_FAULT_handler) // 5
-_default_handler(USAGE_FAULT_handler) // 6
+_default_handler(MM_FAULT_handler)
+_default_handler(BUS_FAULT_handler)
+_default_handler(USAGE_FAULT_handler)
 _default_handler(SVC_handler) // 11
 _default_handler(PENDSV_handler) // 14
 _default_handler(STK_handler) // 15
+
+void print_fault(const char *msg){
+	print(msg);
+	print("UFSR=");
+	print_hex(((*(sfrp_t)0xE000ED28)&0xffff0000)>>16);
+	print(", BFSR=");
+	print_hex(((*(sfrp_t)0xE000ED28)&0xff00)>>8);
+	print(", MMFSR=");
+	print_hex(((*(sfrp_t)0xE000ED28)&0xff));
+	while(1);
+}
+
+_exception(HARD_FAULT_handler){
+	if ((*(sfrp_t)0xE000ED28)&0x7f){
+		print_fault("memory manager fault\n");
+	}else if (((*(sfrp_t)0xE000ED28)&0xff00)){
+		print_fault("bus fault\n");
+	}else if ((*(sfrp_t)0xE000ED28)&0xffff0000){
+		print_fault("usage fault\n");
+	}else{
+		print_fault("hard fault\n");
+	}
+}
+
 
 // IRQ
 _default_handler(WWDG_handler) // 0
@@ -71,6 +100,7 @@ void __attribute__((naked)) reset_mcu(){
 	_reset_mcu();
    
 }
+
 
 
 // Define the vector table
@@ -159,7 +189,7 @@ __attribute__ ((section("vectors")))= {
 };
 
 
-void startup()
+ __attribute__((section(".text.startup"))) void startup()
 {
     /* Set memory in bss segment to zeros */
     unsigned int * bss_start_p = &_BSS_START; 
@@ -184,7 +214,10 @@ void startup()
         data_ram_start_p++;
         data_rom_start_p++;
     }
-    // active les interruptions et les fault handler
+
+	proga=((uint32_t)&_TCA_START)|1;
+	// active les interruptions et les fault handler
+	*(sfrp_t)0xE000ED14=(1<<3)|(1<<4);
     __enable_irq();
     __enable_fault_irq();
     // initialisaton de la pile PSP et commutation 

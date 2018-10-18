@@ -47,6 +47,8 @@ unsigned read_line(char *buffer,unsigned buf_len);
 void print_int(int i, unsigned base);
 // imprime un entier non signé en hexadécimal
 void print_hex(unsigned u);
+// vide la file rx
+void flush_rx_queue();
 
 #endif // CONSOLE_H
 

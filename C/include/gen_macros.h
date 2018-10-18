@@ -10,6 +10,8 @@
 #ifndef GEN_MACROS_H
 #define GEN_MACROS_H
 
+#include <stdint.h>
+
 // CMSIS macros
 #define __enable_irq() ({asm volatile("cpsie i");})
 #define __disable_irq() ({asm volatile("cpsid i");})
@@ -19,6 +21,9 @@
 
 // réinitialisation du µC
 #define _reset_mcu() ({AIRCR=(KEY<<VECTKEY)|(1<<SYSRESETREQ);})
+
+typedef volatile uint32_t sfr_t;
+typedef volatile uint32_t* sfrp_t;
 
 // les Special Function Registers sont de de 32 bits.
 // Ces pointeurs doivent avoir l'attribut volatile

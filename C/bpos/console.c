@@ -163,10 +163,16 @@ void print_hex(unsigned u){
 		pos--;
 		u/=16;
 	}
-	if (pos==13){fmt[pos--]='0';}
+	if (pos==12){fmt[pos--]='0';}
 	fmt[pos--]='x';
 	fmt[pos--]='0';
 	fmt[pos]=' ';
 	print(&fmt[pos]);
+}
+
+// vide la file rx
+void flush_rx_queue(){
+	rx_queue.head=0;
+	rx_queue.tail=0;
 }
 

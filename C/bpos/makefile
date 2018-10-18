@@ -13,14 +13,14 @@ CFLAGS = -mcpu=cortex-m3 -mthumb
 INC = ../include/
 HAL = ../hal/
 SRC = bpos.c console.c startup.c
-SRC += $(HAL)usart.c $(HAL)nvic.c 
+SRC += $(HAL)usart.c $(HAL)nvic.c $(HAL)gpio.c
 
 all: build
 	
 
-build: clean compile link bin_gen
+build: clean compile link bin_gen  print_disassemble
 	
-build_O1: clean compile_O1 link bin_gen
+build_O1: clean compile_O1 link bin_gen print_disassemble
 	
 
 build_debug: clean compile_debug link bin_gen print_disassemble
@@ -38,7 +38,7 @@ compile_O1:
 	@echo "compilation des fichiers"
 	@echo "optimisation O1         "
 	@echo "************************"
-	$(CC) $(CFLAGS) -O1 -c $(SRC)
+	$(CC) $(CFLAGS) -O1 -c -g $(SRC)
 	@echo
 
 

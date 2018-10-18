@@ -1,3 +1,10 @@
+/*
+MEMORY{
+	ROM (RX) : ORIGIN = 0, LENGTH = 64K
+	RAM (WRX) : ORIGIN = 0x20000000, LENGTH = 20K
+}
+*/
+
 SECTIONS
 {
     .  = 0x0;         /* From 0x00000000 */
@@ -5,12 +12,23 @@ SECTIONS
     .text : 
     {
         *(vectors)    /* Vector table */
+        *(.text.startup) /* startup code */
+        *(.text.exception) /* default exception handler */
+        *(.text.handler) /* default handler  */
         *(.text)      /* Program code */
     }
     .rodata : 
     {
         *(.rodata)    /* Read only data */
     }
+	. = ALIGN(0x20) ;
+	_FLASH_FREE = . ;
+    
+    .user_code : AT(_FLASH_FREE)
+    {
+		*(user_code) /* user code in flash */
+    }
+    
     _DATA_ROM_START = .;
 
     .  = 0x20000000;  /* From 0x20000000 */      
@@ -28,4 +46,14 @@ SECTIONS
         *(.bss)       /* Zero-filled run time allocate data memory */
     }
     _BSS_END = .;     /* Indicates where BSS section ends in RAM */
+	
+	. = ALIGN(0x20) ;
+	_TCA_START = . ;
+	
+	.transient : AT(_TCA_START)
+	{
+        *(.transient) /* transient program in RAM*/
+
+	}
+
 }  
