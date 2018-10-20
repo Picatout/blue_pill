@@ -27,7 +27,6 @@ SVC_LED_ON, // allume la LED verte
 SVC_LED_OFF, // éteint la LED verte
 SVC_TIMER, // démarre la minuterie
 SVC_GET_TIMER, // retourne la valeur de la variable timer
-SVC_WAIT_TIMER, // attent l'expiration de la minuterie
 SVC_CONIN,  // reçoit un caractère de la console
 SVC_CONOUT, // envoie un caractère à la console
 SVC_READLN, // lit une ligne de la console

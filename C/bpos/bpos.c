@@ -20,13 +20,15 @@
 #include "../include/gpio.h"
 #include "svcall.h"
 
+#define _pause(tm)  ({do {_svc_call(SVC_GET_TIMER,&tm,NUL);} while (tm);})
+
 extern unsigned int _TCA_START;
 extern unsigned int _FLASH_FREE;
 extern unsigned int _DATA_ROM_START;
 
 uint32_t proga;
 
-int strcmp(const char * s1, const char * s2){
+int strcmp(const char *s1, const char *s2){
 	int result=0;
 	while (*s1 && *s2){
 		if (*s1<*s2){
@@ -95,8 +97,49 @@ static int next(char *buffer, int start, char c);
 static void move(char *src , char *dest, int len);
 static void word();
 
+// routine de services
 
+inline void led_on(){
+	GPIOC_BRR->brr=GRN_LED;
+}
 
+inline void led_off(){
+	GPIOC_BSRR->bsrr=GRN_LED;
+}
+
+inline void set_timer(unsigned time){
+	timer=time;
+}
+
+inline unsigned get_timer(){
+	return timer;
+}
+
+inline uint8_t peek8(uint8_t *adr){
+	return *adr;
+}
+
+inline uint16_t peek16(uint16_t *adr){
+	return *adr;
+}
+
+inline uint32_t peek32(uint32_t *adr){
+	return *adr;
+}
+
+inline void poke8(uint8_t *adr, uint8_t value){
+	*adr=value;
+}
+
+inline void poke16(uint16_t *adr, uint16_t value){
+	*adr=value;
+}
+
+inline void poke32(uint32_t *adr, uint32_t value){
+	*adr=value;
+}
+
+// interruption multiplexeur des appels de services
 void __attribute__((__interrupt__)) SVC_handler(){
 	int svc_id;
 	void *arg1, *argv; 
@@ -111,19 +154,16 @@ void __attribute__((__interrupt__)) SVC_handler(){
     );
 	switch (svc_id){
 	case SVC_LED_ON: 
-		GPIOC_BRR->brr=GRN_LED;
+		led_on();
 		break;
 	case SVC_LED_OFF:
-		GPIOC_BSRR->bsrr=GRN_LED;
+		led_off();
 		break;
-	case SVC_TIMER: 
-		timer=*(unsigned*)arg1;
+	case SVC_TIMER:
+		set_timer(*(unsigned*)arg1);
 		break;
 	case SVC_GET_TIMER:
-		*(unsigned*)arg1=timer;
-		break;
-	case SVC_WAIT_TIMER:
-		while (timer);
+		*(unsigned*)arg1=get_timer();
 		break;
 	case SVC_CONIN:
 		*(char *)arg1=conin();
@@ -138,28 +178,28 @@ void __attribute__((__interrupt__)) SVC_handler(){
 		print((const char*)arg1);
 		break;
 	case SVC_PRINT_INT:
-		print_int(*(int32_t*)arg1,10);
+		print_int((int32_t)arg1,10);
 		break;
 	case SVC_PRINT_HEX:
-		print_hex(*(uint32_t*)arg1);
+		print_hex((uint32_t)arg1);
 		break;
 	case SVC_PEEK8:
-	    *(uint8_t *)arg1=*(uint8_t*)(*(uint32_t*)arg1);
+	    *(uint8_t *)arg1=peek8((uint8_t *)*(uint32_t*)arg1);
 		break;
 	case SVC_PEEK16:
-		*(uint16_t*)arg1=*(uint16_t*)(*(uint32_t*)arg1);
+		*(uint16_t*)arg1=peek16((uint16_t*)*(uint32_t*)arg1);
 		break;
 	case SVC_PEEK32:
-		*(uint32_t*)arg1=*(uint32_t*)(*(uint32_t*)arg1);
+		*(uint32_t*)arg1=peek32((uint32_t*)*(uint32_t*)arg1);
 		break;
 	case SVC_POKE8:
-		*(uint8_t*)(*(uint32_t*)arg1)=*(uint8_t*)argv;
+		poke8((uint8_t*)*(uint32_t *)arg1,*(uint8_t*)argv);
 		break;
 	case SVC_POKE16:
-		*(uint16_t*)(*(uint32_t*)arg1)=*(uint16_t*)argv;
+		poke16((uint16_t*)(*(uint32_t*)arg1),*(uint16_t*)argv);
 		break;
 	case SVC_POKE32:
-		*(uint32_t*)(*(uint32_t*)arg1)=*(uint32_t*)argv;
+		poke32((uint32_t*)(*(uint32_t*)arg1),*(uint32_t*)argv);
 		break;
 /*	
 	case SVC_PRIVILIGED:
@@ -171,7 +211,7 @@ void __attribute__((__interrupt__)) SVC_handler(){
 		break;
 */ 
     case SVC_RESET:
-	    _reset_mcu();
+	    reset_mcu();
 	    break;
 	}	
 }
@@ -288,8 +328,9 @@ static void cmd_get_timer(){
 }
 
 // attend l'expiration de la minuterie
-static void cmd_wait_time_out(){
-	_svc_call(SVC_WAIT_TIMER,NUL,NUL);
+static void cmd_pause(){
+	unsigned tm;
+	_pause(tm);
 }
 
 // reçoit un caractère dans pad
@@ -322,7 +363,6 @@ static void cmd_print(){
 	_svc_call(SVC_PRINT,&tib[in],NUL);
 	while (tib[in]) in++;
 }
-
 
 
 static void cmd_run(){
@@ -395,7 +435,7 @@ static const shell_cmd_t commands[]={
 	{"ledon",cmd_led_on},
 	{"ledoff",cmd_led_off},
 	{"timer",cmd_set_timer},
-	{"timeout",cmd_wait_time_out},
+	{"pause",cmd_pause},
 	{"getc",cmd_getc},
 	{"putc",cmd_putc},
 	{"readln",cmd_readln},
@@ -481,18 +521,18 @@ static void parse_line(unsigned llen){
 }
 
 
-void __attribute__((section(".user_code"),noinline,used)) blink(){
-	volatile unsigned int  delay;
-	volatile char c=0;
+void __attribute__((section(".user_code"),noinline,used,optimize(0))) blink(){
+	unsigned int  delay=500, tm;
+	char c=0;
 	
-	delay=500;
+	
 	while(1){
 		_svc_call(SVC_LED_OFF,NUL,NUL);
 		_svc_call(SVC_TIMER,&delay,NUL);
-		_svc_call(SVC_WAIT_TIMER,NUL,NUL);
+		_pause(tm);//_svc_call(SVC_WAIT_TIMER,NUL,NUL);
 		_svc_call(SVC_LED_ON,NUL,NUL);
 		_svc_call(SVC_TIMER,&delay,NUL);
-		_svc_call(SVC_WAIT_TIMER,NUL,NUL);
+		_pause(tm); //_svc_call(SVC_WAIT_TIMER,NUL,NUL);
 		_svc_call(SVC_CONIN,&c,NUL);
 		if (c) break;
 	}
@@ -509,6 +549,8 @@ void copy_blink_in_ram(){
 	}
 }
 
+extern void print_fault(const char *msg, sfrp_t adr);
+
 void main(void){
 	set_sysclock();
 	set_int_priority(IRQ_SVC,15);
@@ -518,8 +560,7 @@ void main(void){
 	cls();
 	print(VERSION); 
 	copy_blink_in_ram();
-	print("Transient program address: ");print_hex(proga); conout(CR);
-//	((fn)proga)();
+	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,proga&0xfffffffe,NUL); conout(CR);
 	_svc_call(SVC_LED_ON,NUL,NUL);
 	flush_rx_queue();
 	unsigned llen;

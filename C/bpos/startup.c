@@ -32,11 +32,16 @@ extern uint32_t proga;
 void startup();
 void main();
 
+void __attribute__((naked)) reset_mcu(){
+// réinitialise le µC
+	_reset_mcu();
+   
+}
 
 #define _exception(name) void __attribute__((interrupt,weak,section(".text.exception"))) name()
 
 
-#define _default_handler(name)  void __attribute__((naked,weak,section(".text.handler"))) name(){_reset_mcu();}
+#define _default_handler(name)  void __attribute__((naked,weak,section(".text.handler"))) name(){reset_mcu();};
 
 // les gestionnaires d'interruption par défaut
 // réinitialise le µC
@@ -52,8 +57,13 @@ _default_handler(SVC_handler) // 11
 _default_handler(PENDSV_handler) // 14
 _default_handler(STK_handler) // 15
 
-void print_fault(const char *msg){
+void print_fault(const char *msg, uint32_t adr){
 	print(msg);
+	print("at address ");
+	if (adr) {
+		print_hex(adr);
+	};
+	conout(CR);
 	print("UFSR=");
 	print_hex(((*(sfrp_t)0xE000ED28)&0xffff0000)>>16);
 	print(", BFSR=");
@@ -63,15 +73,21 @@ void print_fault(const char *msg){
 	while(1);
 }
 
+
 _exception(HARD_FAULT_handler){
+		uint32_t adr;
+		asm volatile (
+	"mrs r0,PSP\n" // optient la valeur de PSP
+	"ldr %[adr],[r0,#24]\n" // obtient le PC
+    : [adr] "=r" (adr));
 	if ((*(sfrp_t)0xE000ED28)&0x7f){
-		print_fault("memory manager fault\n");
+		print_fault("memory manager fault ",adr);
 	}else if (((*(sfrp_t)0xE000ED28)&0xff00)){
-		print_fault("bus fault\n");
+		print_fault("bus fault ",adr);
 	}else if ((*(sfrp_t)0xE000ED28)&0xffff0000){
-		print_fault("usage fault\n");
+		print_fault("usage fault ",adr);
 	}else{
-		print_fault("hard fault\n");
+		print_fault("hard fault  ",adr);
 	}
 }
 
@@ -95,11 +111,6 @@ _default_handler(USART1_handler) // 37
 _default_handler(USART2_handler) // 38
 _default_handler(USART3_handler) // 39
 
-void __attribute__((naked)) reset_mcu(){
-// réinitialise le µC
-	_reset_mcu();
-   
-}
 
 
 
