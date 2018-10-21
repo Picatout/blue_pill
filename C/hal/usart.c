@@ -49,6 +49,7 @@ void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
 		// PA12 -> RTS output (push-pull)
 		GPIOA_CRH->cr&=~((15<<GPIO_MODE9)|(15<<GPIO_MODE12));
 		GPIOA_CRH->cr|=(0xA<<GPIO_MODE9)|(0xA<<GPIO_MODE12);
+		set_int_priority(IRQ_USART1,7);
 		enable_interrupt(USART1_IRQ);
 		break;
 	case USART2:
@@ -56,10 +57,11 @@ void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
 		RCC_APB2ENR|=(1<<RCC_APB2ENR_IOPAEN);
 		// PA0 -> CTS input   (floating)
 		// PA1 -> RTS output  (push-pull)
-		// PA2 -> TX (push-pull)
-		// PA3 -> RX (floating)
+		// PA2 -> TX  output (push-pull)
+		// PA3 -> RX input (floating)
 		GPIOA_CRL->cr&=~((15<<GPIO_MODE1)|(15<<GPIO_MODE2));
 		GPIOA_CRL->cr|=(0xA<<GPIO_MODE1)|(0xA<<GPIO_MODE2);
+		set_int_priority(IRQ_USART2,7);
 		enable_interrupt(USART2_IRQ);
 		break;
 	case USART3:
@@ -71,6 +73,7 @@ void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
 		//PB14 -> RTS output (push-pull)
 		GPIOB_CRH->cr&=~((15<<GPIO_MODE10)|(15<<GPIO_MODE14));
 		GPIOB_CRH->cr|=(0xA<<GPIO_MODE10)|(0xA<<GPIO_MODE14);
+		set_int_priority(IRQ_USART3,7);
 		enable_interrupt(USART3_IRQ);
 		break;
 	}

@@ -11,7 +11,7 @@
 #ifndef NVIC_H
 #define NVIC_H
 
-#include "core.h"
+#include "gen_macros.h"
 
 /**************
  *  exceptions 
@@ -88,6 +88,55 @@
 #define IRQ_DMA2CH2 57
 #define IRQ_DMA2CH3 58
 #define IRQ_DMA2CH4_5 59
+
+#define LAST_IRQ 59 // dernier IRQ
+
+
+#define NVIC_BASE_ADR 0xE000E100U
+#define NVIC_ISER0_ADR (NVIC_BASE_ADR)
+#define NVIC_ISER0 _sfr(NVIC_BASE_ADR)
+#define NVIC_ISER1 _sfr(NVIC_BASE_ADR+4)
+#define NVIC_ISER2 _sfr(NVIC_BASE_ADR+8)
+#define NVIC_ICER0_ADR (NVIC_BASE_ADR+0x80)
+#define NVIC_ICER0 _sfr(NVIC_BASE_ADR+0x80)
+#define NVIC_ICER1 _sfr(NVIC_BASE_ADR+0x84)
+#define NVIC_ICER2 _sfr(NVIC_BASE_ADR+0x88) 
+#define NVIC_ISPR0 _sfr(NVIC_BASE_ADR+0x100)
+#define NVIC_ISPR1 _sfr(NVIC_BASE_ADR+0x104)
+#define NVIC_ISPR2 _sfr(NVIC_BASE_ADR+0x108)
+#define NVIC_ICPR0 _sfr(NVIC_BASE_ADR+0x180)
+#define NVIC_ICPR1 _sfr(NVIC_BASE_ADR+0x184)
+#define NVIC_ICPR2 _sfr(NVIC_BASE_ADR+0x188)
+#define NVIC_IABR0 _sfr(NVIC_BASE_ADR+0x200)
+#define NVIC_IABR1 _sfr(NVIC_BASE_ADR+0x204)
+#define NVIC_IABR2 _sfr(NVIC_BASE_ADR+0x208)
+#define NVIC_IPR0_ADR (NVIC_BASE_ADR+0x300)
+#define NVIC_IPR0 _sfr(NVIC_BASE_ADR+0x300)
+#define NVIC_IPR1 _sfr(NVIC_BASE_ADR+0x304)
+#define NVIC_IPR2 _sfr(NVIC_BASE_ADR+0x308)
+#define NVIC_IPR3  _sfr(NVIC_BASE_ADR+0x30c)
+#define NVIC_IPR4  _sfr(NVIC_BASE_ADR+0x310)
+#define NVIC_IPR5  _sfr(NVIC_BASE_ADR+0x314)
+#define NVIC_IPR6  _sfr(NVIC_BASE_ADR+0x318)
+#define NVIC_IPR7  _sfr(NVIC_BASE_ADR+0x31c)
+#define NVIC_IPR8  _sfr(NVIC_BASE_ADR+0x320)
+#define NVIC_IPR9  _sfr(NVIC_BASE_ADR+0x324)
+#define NVIC_IPR10  _sfr(NVIC_BASE_ADR+0x328)
+#define NVIC_IPR11 _sfr(NVIC_BASE_ADR+0x32c)
+#define NVIC_IPR12 _sfr(NVIC_BASE_ADR+0x330)
+#define NVIC_IPR13  _sfr(NVIC_BASE_ADR+0x334)
+#define NVIC_IPR14 _sfr(NVIC_BASE_ADR+0x338)
+#define NVIC_IPR15  _sfr(NVIC_BASE_ADR+0x33c)
+#define NVIC_IPR16  _sfr(NVIC_BASE_ADR+0x340)
+#define NVIC_IPR17  _sfr(NVIC_BASE_ADR+0x344)
+#define NVIC_IPR18  _sfr(NVIC_BASE_ADR+0x348)
+#define NVIC_IPR19  _sfr(NVIC_BASE_ADR+0x34c)
+#define NVIC_IPR20  _sfr(NVIC_BASE_ADR+0x350)
+#define NVIC_STIR _sfr(0xE000EF00)
+
+#define ISER ((sfrp_t)NVIC_ISER0_ADR)
+#define ICER ((sfrp_t)NVIC_ICER0_ADR)
+#define IPR ((uint8_t*)NVIC_IPR0_ADR)
 
 
 void enable_interrupt(unsigned irq);

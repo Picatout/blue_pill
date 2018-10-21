@@ -1,8 +1,7 @@
-#include <stdint.h>
 #include "../include/stm32f103c8.h"
 #include "../include/nvic.h"
 #include "../include/console.h"
-#include "../include/core.h"
+
 
 /* NOTE:
  * A la réinitialisation le µC est en mode thread privilégié
@@ -66,11 +65,11 @@ void print_fault(const char *msg, uint32_t adr){
 	};
 	conout(CR);
 	print("UFSR=");
-	print_hex(SCB_CFSR->fsr.usageFalt);
+	print_hex(CFSR->fsr.usageFalt);
 	print(", BFSR=");
-	print_hex(SCB_CFSR->fsr.busFault);
+	print_hex(CFSR->fsr.busFault);
 	print(", MMFSR=");
-	print_hex(SCB_CFSR->fsr.mmFault);
+	print_hex(CFSR->fsr.mmFault);
 	while(1);
 }
 
@@ -83,11 +82,11 @@ _exception(HARD_FAULT_handler){
     : [adr] "=r" (adr)
     :
     :"r0");
-	if ((SCB_CFSR->fsr.mmFault)&0x7f){
+	if ((CFSR->fsr.mmFault)&0x7f){
 		print_fault("memory manager fault ",adr);
-	}else if ((SCB_CFSR->fsr.busFault)&0xff){
+	}else if ((CFSR->fsr.busFault)&0xff){
 		print_fault("bus fault ",adr);
-	}else if ((SCB_CFSR->fsr.usageFalt)&0xffff){
+	}else if ((CFSR->fsr.usageFalt)&0xffff){
 		print_fault("usage fault ",adr);
 	}else{
 		print_fault("hard fault  ",adr);
@@ -233,7 +232,7 @@ __attribute__ ((section("vectors")))= {
 	// active les interruptions et les fault handler
 	//SCB_CCR->fld_ccr.unalign_trp=1;
 	//SCB_CCR->fld_ccr.div_0_trp=1;
-	SCB_CCR->ccr|=1|(1<<3)|(1<<4);
+	CCR->ccr|=1|(1<<3)|(1<<4);
     __enable_irq();
     __enable_fault_irq();
     // initialisaton de la pile PSP et commutation 

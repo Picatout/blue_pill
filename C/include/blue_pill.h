@@ -11,6 +11,9 @@
 #ifndef  BLUE_PILL_H
 #define  BLUE_PILL_H
 
+#include "gen_macros.h"
+#include "stm32f103c8.h"
+
 // cristal 8Mhz
 #define HSI_FREQ  8000000 
 #define FCLK 72000000U

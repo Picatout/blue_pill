@@ -61,7 +61,7 @@ typedef union{
 	} field;
 } cpuid_t;
 
-extern cpuid_t* SCB_CPUID;
+#define CPUID  ((cpuid_t*)SCB_CPUID_ADR)
 
 typedef union{
 	sfr_t icsr;
@@ -80,20 +80,21 @@ typedef union{
 		sfr_t pendsvset:1;
 		sfr_t reserved3:2;
 		sfr_t nmipendset:1;
-	}field;
+	}fld_icsr;
 } icsr_t;
 
-extern icsr_t* SCB_ICSR;
+#define ICSR ((icsr_t*)SCB_ICSR_ADR)
+
 
 typedef union{
 	sfr_t vtor;
 	struct{
 		sfr_t reserved0:7;
 		sfr_t tbloff:25;
-	}field;
+	}fld_vtor;
 } vtor_t;
 
-extern vtor_t * SCB_VTOR;
+#define VTOR ((vtor_t*)SCB_VTOR_ADR)
 
 typedef union{
 	sfr_t aircr;
@@ -105,10 +106,10 @@ typedef union{
 		sfr_t prigroup:3;
 		sfr_t endianness:1;
 		sfr_t vectkey:16;
-	}field;
+	}fld_aircr;
 }aircr_t;
 
-extern aircr_t* SCB_AIRCR;
+#define AIRCR ((aircr_t*)SCB_AIRCR_ADR)
 
 typedef union{
 	sfr_t scr;
@@ -119,10 +120,10 @@ typedef union{
 		sfr_t reserved1:1;
 		sfr_t sevonpend:1;
 		sfr_t reserved2:27;
-	}field;
+	}fld_scr;
 } scr_t;
 
-extern scr_t* SCB_SCR;
+#define SCR ((scr_t*)SCB_SCR_ADR)
 
 
 typedef union{
@@ -157,10 +158,10 @@ typedef union{
 		sfr_t unaligned:1;
 		sfr_t divbyzero:1;
 		sfr_t res4:6;
-	}field;
+	}fld_cfsr;
 }cfsr_t;
 
-extern cfsr_t*  SCB_CFSR;
+#define CFSR ((cfsr_t*)SCB_CFSR_ADR)
 
 typedef union{
 	sfr_t ccr;
@@ -177,6 +178,8 @@ typedef union{
 	}fld_ccr;
 } ccr_t;
 	
-extern ccr_t* SCB_CCR;	
+#define CCR ((ccr_t*)SCB_CCR_ADR)	
+
+#define SHPR ((uint8_t*)SCB_SHPR1_ADR)
 
 #endif //CORE_H

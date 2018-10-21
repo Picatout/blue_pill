@@ -120,14 +120,14 @@ typedef union{
 // registres port A
 #define GPIOA_BASE_ADR 0x40010800
 
-extern gpio_crl_t * GPIOA_CRL;//=(gpio_crl_t*)(GPIOA_BASE_ADR+GPIO_CRL_OFS); 
-extern gpio_crh_t * GPIOA_CRH;//=(gpio_crh_t*)(GPIOA_BASE_ADR+GPIO_CRH_OFS);
-extern gpio_crl_t *  GPIOA_CR;//=(gpio_crl_t*)(GPIOA_BASE_ADR+GPIO_CRL_OFS);
-extern gpio_idr_t * GPIOA_IDR;//=(gpio_idr_t *)(GPIOA_BASE_ADR+GPIO_IDR_OFS);
-extern gpio_odr_t * GPIOA_ODR;//=(gpio_odr_t *)(GPIOA_BASE_ADR+GPIO_ODR_OFS);
-extern gpio_bsrr_t * GPIOA_BSRR;//=(gpio_bsrr_t *)(GPIOA_BASE_ADR+GPIO_BSRR_OFS);
-extern gpio_brr_t * GPIOA_BRR;//=(gpio_brr_t *)(GPIOA_BASE_ADR+GPIO_BRR_OFS);
-extern gpio_lckr_t * GPIOA_LCKR;//=(gpio_lckr_t *)(GPIOA_BASE_ADR+GPIO_LCKR_OFS); 
+#define GPIOA_CRL  ((gpio_crl_t*)(GPIOA_BASE_ADR+GPIO_CRL_OFS))
+#define GPIOA_CRH  ((gpio_crh_t*)(GPIOA_BASE_ADR+GPIO_CRH_OFS))
+#define GPIOA_CR   ((gpio_crl_t*)(GPIOA_BASE_ADR+GPIO_CRL_OFS))
+#define GPIOA_IDR  ((gpio_idr_t *)(GPIOA_BASE_ADR+GPIO_IDR_OFS))
+#define GPIOA_ODR  ((gpio_odr_t *)(GPIOA_BASE_ADR+GPIO_ODR_OFS))
+#define GPIOA_BSRR ((gpio_bsrr_t *)(GPIOA_BASE_ADR+GPIO_BSRR_OFS))
+#define GPIOA_BRR  ((gpio_brr_t *)(GPIOA_BASE_ADR+GPIO_BRR_OFS))
+#define GPIOA_LCKR ((gpio_lckr_t *)(GPIOA_BASE_ADR+GPIO_LCKR_OFS))
  
 /*********
 * PORT B
@@ -135,14 +135,14 @@ extern gpio_lckr_t * GPIOA_LCKR;//=(gpio_lckr_t *)(GPIOA_BASE_ADR+GPIO_LCKR_OFS)
 // registre port B
 #define GPIOB_BASE_ADR 0x40010C00
 
-extern gpio_crl_t * GPIOB_CRL;//=(gpio_crl_t *)(GPIOB_BASE_ADR+GPIO_CRL_OFS); 
-extern gpio_crh_t * GPIOB_CRH;//=(gpio_crh_t *)(GPIOB_BASE_ADR+GPIO_CRH_OFS);
-extern gpio_crl_t *  GPIOB_CR;//=(gpio_crl_t *)(GPIOB_BASE_ADR+GPIO_CRL_OFS);
-extern gpio_idr_t * GPIOB_IDR;//=(gpio_idr_t *)(GPIOB_BASE_ADR+GPIO_IDR_OFS);
-extern gpio_odr_t * GPIOB_ODR;//=(gpio_odr_t *)(GPIOB_BASE_ADR+GPIO_ODR_OFS);
-extern gpio_bsrr_t * GPIOB_BSRR;//=(gpio_bsrr_t *)(GPIOB_BASE_ADR+GPIO_BSRR_OFS);
-extern gpio_brr_t * GPIOB_BRR;//=(gpio_brr_t *)(GPIOB_BASE_ADR+GPIO_BRR_OFS);
-extern gpio_lckr_t * GPIOB_LCKR;//=(gpio_lckr_t *)(GPIOB_BASE_ADR+GPIO_LCKR_OFS); 
+#define GPIOB_CRL  ((gpio_crl_t*)(GPIOB_BASE_ADR+GPIO_CRL_OFS))
+#define GPIOB_CRH  ((gpio_crh_t*)(GPIOB_BASE_ADR+GPIO_CRH_OFS))
+#define GPIOB_CR   ((gpio_crl_t*)(GPIOB_BASE_ADR+GPIO_CRL_OFS))
+#define GPIOB_IDR  ((gpio_idr_t *)(GPIOB_BASE_ADR+GPIO_IDR_OFS))
+#define GPIOB_ODR  ((gpio_odr_t *)(GPIOB_BASE_ADR+GPIO_ODR_OFS))
+#define GPIOB_BSRR ((gpio_bsrr_t *)(GPIOB_BASE_ADR+GPIO_BSRR_OFS))
+#define GPIOB_BRR  ((gpio_brr_t *)(GPIOB_BASE_ADR+GPIO_BRR_OFS))
+#define GPIOB_LCKR ((gpio_lckr_t *)(GPIOB_BASE_ADR+GPIO_LCKR_OFS))
  
 /*********
 * PORT C *
@@ -150,14 +150,14 @@ extern gpio_lckr_t * GPIOB_LCKR;//=(gpio_lckr_t *)(GPIOB_BASE_ADR+GPIO_LCKR_OFS)
 // adresse de base registres du port C
 #define GPIOC_BASE_ADR 0X40011000U 
 
-extern gpio_crl_t * GPIOC_CRL;//=(gpio_crl_t *)(GPIOC_BASE_ADR+GPIO_CRL_OFS); 
-extern gpio_crh_t * GPIOC_CRH;//=(gpio_crh_t *)(GPIOC_BASE_ADR+GPIO_CRH_OFS);
-extern gpio_idr_t * GPIOC_IDR;//=(gpio_idr_t *)(GPIOC_BASE_ADR+GPIO_IDR_OFS);
-extern gpio_crl_t * GPIOC_CR;//=(gpio_crl_t *)(GPIOC_BASE_ADR+GPIO_CRL_OFS);
-extern gpio_odr_t * GPIOC_ODR;//=(gpio_odr_t *)(GPIOC_BASE_ADR+GPIO_ODR_OFS);
-extern gpio_bsrr_t * GPIOC_BSRR;//=(gpio_bsrr_t *)(GPIOC_BASE_ADR+GPIO_BSRR_OFS);
-extern gpio_brr_t * GPIOC_BRR;//=(gpio_brr_t *)(GPIOC_BASE_ADR+GPIO_BRR_OFS);
-extern gpio_lckr_t * GPIOC_LCKR;//=(gpio_lckr_t *)(GPIOC_BASE_ADR+GPIO_LCKR_OFS); 
+#define GPIOC_CRL  ((gpio_crl_t*)(GPIOC_BASE_ADR+GPIO_CRL_OFS))
+#define GPIOC_CRH  ((gpio_crh_t*)(GPIOC_BASE_ADR+GPIO_CRH_OFS))
+#define GPIOC_CR   ((gpio_crl_t*)(GPIOC_BASE_ADR+GPIO_CRL_OFS))
+#define GPIOC_IDR  ((gpio_idr_t *)(GPIOC_BASE_ADR+GPIO_IDR_OFS))
+#define GPIOC_ODR  ((gpio_odr_t *)(GPIOC_BASE_ADR+GPIO_ODR_OFS))
+#define GPIOC_BSRR ((gpio_bsrr_t *)(GPIOC_BASE_ADR+GPIO_BSRR_OFS))
+#define GPIOC_BRR  ((gpio_brr_t *)(GPIOC_BASE_ADR+GPIO_BRR_OFS))
+#define GPIOC_LCKR ((gpio_lckr_t *)(GPIOC_BASE_ADR+GPIO_LCKR_OFS))
 
 // champs mode et config registre CRL 
 #define GPIO_MODE0  0

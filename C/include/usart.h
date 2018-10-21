@@ -12,8 +12,6 @@
 #define USART_H
 
 #include "blue_pill.h"
-#include "stm32f103c8.h"
-#include "gen_macros.h"
 
 #define FLOW_SOFT 0  // XON/XOFF
 #define FLOW_HARD 1  // RTC/CTS

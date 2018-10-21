@@ -20,7 +20,7 @@
 
 
 // réinitialisation du µC
-#define _reset_mcu() ({AIRCR=(KEY<<VECTKEY)|(1<<SYSRESETREQ);})
+#define _reset_mcu() ({AIRCR->aircr=(KEY<<VECTKEY)|(1<<SYSRESETREQ);})
 
 typedef volatile uint32_t sfr_t;
 typedef volatile uint32_t* sfrp_t;

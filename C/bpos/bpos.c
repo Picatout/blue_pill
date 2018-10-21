@@ -11,10 +11,8 @@
 
 //#include <stdlib.h> 
 //#include <string.h>
-#include "../include/core.h"
-#include "../include/stm32f103c8.h"
-#include "../include/gen_macros.h"
 #include "../include/blue_pill.h"
+#include "../include/stm32f103c8.h"
 #include "../include/nvic.h"
 #include "../include/usart.h"
 #include "../include/console.h"
@@ -600,8 +598,8 @@ void main(void){
 	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,proga&0xfffffffe,NUL); conout(CR);
 	_svc_call(SVC_LED_ON,NUL,NUL);
 	flush_rx_queue();
-	unsigned llen;
-	while (1){
+	unsigned llen;// char c;
+	while (1){ // if ((c=conin())) conout(c);
 		llen=read_line(tib,CMD_MAX_LEN);
 		parse_line(llen);
 	}
