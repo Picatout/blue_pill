@@ -11,6 +11,8 @@
 #ifndef NVIC_H
 #define NVIC_H
 
+#include "core.h"
+
 /**************
  *  exceptions 
  *************/

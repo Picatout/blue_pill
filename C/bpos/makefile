@@ -13,7 +13,7 @@ CFLAGS = -mcpu=cortex-m3 -mthumb
 INC = ../include/
 HAL = ../hal/
 SRC = bpos.c console.c startup.c
-SRC += $(HAL)usart.c $(HAL)nvic.c $(HAL)gpio.c
+SRC += $(HAL)usart.c $(HAL)nvic.c $(HAL)gpio.c $(HAL)core.c
 
 all: build
 	

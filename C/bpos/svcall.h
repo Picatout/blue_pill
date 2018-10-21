@@ -41,12 +41,14 @@ SVC_POKE16, // écris un entier 16 bits à l'adresse donnée
 SVC_POKE32, // écris un enteir 32 bits à l'adresse donnée 
 } syscall_e;
 
-#define _svc_call(svc_no,argc,args_array) ({asm volatile (\
-	"mov r0, %1\n"\
-	"mov r1, %2\n"\
-	"svc %0\n":: "I" ((svc_no)&0xff),\
-	"r" (argc),\
-	"r" (args_array)\
+#define _svc_call(svc_no,arg1,arg2) ({asm volatile (\
+	"mov r0, %1\n\t"\
+	"mov r1, %2\n\t"\
+	"svc %0\n\t"\
+	: /*no output */\
+	: "I" ((svc_no)&0xff),\
+	 "r" (arg1), "r" (arg2)\
+	: "r0","r1"\
 	);})
 
 

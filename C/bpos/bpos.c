@@ -11,6 +11,7 @@
 
 //#include <stdlib.h> 
 //#include <string.h>
+#include "../include/core.h"
 #include "../include/stm32f103c8.h"
 #include "../include/gen_macros.h"
 #include "../include/blue_pill.h"
@@ -111,9 +112,11 @@ inline void set_timer(unsigned time){
 	timer=time;
 }
 
+
 inline unsigned get_timer(){
 	return timer;
 }
+
 
 inline uint8_t peek8(uint8_t *adr){
 	return *adr;
@@ -142,15 +145,15 @@ inline void poke32(uint32_t *adr, uint32_t value){
 // interruption multiplexeur des appels de services
 void __attribute__((__interrupt__)) SVC_handler(){
 	int svc_id;
-	void *arg1, *argv; 
+	void *arg1, *arg2; 
 	asm volatile (
-	"mrs r0,PSP\n" // optient la valeur de PSP
-	"ldr r1,[r0,#24]\n" // obtient le PC
-	//"sub r1,r1,#2\n" // PC avant le SVC
-    "ldrb %[svc_id], [r1,#-2]\n" // charge l'octet faible i.e. no de service
-    "ldr %[arg1],[r0]\n"
-    "ldr %[argv],[r0,#4]\n"
-    : [svc_id] "=r" (svc_id), [arg1] "=r" (arg1), [argv] "=r" (argv) 
+	"mrs r0,PSP\n\t" // optient la valeur de PSP
+	"ldr r1,[r0,#24]\n\t" // obtient le PC
+    "ldrb %[svc_id], [r1,#-2]\n\t" // charge l'octet faible i.e. no de service
+    "ldr %[arg1],[r0]\n\t"
+    "ldr %[arg2],[r0,#4]\n\t"
+    : [svc_id] "=r" (svc_id), [arg1] "=r" (arg1), [arg2] "=r" (arg2)
+    :: "r0","r1" 
     );
 	switch (svc_id){
 	case SVC_LED_ON: 
@@ -172,7 +175,7 @@ void __attribute__((__interrupt__)) SVC_handler(){
 		conout(*(char *)arg1);
 		break;
 	case SVC_READLN:
-		*(unsigned *)arg1=read_line((char *)argv,*(unsigned *)arg1);
+		*(unsigned *)arg1=read_line((char *)arg2,*(unsigned *)arg1);
 		break;
 	case SVC_PRINT:
 		print((const char*)arg1);
@@ -193,13 +196,13 @@ void __attribute__((__interrupt__)) SVC_handler(){
 		*(uint32_t*)arg1=peek32((uint32_t*)*(uint32_t*)arg1);
 		break;
 	case SVC_POKE8:
-		poke8((uint8_t*)*(uint32_t *)arg1,*(uint8_t*)argv);
+		poke8((uint8_t*)*(uint32_t *)arg1,*(uint8_t*)arg2);
 		break;
 	case SVC_POKE16:
-		poke16((uint16_t*)(*(uint32_t*)arg1),*(uint16_t*)argv);
+		poke16((uint16_t*)(*(uint32_t*)arg1),*(uint16_t*)arg2);
 		break;
 	case SVC_POKE32:
-		poke32((uint32_t*)(*(uint32_t*)arg1),*(uint32_t*)argv);
+		poke32((uint32_t*)(*(uint32_t*)arg1),*(uint32_t*)arg2);
 		break;
 /*	
 	case SVC_PRIVILIGED:
@@ -289,7 +292,7 @@ const char *VERSION="bpos version 0.1\n";
 #define CMD_MAX_LEN 80
 
 static char tib[CMD_MAX_LEN];
-static char pad[CMD_MAX_LEN];
+static volatile char pad[CMD_MAX_LEN];
 static unsigned in;
 
 typedef struct shell_cmd{
@@ -317,9 +320,9 @@ static void cmd_led_off(){
 
 // démarre la minuterie
 static void cmd_set_timer(){
-	int n;
+	volatile int n;
 	word();
-	n=atoi(pad);
+	n=atoi((const char*)pad);
 	_svc_call(SVC_TIMER,&n,NUL);
 }
 
@@ -329,13 +332,13 @@ static void cmd_get_timer(){
 
 // attend l'expiration de la minuterie
 static void cmd_pause(){
-	unsigned tm;
+	volatile unsigned tm;
 	_pause(tm);
 }
 
 // reçoit un caractère dans pad
 static void cmd_getc(){
-	char n=0;
+	volatile char n=0;
 	while (!n){
 		_svc_call(SVC_CONIN,&n,NUL);
 	}
@@ -347,7 +350,7 @@ static void cmd_getc(){
 static void cmd_putc(){
 	int cmd_id;
 	word();
-	cmd_id=search_command(pad);
+	cmd_id=search_command((const char*)pad);
 	if (cmd_id>-1) commands[cmd_id].fn();
 	_svc_call(SVC_CONOUT,pad,NUL);
 }
@@ -355,13 +358,12 @@ static void cmd_putc(){
 static void cmd_readln(){
 	unsigned llen=80;
 	_svc_call(SVC_READLN,&llen,pad);
-	print(pad);
+	print((const char*)pad);
 }
 
 static void cmd_print(){
-	in=skip(tib,in,SPACE);
-	_svc_call(SVC_PRINT,&tib[in],NUL);
-	while (tib[in]) in++;
+	word();
+	_svc_call(SVC_PRINT,pad,NUL);
 }
 
 
@@ -373,7 +375,7 @@ static void cmd_run(){
 static void cmd_peek8(){
 	uint32_t u;
 	word();
-	u=atoi(pad);
+	u=atoi((const char*)pad);
 	_svc_call(SVC_PEEK8,&u,NUL);
 	pad[0]=(unsigned char)u;
 }
@@ -381,7 +383,7 @@ static void cmd_peek8(){
 static void cmd_peek16(){
 	uint32_t u;
 	word();
-	u=atoi(pad);
+	u=atoi((const char*)pad);
 	_svc_call(SVC_PEEK16,&u,NUL);
 	pad[0]=(unsigned char)(u&0xff);
 	pad[1]=(unsigned char)((u>>8)&0xff);
@@ -391,7 +393,7 @@ static void cmd_peek32(){
 	uint32_t u;
 	int i;
 	word();
-	u=atoi(pad);
+	u=atoi((const char*)pad);
 	_svc_call(SVC_PEEK32,&u,NUL);
 	for (i=0;i<4;i++){
 		pad[i]=(unsigned char)(u&0xff);
@@ -403,9 +405,9 @@ static void cmd_poke8(){
 	uint32_t adr;
 	uint8_t u8;
 	word();
-	adr=atoi(pad);
+	adr=atoi((const char*)pad);
 	word();
-	u8=atoi(pad);
+	u8=atoi((const char*)pad);
 	_svc_call(SVC_POKE8,&adr,&u8);
 }
 
@@ -413,9 +415,9 @@ static void cmd_poke16(){
 	uint32_t adr;
 	uint16_t u16;
 	word();
-	adr=atoi(pad);
+	adr=atoi((const char*)pad);
 	word();
-	u16=atoi(pad);
+	u16=atoi((const char*)pad);
 	_svc_call(SVC_POKE16,&adr,&u16);
 }
 
@@ -423,9 +425,9 @@ static void cmd_poke32(){
 	uint32_t adr,u32;
 	
 	word();
-	adr=atoi(pad);
+	adr=atoi((const char*)pad);
 	word();
-	u32=atoi(pad);
+	u32=atoi((const char*)pad);
 	_svc_call(SVC_POKE32,&adr,&u32);
 }
 
@@ -477,6 +479,35 @@ static int scan(char *buffer, int start, char c){
 	return start;
 }
 
+// copie une chaîne entre guillemets dans pad.
+// retourne la position finale.
+static int quote(char *buffer, int start){
+	int escaped=0,end=start, i=0, in_quote=1;;
+	while (buffer[end]&& in_quote){
+		switch (buffer[end]){
+		case '"':
+			if (!escaped) {in_quote=0;} else{pad[i++]='"'; escaped=0;}
+			break;
+		case '\\':
+			if (!escaped){
+				escaped=1;
+			}else{
+				escaped=0;
+				pad[i++]=buffer[end];
+			}
+			break;
+		case 'n':
+			if (escaped) buffer[end]=CR;
+		default:
+			escaped=0;
+			pad[i++]=buffer[end];
+		}
+		end++;
+	}
+	pad[i]=0;
+	return end;
+}
+
 // retourne la longueur du prochain mot
 // 'c' est le séparateur de mots
 static int next(char *buffer, int start, char c){
@@ -499,9 +530,14 @@ static void move(char *src , char *dest, int len){
 static void word(){
 		int len;
 		in=skip(tib,in,SPACE);
-		len=next(tib,in,SPACE);
-		move(&tib[in],pad,len);
-		in+=len;
+		if (tib[in]=='"'){
+			in++;
+			in=quote(tib,in);
+		}else{
+			len=next(tib,in,SPACE);
+			move(&tib[in],(char*)pad,len);
+			in+=len;
+		}
 }
 
 static void parse_line(unsigned llen){
@@ -513,7 +549,7 @@ static void parse_line(unsigned llen){
 		if (cmd_id>-1){
 			commands[cmd_id].fn();
 		}else{
-			print(pad); conout('?');
+			print((const char*)pad); conout('?');
 			break;
 		}
 	}//while
@@ -521,9 +557,10 @@ static void parse_line(unsigned llen){
 }
 
 
-void __attribute__((section(".user_code"),noinline,used,optimize(0))) blink(){
-	unsigned int  delay=500, tm;
-	char c=0;
+void __attribute__((section(".user_code"),noinline,used/*,optimize(0)*/)) blink(){
+	volatile unsigned int  delay=500;
+	volatile unsigned int tm;
+	volatile char c=0;
 	
 	
 	while(1){
