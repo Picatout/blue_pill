@@ -49,10 +49,10 @@ void __attribute__((__interrupt__)) SVC_handler(){
     );
 	switch (svc_id){
 	case SVC_LED_ON: 
-		GPIOC_BRR=GRN_LED;
+		GPIOC_BRR->brr=GRN_LED;
 		break;
 	case SVC_LED_OFF:
-		GPIOC_BSRR=GRN_LED;
+		GPIOC_BSRR->bsrr=GRN_LED;
 		break;
 	case SVC_TIMER: 
 		timer=argc;
@@ -71,7 +71,7 @@ void __attribute__((__interrupt__)) SVC_handler(){
 }
 
 // interruption coretimer
-void __attribute__((__interrupt__)) STK_handler(){
+void __attribute__((__interrupt__)) SYSTICK_handler(){
 	ticks++;
 	if (timer) {timer--;}
 }
@@ -80,24 +80,24 @@ void __attribute__((__interrupt__)) STK_handler(){
 // en utilisant le cristal externe (HSE) et le PLL
 static void set_sysclock(){
 	 // active l'oscillateur externe
-	RCC_CR|=1<<RCC_CR_HSEON;
+	RCC_CR->fld.hseon=1;
 	 // attend que l'oscillateur soit prêt
-   while (! (RCC_CR & (1<<RCC_CR_HSERDY)));
+   while (!RCC_CR->fld.hserdy);
      // sélection PREDIV1 pour la source du PLL
      // multiplie la fréquence HSE par 9 
      // pour une fréquence maximale Fsysclk de 72 Mhz
-    RCC_CFGR|=(PLLSRC_PREDIV1<<RCC_CFGR_PLLSRC)|(PLLMUL9<<RCC_CFGR_PLLMUL);
+    RCC_CFGR->cfgr|=(PLLSRC_PREDIV1<<RCC_CFGR_PLLSRC)|(PLLMUL9<<RCC_CFGR_PLLMUL);
     // active le PLL
-    RCC_CR|=1<<RCC_CR_PLLON;
+    RCC_CR->fld.pllon=1;
     // Attend que le PLL soit prêt
-    while (! (RCC_CR & (1<<RCC_CR_PLLRDY)));
+    while (!RCC_CR->fld.pllrdy);
     // ajoute délais d'accès à la mémoire flash
-    FLASH_ACR|=WAIT_2_CY;
+    FLASH_ACR->fld.latency=WAIT_2_CY;
     // SélectionNE le PLL comme source pour SYSCLK
-    RCC_CFGR|=PLL_CLK<<RCC_CFGR_SW;
+    RCC_CFGR->fld.sw=PLL_CLK;
 	// La fréquence maximale pour APB1 doit-être de 36 Mhz
 	// donc divise SYSCLK/2
-	RCC_CFGR|=PPRECLK_DIV2<<RCC_CFGR_PPRE1;
+	RCC_CFGR->fld.ppre1=PPRECLK_DIV2;
 }
 
 // configure SYSTICKS pour un cycle 1 msec
@@ -105,8 +105,8 @@ static void set_sysclock(){
 // valeur reload 72Mhz/8/1000=9000
 #define MSEC_DLY 9000
 static void config_systicks(){
-	STK_LOAD=MSEC_DLY-1;
-	STK_CTRL=(1<<STK_TICKINT)|(1<<STK_ENABLE);
+	SYST_RVR=MSEC_DLY-1;
+	SYST_CSR->csr=(1<<SYST_TICKINT)|(1<<SYST_ENABLE);
 }
 
 #define _mask_cnf(cnf,bit) (cnf & ~(CNF_MASK<<((bit&7)*4)))
@@ -114,16 +114,16 @@ static void config_systicks(){
 // PC13 mode{0:1}=10, CNF{2:3}=01 -> 6
 #define PC13_CNF 6
 static void port_c_setup(){
-	RCC_APB2ENR|=1<<GPIOC_EN;
-	GPIOC_CRH=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
+	APB2ENR->fld.iopcen=1;
+	GPIOC_CRH->cr=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
 }
 
-inline static void led_on(){
-	GPIOC_BRR=GRN_LED;
+static inline void led_on(){
+	GPIOC_BRR->brr=GRN_LED;
 }
 
-inline static void led_off(){
-	GPIOC_BSRR=GRN_LED;
+static inline void led_off(){
+	GPIOC_BSRR->bsrr=GRN_LED;
 }
 
 // délais en millisecondes

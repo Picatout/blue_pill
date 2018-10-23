@@ -9,7 +9,9 @@
  * 
  */
  
-#include "../include/stm32f103c8.h"
+#include "../include/blue_pill.h"
+
+
 
 #define LED_PIN (13)
 #define GRN_LED (1<<LED_PIN)
@@ -19,17 +21,17 @@
 #define _apply_cnf(cnf,bit,pin_cnf) (_mask_cnf(cnf,bit) | pin_cnf<<((bit&7)*4)) 
 // PC13 mode{0:1}=10, CNF{2:3}=01 -> 6
 #define PC13_CNF 6
-static void port_c_setup(){
-	RCC_APB2ENR|=1<<GPIOC_EN;
-	GPIOC_CRH=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
+void port_c_setup(){
+	APB2ENR->fld.iopcen=1;
+	GPIOC_CRH->cr=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
 }
 
 inline static void led_on(){
-	GPIOC_BRR=GRN_LED;
+	GPIOC_BRR->brr=GRN_LED;
 }
 
 inline static void led_off(){
-	GPIOC_BSRR=GRN_LED;
+	GPIOC_BSRR->bsrr=GRN_LED;
 }
 
 inline static void delay(unsigned dly){

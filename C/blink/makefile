@@ -4,6 +4,9 @@ all:
 	@echo "Make targets"
 	@cat makefile | grep '^[a-zA-Z]' | sed 's/:.*//g' | sed 's/^/  /g'
 
+flash: 
+	st-flash write blink.bin 0x8000000
+
 build: blink.c startup.c stm32.ld clean
 	@echo
 	@echo "Build production image"

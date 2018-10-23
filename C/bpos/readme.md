@@ -9,8 +9,20 @@ bpos demo
    0 | SVC_RESET | aucun | réinitialise le µC
    1 | SVC_LED_ON | aucun | allume la LED verte
    2 | SVC_LED_OFF | aucun | éteint la LED verte
-   3 | SVC_TIMER | durée en msec | démarre la minuterie
-   4 | SVC_PRIVILIGED | aucun | accorde tous les privilèges au programme
+   3 | SVC_TIMER | uint32_t* | démarre la minuterie
+   4 | SVC_GET_TIMER | uint32_t* | retourne la valeur de la variable timer
+   5 | SVC_CONIN| char* | reçoit un caractère de la console
+   6 | SVC_CONOUT| char* | envoie un caractère à la console
+   7 | SVC_READLN| char*, int* | lit une ligne de la console
+   8 | SVC_PRINT| char* | imprime une chaine
+   9 | SVC_PRINT_INT| int* | imprime un entier
+  10 | SVC_PRINT_HEX| uint32_t* | imprime un entier en format hexadécimal
+  11 | SVC_PEEK8| uint32_t* | lit un entier 8 bits à l'adresse donnée
+  12 | SVC_PEEK16| uint32_t* | lit un entier 16 bits à l'acresse donnée
+  13 | SVC_PEEK32| uint32_t* | lit un entier 32 bits à l'adresse donnée
+  14 | SVC_POKE8| uint32_t*, uint8_t* | écris un entier 8 bits à l'adresse donnée
+  15 | SVC_POKE16| uint32_t*,uint16_t* | écris un entier 16 bits à l'adresse donnée
+  16 | SVC_POKE32| uint32_t*,uint32_t*| écris un entier 32 bits à l'adresse donnée 
    
    
 La macro **_svc_call()** code en assembleur les appels système. Le registre cpu **r0** contient le premier argument et le registre **r1** le deuxième.

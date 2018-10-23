@@ -18,12 +18,16 @@
 #define __enable_fault_irq() ({asm volatile("cpsie f");})
 #define __disable_fault_irq() ({asm volatile("cpsid f");})
 
-
 // réinitialisation du µC
 #define _reset_mcu() ({AIRCR->aircr=(KEY<<VECTKEY)|(1<<SYSRESETREQ);})
 
+typedef volatile uint8_t sfr8_t;
+typedef volatile uint8_t* sfr8p_t;
+typedef volatile uint16_t sfr16_t;
+typedef volatile uint16_t* sfr16p_t;
 typedef volatile uint32_t sfr_t;
 typedef volatile uint32_t* sfrp_t;
+
 
 // les Special Function Registers sont de de 32 bits.
 // Ces pointeurs doivent avoir l'attribut volatile

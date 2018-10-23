@@ -12,24 +12,12 @@
 #define RTC_H
 
 #include "gen_macros.h"
-#include "stm32f103c8.h"
+
 
 #define FR_RTC_OSC 32768
 // valeur de RTC_PR pour obtenir la période x
-#define _rtc_period_msec(x)  (FR_RTC_OSC*x/1000-1)
+#define _rtc_period_msec(x)  (FR_RTC_OSC*(x)/1000-1)
 
-// champs de bit du registre RCC_BDCR
-#define BDCR_LSEON 0 // 1 bit activation oscillateur LSE
-#define BDCR_LSERDY 1 // 1 bit, oscillateur prêt
-#define BDCR_LSEBYP 2 // 1 bit, contourne l'oscillateur LSE
-#define BDCR_RTCSEL 8 // 2 bits, sélectionne le clock du RTC 
-						// 00: No clock
-						// 01: LSE oscillator clock used as RTC clock
-						// 10: LSI oscillator clock used as RTC clock
-						// 11: HSE oscillator clock divided by 128 used as RTC clock
-#define BDCR_RTCEN 15 // 1 bit, activation RTC						
-#define BDCR_BDRST 16 // 1 bit, réinitialisation du backup domain.
-  
 // source clock pour RTC
 #define RTC_NOCLK 0
 #define RTC_LSECLK 1
@@ -39,21 +27,26 @@
 
 #define RTC_BASE_ADR 0x40002800
 
-#define RTC_CRH _sfr(RTC_BASE_ADR)
-#define RTC_CRL _sfr(RTC_BASE_ADR+4)
-#define RTC_PRLH _sfr(RTC_BASE_ADR+8)
-#define RTC_PRLL _sfr(RTC_BASE_ADR+0xc)
-#define RTC_DIVH _sfr(RTC_BASE_ADR+0x10)
-#define RTC_DIVL _sfr(RTC_BASE_ADR+0x14)
-#define RTC_CNTH _sfr(RTC_BASE_ADR+0x18)
-#define RTC_CNTL _sfr(RTC_BASE_ADR+0x1c)
-#define RTC_ALRH _sfr(RTC_BASE_ADR+0x20)
-#define RTC_ALRL _sfr(RTC_BASE_ADR+0x24)
 
+#define RTC_CRH_ADR (RTC_BASE_ADR)
 // champs de bits registre RTC_CRH
 #define RTC_CRH_SECIE (0) // 1 bit, activation interruption sur débordement compteur RTC_DIV
 #define RTC_CRH_ALRIE (1) // 1 bit, activation interruption sur alarme. ie. RTC_CNT==RCT_ALR
 #define RTC_CRH_OWIE  (2) // 1 bit, activation interruption sur débordement RTC_CNT
+
+typedef union{
+	sfr16_t crh;
+	struct{
+		sfr16_t secie:1;
+		sfr16_t alrie:1;
+		sfr16_t owie:1;
+		sfr16_t res0:13;
+	}fld;
+}rtc_crh_t;
+
+#define RTC_CRH ((rtc_crh_t*)RTC_CRH_ADR)
+
+#define RTC_CRL_ADR (RTC_BASE_ADR+4)
 //champs de bits registre RTC_CRL
 #define RTC_CRL_SECF (0) // 1 bit, indicateur interruption débordement RTC_DIV
 #define RTC_CRL_ALRF (1) // 1 bit, indicateur interruption alarme
@@ -61,6 +54,55 @@
 #define RTC_CRL_RSF  (3) // 1 bit, indicateur synchronisation RTC_CNT et RTC_DIV
 #define RTC_CRL_CNF  (4) // 1 bit, déverrouillage écriture dans RTC_PR, RTC_ALR et RTC_CNT
 #define RTC_CRL_RTOFF (5) // 1 bit, indicateur opération écriture complétée.
+
+typedef union{
+	sfr16_t crl;
+	struct{
+		sfr16_t secf:1;
+		sfr16_t alrf:1;
+		sfr16_t owf:1;
+		sfr16_t rsf:1;
+		sfr16_t cnf:1;
+		sfr16_t rtoff:1;
+		sfr16_t res0:10; 
+	}fld;
+} rtc_crl_t;
+
+#define RTC_CRL ((rtc_crl_t*)RTC_CRL_ADR)
+
+#define RTC_PRLH_ADR (RTC_BASE_ADR+8)
+typedef struct{
+	sfr16_t prl:4;
+	sfr16_t res0:12;
+}rtc_prlh_t;
+
+#define RTC_PRLH ((rtc_prlh_t*)RTC_PRLH_ADR)
+
+#define RTC_PRLL_ADR (RTC_BASE_ADR+0xc)
+#define RTC_PRLL ((sfr16p_t) RTC_PRLL_ADR)
+
+#define RTC_DIVH_ADR (RTC_BASE_ADR+0x10)
+typedef struct{
+	sfr16_t rtc_div:4;
+	sfr16_t res0:12;
+} rtc_divh_t;
+
+#define RTC_DIVH ((rtc_divh_t*)RTC_DIVH_ADR)
+
+#define RTC_DIVL_ADR (RTC_BASE_ADR+0x14)
+#define RTC_DIVL ((sfr16p_t) RTC_DIVL_ADR)
+
+#define RTC_CNTH_ADR (RTC_BASE_ADR+0x18)
+#define RTC_CNTH ((sfr16p_t) RTC_CNTH_ADR)
+
+#define RTC_CNTL_ADR (RTC_BASE_ADR+0x1c)
+#define RTC_CNTL ((sfr16p_t) RTC_CNTL_ADR)
+
+#define RTC_ALRH_ADR (RTC_BASE_ADR+0x20)
+#define RTC_ALRH ((sfr16p_t) RTC_ALRH_ADR)
+
+#define RTC_ALRL_ADR (RTC_BASE_ADR+0x24)
+#define RTC_ALRL ((sfr16p_t) RTC_ALRL_ADR)
 
 // seconde par minute
 #define SEC_PER_MIN 60
@@ -92,7 +134,7 @@
  *   API
  **************/
 
-#define _wait_rtc_write()  ({while (! (RTC_CRL & (1<<RTC_CRL_RTOFF)));})
+#define _wait_rtc_write()  ({while (!RTC_CRL->fld.rtoff);})
  
 typedef struct date_time{
 	uint32_t second:6;

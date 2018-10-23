@@ -6,29 +6,32 @@ all:
 	@echo "Construction des cibles"
 	@cat makefile | grep '^[a-zA-Z]' | sed 's/:.*//g' | sed 's/^/  /g'
 
-build: svc_demo.c $(HAL)startup.c $(HAL)nvic.c stm32.ld clean
+flash:
+	st-flash write svc_demo.bin 0x8000000
+
+build: svc_demo.c startup.c $(HAL)nvic.c stm32.ld clean
 	@echo
 	@echo "Construction de l'image de production sans optimisation"
 	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o svc_demo.o svc_demo.c
-	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o startup.o $(HAL)startup.c
+	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o startup.o startup.c
 	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o nvic.o $(HAL)nvic.c
 	arm-none-eabi-ld -Tstm32.ld -o svc_demo.elf startup.o svc_demo.o nvic.o
 	arm-none-eabi-objcopy -O binary svc_demo.elf svc_demo.bin
 
-build_O1: svc_demo.c $(HAL)startup.c $(HAL)nvic.c stm32.ld clean
+build_O1: svc_demo.c startup.c $(HAL)nvic.c stm32.ld clean
 	@echo
 	@echo "construction de l'image de débogage avec optimisation -O1"
 	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o svc_demo.o svc_demo.c
-	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o startup.o $(HAL)startup.c
+	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
 	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o nvic.o $(HAL)nvic.c
 	arm-none-eabi-ld -Tstm32.ld -o svc_demo.elf startup.o svc_demo.o nvic.o
 	arm-none-eabi-objcopy -O binary svc_demo.elf svc_demo.bin
 
-build_debug: svc_demo.c $(HAL)startup.c $(HAL)nvic.c stm32.ld clean
+build_debug: svc_demo.c startup.c $(HAL)nvic.c stm32.ld clean
 	@echo
 	@echo "Construction d'une image pour débogage"
 	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o svc_demo.o svc_demo.c
-	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o startup.o $(HAL)startup.c
+	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
 	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o nvic.o $(HAL)nvic.c
 	arm-none-eabi-ld -Tstm32.ld -o svc_demo.elf startup.o svc_demo.o nvic.o
 	arm-none-eabi-objcopy -O binary svc_demo.elf svc_demo.bin

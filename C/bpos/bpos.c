@@ -12,11 +12,9 @@
 //#include <stdlib.h> 
 //#include <string.h>
 #include "../include/blue_pill.h"
-#include "../include/stm32f103c8.h"
 #include "../include/nvic.h"
 #include "../include/usart.h"
 #include "../include/console.h"
-#include "../include/gpio.h"
 #include "svcall.h"
 
 #define _pause(tm)  ({do {_svc_call(SVC_GET_TIMER,&tm,NUL);} while (tm);})
@@ -98,45 +96,45 @@ static void word();
 
 // routine de services
 
-inline void led_on(){
+static inline void led_on(){
 	GPIOC_BRR->brr=GRN_LED;
 }
 
-inline void led_off(){
+static inline void led_off(){
 	GPIOC_BSRR->bsrr=GRN_LED;
 }
 
-inline void set_timer(unsigned time){
+static inline void set_timer(unsigned time){
 	timer=time;
 }
 
 
-inline unsigned get_timer(){
+static inline unsigned get_timer(){
 	return timer;
 }
 
 
-inline uint8_t peek8(uint8_t *adr){
+static inline uint8_t peek8(uint8_t *adr){
 	return *adr;
 }
 
-inline uint16_t peek16(uint16_t *adr){
+static inline uint16_t peek16(uint16_t *adr){
 	return *adr;
 }
 
-inline uint32_t peek32(uint32_t *adr){
+static inline uint32_t peek32(uint32_t *adr){
 	return *adr;
 }
 
-inline void poke8(uint8_t *adr, uint8_t value){
+static inline void poke8(uint8_t *adr, uint8_t value){
 	*adr=value;
 }
 
-inline void poke16(uint16_t *adr, uint16_t value){
+static inline void poke16(uint16_t *adr, uint16_t value){
 	*adr=value;
 }
 
-inline void poke32(uint32_t *adr, uint32_t value){
+static inline void poke32(uint32_t *adr, uint32_t value){
 	*adr=value;
 }
 
@@ -228,24 +226,24 @@ void __attribute__((naked)) STK_handler(){
 // en utilisant le cristal externe (HSE) et le PLL
 static void set_sysclock(){
 	 // active l'oscillateur externe
-	RCC_CR|=1<<RCC_CR_HSEON;
+	RCC_CR->fld.hseon=1;
 	 // attend que l'oscillateur soit prêt
-   while (! (RCC_CR & (1<<RCC_CR_HSERDY)));
+   while (!RCC_CR->fld.hserdy);
      // sélection PREDIV1 pour la source du PLL
      // multiplie la fréquence HSE par 9 
      // pour une fréquence maximale Fsysclk de 72 Mhz
-    RCC_CFGR|=(PLLSRC_PREDIV1<<RCC_CFGR_PLLSRC)|(PLLMUL9<<RCC_CFGR_PLLMUL);
+    RCC_CFGR->cfgr|=(PLLSRC_PREDIV1<<RCC_CFGR_PLLSRC)|(PLLMUL9<<RCC_CFGR_PLLMUL);
     // active le PLL
-    RCC_CR|=1<<RCC_CR_PLLON;
+    RCC_CR->fld.pllon=1;
     // Attend que le PLL soit prêt
-    while (! (RCC_CR & (1<<RCC_CR_PLLRDY)));
+    while (!RCC_CR->fld.pllrdy);
     // ajoute délais d'accès à la mémoire flash
-    FLASH_ACR|=WAIT_2_CY;
+    FLASH_ACR->fld.latency=WAIT_2_CY;
     // SélectionNE le PLL comme source pour SYSCLK
-    RCC_CFGR|=PLL_CLK<<RCC_CFGR_SW;
+    RCC_CFGR->fld.sw=PLL_CLK;
 	// La fréquence maximale pour APB1 doit-être de 36 Mhz
 	// donc divise SYSCLK/2
-	RCC_CFGR|=PPRECLK_DIV2<<RCC_CFGR_PPRE1;
+	RCC_CFGR->fld.ppre1=PPRECLK_DIV2;
 }
 
 // configure SYSTICKS pour un cycle 1 msec
@@ -253,8 +251,8 @@ static void set_sysclock(){
 // valeur reload 72Mhz/8/1000=9000
 #define MSEC_DLY 9000
 static void config_systicks(){
-	STK_LOAD=MSEC_DLY-1;
-	STK_CTRL=(1<<STK_TICKINT)|(1<<STK_ENABLE);
+	SYST_RVR=MSEC_DLY-1;
+	SYST_CSR->csr=(1<<SYST_TICKINT)|(1<<SYST_ENABLE);
 }
 
 #define _mask_cnf(cnf,bit) (cnf & ~(CNF_MASK<<((bit&7)*4)))
@@ -262,7 +260,7 @@ static void config_systicks(){
 // PC13 mode{0:1}=10, CNF{2:3}=01 -> 6
 #define PC13_CNF 6
 static void port_c_setup(){
-	RCC_APB2ENR|=1<<GPIOC_EN;
+	APB2ENR->fld.iopcen=1;
 	GPIOC_CRH->cr=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
 }
 

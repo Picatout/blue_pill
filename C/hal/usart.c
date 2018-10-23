@@ -42,7 +42,7 @@ void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
 	
 	switch(channel){ // activation du périphérique USART et du PORT
 	case USART1:
-		RCC_APB2ENR|=(1<<RCC_APB2ENR_USART1EN)|(1<<RCC_APB2ENR_IOPAEN);
+		APB2ENR->apb2enr|=(1<<RCC_APB2ENR_USART1EN)|(1<<RCC_APB2ENR_IOPAEN);
 		// PA9 -> TX   output (push-pull)
 		// PA10 -> RX  input (floating)
 		// PA11 -> CTS input (floating)
@@ -53,8 +53,8 @@ void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
 		enable_interrupt(USART1_IRQ);
 		break;
 	case USART2:
-		RCC_APB1ENR|=(1<<RCC_APB1ENR_USART2EN);
-		RCC_APB2ENR|=(1<<RCC_APB2ENR_IOPAEN);
+		APB1ENR->fld.usart2en=1;
+		APB2ENR->fld.iopaen=1;
 		// PA0 -> CTS input   (floating)
 		// PA1 -> RTS output  (push-pull)
 		// PA2 -> TX  output (push-pull)
@@ -65,8 +65,8 @@ void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
 		enable_interrupt(USART2_IRQ);
 		break;
 	case USART3:
-		RCC_APB1ENR|=1<<RCC_APB1ENR_USART3EN;
-		RCC_APB2ENR|=(1<<RCC_APB2ENR_IOPBEN);
+		APB1ENR->fld.usart3en=1;
+		APB2ENR->fld.iopben=1;
 		//PB10 -> TX output (push-pull)
 		//PB11 -> RX input (floating)
 		//PB13 -> CTS input (floating)

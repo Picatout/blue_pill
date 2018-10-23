@@ -2,6 +2,9 @@ all:
 	@echo "Construction des cibles"
 	@cat makefile | grep '^[a-zA-Z]' | sed 's/:.*//g' | sed 's/^/  /g'
 
+flash:
+	st-flash write blink_v2.bin 0x8000000
+
 build: blink_v2.c startup.c stm32.ld clean
 	@echo
 	@echo "Construction de l'image de production sans optimisation"

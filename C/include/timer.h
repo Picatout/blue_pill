@@ -56,13 +56,13 @@ typedef union{
 		sfr_t arpe:1;
 		sfr_t ckd:2;
 		sfr_t reserved: 22;
-	}field;
+	}fld;
 } timer_cr1_t;
 
-timer_cr1_t* TIMER1_CR1= (timer_cr1_t*)(TIMER1_BASE_ADR+TMR_CR1_OFS);
-timer_cr1_t* TIMER2_CR1= (timer_cr1_t*)(TIMER2_BASE_ADR+TMR_CR1_OFS);
-timer_cr1_t* TIMER3_CR1= (timer_cr1_t*)(TIMER3_BASE_ADR+TMR_CR1_OFS);
-timer_cr1_t* TIMER4_CR1= (timer_cr1_t*)(TIMER4_BASE_ADR+TMR_CR1_OFS);
+#define TIMER1_CR1 ((timer_cr1_t*)(TIMER1_BASE_ADR+TMR_CR1_OFS))
+#define TIMER2_CR1 ((timer_cr1_t*)(TIMER2_BASE_ADR+TMR_CR1_OFS))
+#define TIMER3_CR1 ((timer_cr1_t*)(TIMER3_BASE_ADR+TMR_CR1_OFS))
+#define TIMER4_CR1 ((timer_cr1_t*)(TIMER4_BASE_ADR+TMR_CR1_OFS))
 
 typedef union{
 	sfr_t cr2;
@@ -72,13 +72,13 @@ typedef union{
 		sfr_t mms:3;
 		sfr_t ti1s:1;
 		sfr_t reserved1:24;
-	}field;
+	}fld;
 } timer_cr2_t;
 
- timer_cr2_t* TIMER1_CR2= (timer_cr2_t*)(TIMER1_BASE_ADR+TMR_CR2_OFS);
- timer_cr2_t* TIMER2_CR2= (timer_cr2_t*)(TIMER2_BASE_ADR+TMR_CR2_OFS);
- timer_cr2_t* TIMER3_CR2= (timer_cr2_t*)(TIMER3_BASE_ADR+TMR_CR2_OFS);
- timer_cr2_t* TIMER4_CR2= (timer_cr2_t*)(TIMER4_BASE_ADR+TMR_CR2_OFS);
+#define TIMER1_CR2 ((timer_cr2_t*)(TIMER1_BASE_ADR+TMR_CR2_OFS))
+#define TIMER2_CR2 ((timer_cr2_t*)(TIMER2_BASE_ADR+TMR_CR2_OFS))
+#define TIMER3_CR2 ((timer_cr2_t*)(TIMER3_BASE_ADR+TMR_CR2_OFS))
+#define TIMER4_CR2 ((timer_cr2_t*)(TIMER4_BASE_ADR+TMR_CR2_OFS))
 
 typedef union{
 	sfr_t smcr;
@@ -92,13 +92,13 @@ typedef union{
 		sfr_t ece:1;
 		sfr_t etp:1;
 		sfr_t reserved1:16;
-	}field;
+	}fld;
 } timer_smcr_t;
 
- timer_smcr_t* TIMER1_SMCR= (timer_smcr_t*)(TIMER1_BASE_ADR+TMR_SMCR_OFS);
- timer_smcr_t* TIMER2_SMCR= (timer_smcr_t*)(TIMER2_BASE_ADR+TMR_SMCR_OFS);
- timer_smcr_t* TIMER3_SMCR= (timer_smcr_t*)(TIMER3_BASE_ADR+TMR_SMCR_OFS);
- timer_smcr_t* TIMER4_SMCR= (timer_smcr_t*)(TIMER4_BASE_ADR+TMR_SMCR_OFS);
+#define TIMER1_SMCR ((timer_smcr_t*)(TIMER1_BASE_ADR+TMR_SMCR_OFS))
+#define TIMER2_SMCR ((timer_smcr_t*)(TIMER2_BASE_ADR+TMR_SMCR_OFS))
+#define TIMER3_SMCR ((timer_smcr_t*)(TIMER3_BASE_ADR+TMR_SMCR_OFS))
+#define TIMER4_SMCR ((timer_smcr_t*)(TIMER4_BASE_ADR+TMR_SMCR_OFS))
 
 typedef union{
 	sfr_t dier;
@@ -119,14 +119,14 @@ typedef union{
 		sfr_t comde:1;
 		sfr_t tde:1;
 		sfr_t reserved2:17;
-	}field;
+	}fld;
 	
 } timer_dier_t;
 
- timer_dier_t* TIMER1_DIER= (timer_dier_t*)(TIMER1_BASE_ADR+TMR_DIER_OFS);
- timer_dier_t* TIMER2_DIER= (timer_dier_t*)(TIMER2_BASE_ADR+TMR_DIER_OFS);
- timer_dier_t* TIMER3_DIER= (timer_dier_t*)(TIMER3_BASE_ADR+TMR_DIER_OFS);
- timer_dier_t* TIMER4_DIER= (timer_dier_t*)(TIMER4_BASE_ADR+TMR_DIER_OFS);
+#define TIMER1_DIER ((timer_dier_t*)(TIMER1_BASE_ADR+TMR_DIER_OFS))
+#define TIMER2_DIER ((timer_dier_t*)(TIMER2_BASE_ADR+TMR_DIER_OFS))
+#define TIMER3_DIER ((timer_dier_t*)(TIMER3_BASE_ADR+TMR_DIER_OFS))
+#define TIMER4_DIER ((timer_dier_t*)(TIMER4_BASE_ADR+TMR_DIER_OFS))
 
 typedef union{
 	sfr_t sr;
@@ -146,13 +146,13 @@ typedef union{
 		sfr_t cc4df:1;
 		sfr_t comdf:1;
 		sfr_t reserved2:19;
-	}field;
+	}fld;
 } timer_sr_t;
 
- timer_sr_t* TIMER1_SR= (timer_sr_t*)(TIMER1_BASE_ADR+TMR_SR_OFS);
- timer_sr_t* TIMER2_SR= (timer_sr_t*)(TIMER2_BASE_ADR+TMR_SR_OFS);
- timer_sr_t* TIMER3_SR= (timer_sr_t*)(TIMER3_BASE_ADR+TMR_SR_OFS);
- timer_sr_t* TIMER4_SR= (timer_sr_t*)(TIMER4_BASE_ADR+TMR_SR_OFS);
+#define TIMER1_SR ((timer_sr_t*)(TIMER1_BASE_ADR+TMR_SR_OFS))
+#define TIMER2_SR ((timer_sr_t*)(TIMER2_BASE_ADR+TMR_SR_OFS))
+#define TIMER3_SR ((timer_sr_t*)(TIMER3_BASE_ADR+TMR_SR_OFS))
+#define TIMER4_SR ((timer_sr_t*)(TIMER4_BASE_ADR+TMR_SR_OFS))
 
 
 typedef union{
@@ -167,13 +167,13 @@ typedef union{
 		sfr_t tg:1;
 		sfr_t reserved1:25;
 		
-	}field;
+	}fld;
 } timer_egr_t;
 
- timer_egr_t* TIMER1_EGR= (timer_egr_t*)(TIMER1_BASE_ADR+TMR_EGR_OFS);
- timer_egr_t* TIMER2_EGR= (timer_egr_t*)(TIMER2_BASE_ADR+TMR_EGR_OFS);
- timer_egr_t* TIMER3_EGR= (timer_egr_t*)(TIMER3_BASE_ADR+TMR_EGR_OFS);
- timer_egr_t* TIMER4_EGR= (timer_egr_t*)(TIMER4_BASE_ADR+TMR_EGR_OFS);
+#define TIMER1_EGR ((timer_egr_t*)(TIMER1_BASE_ADR+TMR_EGR_OFS))
+#define TIMER2_EGR ((timer_egr_t*)(TIMER2_BASE_ADR+TMR_EGR_OFS))
+#define TIMER3_EGR ((timer_egr_t*)(TIMER3_BASE_ADR+TMR_EGR_OFS))
+#define TIMER4_EGR ((timer_egr_t*)(TIMER4_BASE_ADR+TMR_EGR_OFS))
 
 // ccmr1 output compare mode
 typedef union{
@@ -190,14 +190,14 @@ typedef union{
 		sfr_t oc2m:3;
 		sfr_t oc2ce:1;
 		sfr_t reserved0:16; 
-	}field;
+	}fld;
 	
 } timer_ccmr1_ocm_t;
 
- timer_ccmr1_ocm_t* TIMER1_CCMR1_OCM= (timer_ccmr1_ocm_t*)(TIMER1_BASE_ADR+TMR_CCMR1_OCM_OFS);
- timer_ccmr1_ocm_t* TIMER2_CCMR1_OCM= (timer_ccmr1_ocm_t*)(TIMER2_BASE_ADR+TMR_CCMR1_OCM_OFS);
- timer_ccmr1_ocm_t* TIMER3_CCMR1_OCM= (timer_ccmr1_ocm_t*)(TIMER3_BASE_ADR+TMR_CCMR1_OCM_OFS);
- timer_ccmr1_ocm_t* TIMER4_CCMR1_OCM= (timer_ccmr1_ocm_t*)(TIMER4_BASE_ADR+TMR_CCMR1_OCM_OFS);
+#define TIMER1_CCMR1_OCM ((timer_ccmr1_ocm_t*)(TIMER1_BASE_ADR+TMR_CCMR1_OCM_OFS))
+#define TIMER2_CCMR1_OCM ((timer_ccmr1_ocm_t*)(TIMER2_BASE_ADR+TMR_CCMR1_OCM_OFS))
+#define TIMER3_CCMR1_OCM ((timer_ccmr1_ocm_t*)(TIMER3_BASE_ADR+TMR_CCMR1_OCM_OFS))
+#define TIMER4_CCMR1_OCM ((timer_ccmr1_ocm_t*)(TIMER4_BASE_ADR+TMR_CCMR1_OCM_OFS))
 
 // ccmr1 input capture mode
 typedef union{
@@ -210,13 +210,13 @@ typedef union{
 		sfr_t ic2psc:2;
 		sfr_t ic2f:4;
 		sfr_t reserved0:16;
-	}field;
+	}fld;
 } timer_ccmr1_icm_t;
 
- timer_ccmr1_icm_t* TIMER1_CCMR1_ICM= (timer_ccmr1_icm_t*)(TIMER1_BASE_ADR+TMR_CCMR1_ICM_OFS);
- timer_ccmr1_icm_t* TIMER2_CCMR1_ICM= (timer_ccmr1_icm_t*)(TIMER2_BASE_ADR+TMR_CCMR1_ICM_OFS);
- timer_ccmr1_icm_t* TIMER3_CCMR1_ICM= (timer_ccmr1_icm_t*)(TIMER3_BASE_ADR+TMR_CCMR1_ICM_OFS);
- timer_ccmr1_icm_t* TIMER4_CCMR1_ICM= (timer_ccmr1_icm_t*)(TIMER4_BASE_ADR+TMR_CCMR1_ICM_OFS);
+#define TIMER1_CCMR1_ICM ((timer_ccmr1_icm_t*)(TIMER1_BASE_ADR+TMR_CCMR1_ICM_OFS))
+#define TIMER2_CCMR1_ICM ((timer_ccmr1_icm_t*)(TIMER2_BASE_ADR+TMR_CCMR1_ICM_OFS))
+#define TIMER3_CCMR1_ICM ((timer_ccmr1_icm_t*)(TIMER3_BASE_ADR+TMR_CCMR1_ICM_OFS))
+#define TIMER4_CCMR1_ICM ((timer_ccmr1_icm_t*)(TIMER4_BASE_ADR+TMR_CCMR1_ICM_OFS))
 
 // ccmr2 output compare mode
 typedef union{
@@ -233,14 +233,14 @@ typedef union{
 		sfr_t oc2m:3;
 		sfr_t oc2ce:1;
 		sfr_t reserved0:16; 
-	}field;
+	}fld;
 	
 } timer_ccmr2_ocm_t;
 
- timer_ccmr2_ocm_t* TIMER1_CCMR2_OCM= (timer_ccmr2_ocm_t*)(TIMER1_BASE_ADR+TMR_CCMR2_OCM_OFS);
- timer_ccmr2_ocm_t* TIMER2_CCMR2_OCM= (timer_ccmr2_ocm_t*)(TIMER2_BASE_ADR+TMR_CCMR2_OCM_OFS);
- timer_ccmr2_ocm_t* TIMER3_CCMR2_OCM= (timer_ccmr2_ocm_t*)(TIMER3_BASE_ADR+TMR_CCMR2_OCM_OFS);
- timer_ccmr2_ocm_t* TIMER4_CCMR2_OCM= (timer_ccmr2_ocm_t*)(TIMER4_BASE_ADR+TMR_CCMR2_OCM_OFS);
+#define TIMER1_CCMR2_OCM ((timer_ccmr2_ocm_t*)(TIMER1_BASE_ADR+TMR_CCMR2_OCM_OFS))
+#define TIMER2_CCMR2_OCM ((timer_ccmr2_ocm_t*)(TIMER2_BASE_ADR+TMR_CCMR2_OCM_OFS))
+#define TIMER3_CCMR2_OCM ((timer_ccmr2_ocm_t*)(TIMER3_BASE_ADR+TMR_CCMR2_OCM_OFS))
+#define TIMER4_CCMR2_OCM ((timer_ccmr2_ocm_t*)(TIMER4_BASE_ADR+TMR_CCMR2_OCM_OFS))
 
 // ccmr2 input capture mode
 typedef union{
@@ -253,13 +253,13 @@ typedef union{
 		sfr_t ic2psc:2;
 		sfr_t ic2f:4;
 		sfr_t reserved0:16;
-	}field;
+	}fld;
 } timer_ccmr2_icm_t;
 
- timer_ccmr2_icm_t* TIMER1_CCMR2_ICM= (timer_ccmr2_icm_t*)(TIMER1_BASE_ADR+TMR_CCMR2_ICM_OFS);
- timer_ccmr2_icm_t* TIMER2_CCMR2_ICM= (timer_ccmr2_icm_t*)(TIMER2_BASE_ADR+TMR_CCMR2_ICM_OFS);
- timer_ccmr2_icm_t* TIMER3_CCMR2_ICM= (timer_ccmr2_icm_t*)(TIMER3_BASE_ADR+TMR_CCMR2_ICM_OFS);
- timer_ccmr2_icm_t* TIMER4_CCMR2_ICM= (timer_ccmr2_icm_t*)(TIMER4_BASE_ADR+TMR_CCMR2_ICM_OFS);
+#define TIMER1_CCMR2_ICM ((timer_ccmr2_icm_t*)(TIMER1_BASE_ADR+TMR_CCMR2_ICM_OFS))
+#define TIMER2_CCMR2_ICM ((timer_ccmr2_icm_t*)(TIMER2_BASE_ADR+TMR_CCMR2_ICM_OFS))
+#define TIMER3_CCMR2_ICM ((timer_ccmr2_icm_t*)(TIMER3_BASE_ADR+TMR_CCMR2_ICM_OFS))
+#define TIMER4_CCMR2_ICM ((timer_ccmr2_icm_t*)(TIMER4_BASE_ADR+TMR_CCMR2_ICM_OFS))
 
 typedef union{
 	sfr_t ccer;
@@ -276,56 +276,56 @@ typedef union{
 		sfr_t cc4e:1;
 		sfr_t cc4p:1;
 		sfr_t reserved3:18;
-	}field;
+	}fld;
 } timer_ccer_t;
 
- timer_ccer_t* TIMER1_CCER= (timer_ccer_t*)(TIMER1_BASE_ADR+TMR_CCER_OFS);
- timer_ccer_t* TIMER2_CCER= (timer_ccer_t*)(TIMER2_BASE_ADR+TMR_CCER_OFS);
- timer_ccer_t* TIMER3_CCER= (timer_ccer_t*)(TIMER3_BASE_ADR+TMR_CCER_OFS);
- timer_ccer_t* TIMER4_CCER= (timer_ccer_t*)(TIMER4_BASE_ADR+TMR_CCER_OFS);
+#define TIMER1_CCER ((timer_ccer_t*)(TIMER1_BASE_ADR+TMR_CCER_OFS))
+#define TIMER2_CCER ((timer_ccer_t*)(TIMER2_BASE_ADR+TMR_CCER_OFS))
+#define TIMER3_CCER ((timer_ccer_t*)(TIMER3_BASE_ADR+TMR_CCER_OFS))
+#define TIMER4_CCER ((timer_ccer_t*)(TIMER4_BASE_ADR+TMR_CCER_OFS))
 
 typedef volatile uint16_t *timer_cnt_t;
 
- timer_cnt_t TIMER1_CNT= (timer_cnt_t)(TIMER1_BASE_ADR+TMR_CNT_OFS);
- timer_cnt_t TIMER2_CNT= (timer_cnt_t)(TIMER2_BASE_ADR+TMR_CNT_OFS);
- timer_cnt_t TIMER3_CNT= (timer_cnt_t)(TIMER3_BASE_ADR+TMR_CNT_OFS);
- timer_cnt_t TIMER4_CNT= (timer_cnt_t)(TIMER4_BASE_ADR+TMR_CNT_OFS);
+#define TIMER1_CNT ((timer_cnt_t)(TIMER1_BASE_ADR+TMR_CNT_OFS))
+#define TIMER2_CNT ((timer_cnt_t)(TIMER2_BASE_ADR+TMR_CNT_OFS))
+#define TIMER3_CNT ((timer_cnt_t)(TIMER3_BASE_ADR+TMR_CNT_OFS))
+#define TIMER4_CNT ((timer_cnt_t)(TIMER4_BASE_ADR+TMR_CNT_OFS))
 
 typedef volatile uint16_t *timer_psc_t;
 
- timer_psc_t TIMER1_PSC= (timer_psc_t)(TIMER1_BASE_ADR+TMR_PSC_OFS);
- timer_psc_t TIMER2_PSC= (timer_psc_t)(TIMER2_BASE_ADR+TMR_PSC_OFS);
- timer_psc_t TIMER3_PSC= (timer_psc_t)(TIMER3_BASE_ADR+TMR_PSC_OFS);
- timer_psc_t TIMER4_PSC= (timer_psc_t)(TIMER4_BASE_ADR+TMR_PSC_OFS);
+#define TIMER1_PSC ((timer_psc_t)(TIMER1_BASE_ADR+TMR_PSC_OFS))
+#define TIMER2_PSC ((timer_psc_t)(TIMER2_BASE_ADR+TMR_PSC_OFS))
+#define TIMER3_PSC ((timer_psc_t)(TIMER3_BASE_ADR+TMR_PSC_OFS))
+#define TIMER4_PSC ((timer_psc_t)(TIMER4_BASE_ADR+TMR_PSC_OFS))
 
 typedef volatile uint16_t *timer_arr_t;
 
- timer_arr_t TIMER1_ARR= (timer_arr_t)(TIMER1_BASE_ADR+TMR_ARR_OFS);
- timer_arr_t TIMER2_ARR= (timer_arr_t)(TIMER2_BASE_ADR+TMR_ARR_OFS);
- timer_arr_t TIMER3_ARR= (timer_arr_t)(TIMER3_BASE_ADR+TMR_ARR_OFS);
- timer_arr_t TIMER4_ARR= (timer_arr_t)(TIMER4_BASE_ADR+TMR_ARR_OFS);
+#define TIMER1_ARR ((timer_arr_t)(TIMER1_BASE_ADR+TMR_ARR_OFS))
+#define TIMER2_ARR ((timer_arr_t)(TIMER2_BASE_ADR+TMR_ARR_OFS))
+#define TIMER3_ARR ((timer_arr_t)(TIMER3_BASE_ADR+TMR_ARR_OFS))
+#define TIMER4_ARR ((timer_arr_t)(TIMER4_BASE_ADR+TMR_ARR_OFS))
 
 typedef volatile uint16_t *timer_ccr_t;
 
- timer_ccr_t TIMER1_CCR1= (timer_ccr_t)(TIMER1_BASE_ADR+TMR_CCR1_OFS);
- timer_ccr_t TIMER2_CCR1= (timer_ccr_t)(TIMER2_BASE_ADR+TMR_CCR1_OFS);
- timer_ccr_t TIMER3_CCR1= (timer_ccr_t)(TIMER3_BASE_ADR+TMR_CCR1_OFS);
- timer_ccr_t TIMER4_CCR1= (timer_ccr_t)(TIMER4_BASE_ADR+TMR_CCR1_OFS);
+#define TIMER1_CCR1 ((timer_ccr_t)(TIMER1_BASE_ADR+TMR_CCR1_OFS))
+#define TIMER2_CCR1 ((timer_ccr_t)(TIMER2_BASE_ADR+TMR_CCR1_OFS))
+#define TIMER3_CCR1 ((timer_ccr_t)(TIMER3_BASE_ADR+TMR_CCR1_OFS))
+#define TIMER4_CCR1 ((timer_ccr_t)(TIMER4_BASE_ADR+TMR_CCR1_OFS))
 
- timer_ccr_t TIMER1_CCR2= (timer_ccr_t)(TIMER1_BASE_ADR+TMR_CCR2_OFS);
- timer_ccr_t TIMER2_CCR2= (timer_ccr_t)(TIMER2_BASE_ADR+TMR_CCR2_OFS);
- timer_ccr_t TIMER3_CCR2= (timer_ccr_t)(TIMER3_BASE_ADR+TMR_CCR2_OFS);
- timer_ccr_t TIMER4_CCR2= (timer_ccr_t)(TIMER4_BASE_ADR+TMR_CCR2_OFS);
+#define TIMER1_CCR2 ((timer_ccr_t)(TIMER1_BASE_ADR+TMR_CCR2_OFS))
+#define TIMER2_CCR2 ((timer_ccr_t)(TIMER2_BASE_ADR+TMR_CCR2_OFS))
+#define TIMER3_CCR2 ((timer_ccr_t)(TIMER3_BASE_ADR+TMR_CCR2_OFS))
+#define TIMER4_CCR2 ((timer_ccr_t)(TIMER4_BASE_ADR+TMR_CCR2_OFS))
 
- timer_ccr_t TIMER1_CCR3= (timer_ccr_t)(TIMER1_BASE_ADR+TMR_CCR3_OFS);
- timer_ccr_t TIMER2_CCR3= (timer_ccr_t)(TIMER2_BASE_ADR+TMR_CCR3_OFS);
- timer_ccr_t TIMER3_CCR3= (timer_ccr_t)(TIMER3_BASE_ADR+TMR_CCR3_OFS);
- timer_ccr_t TIMER4_CCR3= (timer_ccr_t)(TIMER4_BASE_ADR+TMR_CCR3_OFS);
+#define TIMER1_CCR3 ((timer_ccr_t)(TIMER1_BASE_ADR+TMR_CCR3_OFS))
+#define TIMER2_CCR3 ((timer_ccr_t)(TIMER2_BASE_ADR+TMR_CCR3_OFS))
+#define TIMER3_CCR3 ((timer_ccr_t)(TIMER3_BASE_ADR+TMR_CCR3_OFS))
+#define TIMER4_CCR3 ((timer_ccr_t)(TIMER4_BASE_ADR+TMR_CCR3_OFS))
 
- timer_ccr_t TIMER1_CCR4= (timer_ccr_t)(TIMER1_BASE_ADR+TMR_CCR4_OFS);
- timer_ccr_t TIMER2_CCR4= (timer_ccr_t)(TIMER2_BASE_ADR+TMR_CCR4_OFS);
- timer_ccr_t TIMER3_CCR4= (timer_ccr_t)(TIMER3_BASE_ADR+TMR_CCR4_OFS);
- timer_ccr_t TIMER4_CCR4= (timer_ccr_t)(TIMER4_BASE_ADR+TMR_CCR4_OFS);
+#define TIMER1_CCR4 ((timer_ccr_t)(TIMER1_BASE_ADR+TMR_CCR4_OFS))
+#define TIMER2_CCR4 ((timer_ccr_t)(TIMER2_BASE_ADR+TMR_CCR4_OFS))
+#define TIMER3_CCR4 ((timer_ccr_t)(TIMER3_BASE_ADR+TMR_CCR4_OFS))
+#define TIMER4_CCR4 ((timer_ccr_t)(TIMER4_BASE_ADR+TMR_CCR4_OFS))
 
 typedef union{
 	sfr_t dcr;
@@ -334,20 +334,20 @@ typedef union{
 		sfr_t reserved0:3;
 		sfr_t dbl:5;
 		sfr_t reserved1:19;
-	}field;
+	}fld;
 } timer_dcr_t;
 
- timer_dcr_t* TIMER1_CCMR2_DCR= (timer_dcr_t*)(TIMER1_BASE_ADR+TMR_CCMR2_DCR_OFS);
- timer_dcr_t* TIMER2_CCMR2_DCR= (timer_dcr_t*)(TIMER2_BASE_ADR+TMR_CCMR2_DCR_OFS);
- timer_dcr_t* TIMER3_CCMR2_DCR= (timer_dcr_t*)(TIMER3_BASE_ADR+TMR_CCMR2_DCR_OFS);
- timer_dcr_t* TIMER4_CCMR2_DCR= (timer_dcr_t*)(TIMER4_BASE_ADR+TMR_CCMR2_DCR_OFS);
+#define TIMER1_CCMR2_DCR ((timer_dcr_t*)(TIMER1_BASE_ADR+TMR_CCMR2_DCR_OFS))
+#define TIMER2_CCMR2_DCR ((timer_dcr_t*)(TIMER2_BASE_ADR+TMR_CCMR2_DCR_OFS))
+#define TIMER3_CCMR2_DCR ((timer_dcr_t*)(TIMER3_BASE_ADR+TMR_CCMR2_DCR_OFS))
+#define TIMER4_CCMR2_DCR ((timer_dcr_t*)(TIMER4_BASE_ADR+TMR_CCMR2_DCR_OFS))
 
 typedef volatile uint16_t *timer_dmar_t;
 
- timer_dmar_t TIMER1_DMAR= (timer_dmar_t)(TIMER1_BASE_ADR+TMR_DMAR_OFS);
- timer_dmar_t TIMER2_DMAR= (timer_dmar_t)(TIMER2_BASE_ADR+TMR_DMAR_OFS);
- timer_dmar_t TIMER3_DMAR= (timer_dmar_t)(TIMER3_BASE_ADR+TMR_DMAR_OFS);
- timer_dmar_t TIMER4_DMAR= (timer_dmar_t)(TIMER4_BASE_ADR+TMR_DMAR_OFS);
+#define TIMER1_DMAR ((timer_dmar_t)(TIMER1_BASE_ADR+TMR_DMAR_OFS))
+#define TIMER2_DMAR ((timer_dmar_t)(TIMER2_BASE_ADR+TMR_DMAR_OFS))
+#define TIMER3_DMAR ((timer_dmar_t)(TIMER3_BASE_ADR+TMR_DMAR_OFS))
+#define TIMER4_DMAR ((timer_dmar_t)(TIMER4_BASE_ADR+TMR_DMAR_OFS))
 
 
 #endif // PWM_H
