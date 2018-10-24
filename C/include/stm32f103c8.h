@@ -20,7 +20,8 @@
 #include "rcc.h"
 #include "gpio.h"
 #include "rtc.h"
-
+#include "power.h"
+#include "flash.h"
 
   
 

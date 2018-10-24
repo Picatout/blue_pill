@@ -239,6 +239,8 @@ static void set_sysclock(){
     while (!RCC_CR->fld.pllrdy);
     // ajoute délais d'accès à la mémoire flash
     FLASH_ACR->fld.latency=WAIT_2_CY;
+    // active le prefetch buffer
+    FLASH_ACR->fld.prftbe=1;
     // SélectionNE le PLL comme source pour SYSCLK
     RCC_CFGR->fld.sw=PLL_CLK;
 	// La fréquence maximale pour APB1 doit-être de 36 Mhz
