@@ -11,10 +11,7 @@
 #ifndef SPI_H
 #define SPI_H
 
-#include "blue_pill.h"
-#include "stm32f103c8.h"
 #include "gen_macros.h"
-#include "gpio.h"
 
 
 // baud rate
@@ -30,9 +27,6 @@
 #define SPI1_BASE_ADR 0x40013000
 #define SPI2_BASE_ADR 0X40003800
 
-// canaux spi
-#define SPI1 1 
-#define SPI2 2
 // offset des registres SPI
 #define SPI_CR1_OFS 0
 #define SPI_CR2_OFS 4
@@ -44,8 +38,23 @@
 #define SPI_I2SCFGR_OFS 28
 #define SPI_I2SPR_OFS 32
 
-#define SPI1_DR _sfr(SPI1_BASE_ADR+SPI_DR_OFS;
-#define SPI2_DR _sfr(SPI2_BASE_ADR+SPI_DR_OFS;
+typedef struct{
+	sfr_t cr1;
+	sfr_t cr2;
+	sfr_t sr;
+	sfr_t dr;
+	sfr_t crcpr;
+	sfr_t rxcrcr;
+	sfr_t txcrcr;
+	sfr_t i2scfgr;
+	sfr_t is2pr;
+} spi_sfr_t;
+
+#define SPI1 ((spi_sfr_t*)SPI1_BASE_ADR)
+#define SPI2 ((spi_sfr_t*)SPI2_BASE_ADR)
+
+#define SPI1_DR ((sfr16p_t)(SPI1_BASE_ADR+SPI_DR_OFS))
+#define SPI2_DR ((sfr16p_t)(SPI2_BASE_ADR+SPI_DR_OFS))
 
 typedef union{
 	sfr_t cr1;
@@ -54,7 +63,7 @@ typedef union{
 		sfr_t cpol:1;
 		sfr_t mstr:1;
 		sfr_t br:3;
-		sfr_t spe:1
+		sfr_t spe:1;
 		sfr_t lsbfirst:1;
 		sfr_t ssi:1;
 		sfr_t ssm:1;
@@ -64,7 +73,7 @@ typedef union{
 		sfr_t crcen:1;
 		sfr_t bidioe:1;
 		sfr_t bidimode:1;
-	} field;
+	}fld;
 	
 }spi_cr1_t;
 
@@ -84,8 +93,8 @@ typedef union{
 #define SPI_CR1_BIDIOE 14 // activation E/S bidirectionnel
 #define SPI_CR1_BIDIMODE 15 // mode bidirectionnel
 
-spi_cr1_t * SPI1_CR1=(spi_cr1_t*)(SPI1_BASE_ADR+SPI_CR1_OFS);
-spi_cr2_t * SPI2_CR2=(spi_cr1_t*)(SPI2_BASE_ADR+SPI_CR1_OFS);
+#define SPI1_CR1 ((spi_cr1_t*)(SPI1_BASE_ADR+SPI_CR1_OFS))
+
 
 typedef union{
 		sfr_t cr2;
@@ -97,7 +106,7 @@ typedef union{
 		    sfr_t errie:1;
 		    sfr_t rxneie:1;
 		    sfr_t txeie:1;
-		} field;
+		} fld;
 }spi_cr2_t;
 
 // champs de bit registre SPI_CR2
@@ -108,8 +117,7 @@ typedef union{
 #define SPI_CR2_RXNEIE 6 // 1 bit, activation interruption sur rx buffer not empty
 #define SPI_CR2_TXEIE 7 // 1 bit, activation interruption sur tx buffer empty
  
-spi_cr2_t * SPI1_CR2=(spi_cr2_t *)(SPI1_BASE_ADR+SPI_CR2_OFS);
-spi_cr2_t * SPI2_CR2=(spi_cr2_t *)(SPI2_BASE_ADR+SPI_CR2_OFS);
+#define SPI2_CR2 ((spi_cr2_t *)(SPI2_BASE_ADR+SPI_CR2_OFS))
 
  
 typedef union{
@@ -123,7 +131,7 @@ typedef union{
 			sfr_t modf:1;
 			sfr_t ovr:1;
 			sfr_t bsy:1;
-		}field;
+		}fld;
 	
 }spi_sr_t;
  
@@ -137,8 +145,8 @@ typedef union{
 #define SPI_SR_OVR 6 //  1 bit, overrun flag
 #define SPI_SR_BSY 7 // 1 bit, busy flag
 
-spi_sr_t * SPI1_SR=(spi_sr_t*)(SPI1_BASE_ADR+SPI_SR_OFS);
-spi_sr_t * SPI2_SR=(spi_sr_t*)(SPI2_BASE_ADR+SPI_SR_OFS);
+#define SPI1_SR ((spi_sr_t*)(SPI1_BASE_ADR+SPI_SR_OFS))
+#define SPI2_SR ((spi_sr_t*)(SPI2_BASE_ADR+SPI_SR_OFS))
  
 typedef union{
 		sfr_t cfgr;
@@ -152,7 +160,7 @@ typedef union{
 			sfr_t i2scfg:2;
 			sfr_t i2se:1;
 			sfr_t i2smod:1;
-		}field; 
+		}fld; 
 } spi_i2scfgr_t ;
 
 // champs de bits du registre SPI_I2SCFGR
@@ -165,8 +173,8 @@ typedef union{
 #define SPI_I2SCFGR_I2SE 10 // 1 bit, activation I2S
 #define SPI_I2SCFGR_MODE 11 // 1 bit, sélection mode SPI/I2S 
 
-spi_i2scfgr_t * SPI1_I2SCFGR=(spi_i2scfgr_t *)(SPI1_BASE_ADR+SPI_SR_OFS);
-spi_i2scfgr_t * SPI2_I2SCFGR=(spi_i2scfgr_t *)(SPI2_BASE_ADR+SPI_SR_OFS);
+#define SPI1_I2SCFGR ((spi_i2scfgr_t *)(SPI1_BASE_ADR+SPI_SR_OFS))
+#define SPI2_I2SCFGR ((spi_i2scfgr_t *)(SPI2_BASE_ADR+SPI_SR_OFS))
 
 typedef union{
 	sfr_t  i2spr;
@@ -174,34 +182,34 @@ typedef union{
 		sfr_t i2sdiv:8;
 		sfr_t odd:1;
 		sfr_t mckoe:1;
-	}field;
+	}fld;
 }spi_i2spr_t;
 
 // champ de bits du registre SPI_I2SPR
-#define SPI_I2SPR_I2SDIV 0 // 8 bits, diviseur signal clock >=2
+#define SPI_I2SPR_I2SDIV 0 // 8 bits, diviseur signal clock > (2
 #define SPI_I2SPR_ODD 8 // 1 bit,  diviseur impaire I2SDIV*2+1
 #define SPI_I2SPR_MCKOE 9 // 1 bit, activation sortie master clock
 
-spi_i2spr_t * SPI1_I2SPR=(spi_i2spr_t*)(SPI1_BASE_ADR+SPI_I2SPR_OFS);
-spi_i2spr_t * SPI2_I2SPR=(spi_i2spr_t*)(SPI2_BASE_ADR+SPI_I2SPR_OFS);
+#define SPI1_I2SPR ((spi_i2spr_t*)(SPI1_BASE_ADR+SPI_I2SPR_OFS))
+#define SPI2_I2SPR ((spi_i2spr_t*)(SPI2_BASE_ADR+SPI_I2SPR_OFS))
 
 
-void spi_baudrate(unsigned channel, unsigned baud);
-void spi_init(unsigned channel, unsigned baud);
+void spi_baudrate(spi_sfr_t* channel, unsigned baud);
+void spi_init(spi_sfr_t* channel, unsigned baud);
 
 #define SPI_MODE_READ 0
 #define SPI_MODE_WRITE 1
 #define SPI_MODE_READ_WRITE 2
-void spi_enable(unsigned channel, unsigned mode);
-void spi_disable(unsigned channel);
+void spi_enable(spi_sfr_t* channel, unsigned mode);
+void spi_disable(spi_sfr_t* channel);
 // envoie un octet via le canla SPI
-void spi_write(unsigned channel, uint8_t b);
+void spi_write(spi_sfr_t* channel, uint8_t b);
 // reçois un octet du canal SPI
-uint8_t spi_read(unsigned channel);
+uint8_t spi_read(spi_sfr_t* channel);
 // écriture d'un bloc d'octet
-void spi_block_write(unsigned channel, const char *buffer, int count);
+void spi_block_write(spi_sfr_t* channel, const char *buffer, int count);
 // lecture d'un bloc d'octet
-void spi_block_read(unsigned channel, char *buffer, int count);
+void spi_block_read(spi_sfr_t* channel, char *buffer, int count);
 
 
 #endif // SPI_H

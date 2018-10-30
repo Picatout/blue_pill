@@ -22,8 +22,9 @@
 #include "rtc.h"
 #include "power.h"
 #include "flash.h"
-
-  
+#include "timer.h"
+#include "spi.h"  
+#include "dma.h"
 
 
 #endif // STM32F103C8_H

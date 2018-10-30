@@ -21,12 +21,21 @@
 // réinitialisation du µC
 #define _reset_mcu() ({AIRCR->aircr=(KEY<<VECTKEY)|(1<<SYSRESETREQ);})
 
+// pour les registres qui peuvent-être mmodifiés par le hardware
 typedef volatile uint8_t sfr8_t;
 typedef volatile uint8_t* sfr8p_t;
 typedef volatile uint16_t sfr16_t;
 typedef volatile uint16_t* sfr16p_t;
 typedef volatile uint32_t sfr_t;
 typedef volatile uint32_t* sfrp_t;
+
+// pour les autres registres (non volatile)
+typedef uint8_t sfr8nv_t;
+typedef uint8_t* sfr8nvp_t;
+typedef uint16_t sfr16nv_t;
+typedef uint16_t* sfr16nvp_t;
+typedef uint32_t sfrnv_t;
+typedef uint32_t* sfrnvp_t;
 
 
 // les Special Function Registers sont de de 32 bits.

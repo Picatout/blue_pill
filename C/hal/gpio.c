@@ -18,19 +18,21 @@
 //	pin -> {0..15}
 //  config -> {OUTPUT..., INPUT...}
 void config_pin(unsigned port, unsigned pin, unsigned config){
+	register gpio_crl_t* cr;
+	uint8_t shift;
 	switch (port){
 		case GPIOA:
-		GPIOA_CR[pin>>3].cr&=~(15<<(pin&7));
-		GPIOA_CR[pin>>3].cr|=config<<(pin&7);
+		cr=(gpio_crl_t*)(GPIOA_BASE_ADR+GPIO_CRL_OFS);
 		break;
 		case GPIOB:
-		GPIOA_CR[pin>>3].cr&=~(15<<(pin&7));
-		GPIOA_CR[pin>>3].cr|=config<<(pin&7);
+		cr=(gpio_crl_t*)(GPIOB_BASE_ADR+GPIO_CRL_OFS);
 		break;
 		case GPIOC:
-		GPIOA_CR[pin>>3].cr&=~(15<<(pin&7));
-		GPIOA_CR[pin>>3].cr|=config<<(pin&7);
+		cr=(gpio_crl_t*)(GPIOC_BASE_ADR+GPIO_CRL_OFS);
 		break;
 	}
+	shift=(pin&7)<<2;
+	cr[pin>>3].cr&=~(15<<shift);
+	cr[pin>>3].cr|=config<<shift;
 }
 

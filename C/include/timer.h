@@ -13,7 +13,12 @@
 #include "gen_macros.h"
 #include "stm32f103c8.h"
 
-
+enum timer_e{
+	TIMER1,
+	TIMER2,
+	TIMER3,
+	TIMER4
+};
 
 // adresse de base des timers
 #define TIMER1_BASE_ADR 0x40012c00
@@ -35,11 +40,12 @@
 #define TMR_CCER_OFS 32
 #define TMR_CNT_OFS 36
 #define TMR_PSC_OFS 40
-#defnie TMR_ARR_OFS 44
+#define TMR_ARR_OFS 44
 #define TMR_CCR1_OFS 52
 #define TMR_CCR2_OFS 56
 #define TMR_CCR3_OFS 60
 #define TMR_CCR4_OFS 64
+#define TMR_BDTR_OFS 68
 #define TMR_DCR_OFS 72
 #define TMR_DMAR_OFS 76
 
@@ -104,10 +110,10 @@ typedef union{
 	sfr_t dier;
 	struct{
 		sfr_t uie:1;
-		sfr_t cc1e:1;
-		sfr_t cc2e:1:
-		sfr_t cc3e:1;
-		sfr_t cc4e:1;
+		sfr_t cc1ie:1;
+		sfr_t cc2ie:1;
+		sfr_t cc3ie:1;
+		sfr_t cc4ie:1;
 		sfr_t reserved0:1;
 		sfr_t tie:1;
 		sfr_t reserved1:1;
@@ -132,10 +138,10 @@ typedef union{
 	sfr_t sr;
 	struct{
 		sfr_t uif:1;
-		sfr_t cc1f:1;
-		sfr_t cc2f:1:
-		sfr_t cc3f:1;
-		sfr_t cc4f:1;
+		sfr_t cc1if:1;
+		sfr_t cc2if:1;
+		sfr_t cc3if:1;
+		sfr_t cc4if:1;
 		sfr_t reserved0:1;
 		sfr_t tif:1;
 		sfr_t reserved1:1;
@@ -222,16 +228,16 @@ typedef union{
 typedef union{
 	sfr_t ccmr2;
 	struct{
-		sfr_t cc1s:2;
-		sfr_t oc1fe:1;
-		sfr_t oc1pe:1;
-		sfr_t oc1m:3;
-		sfr_t oc1ce:1;
-		sfr_t cc2s:2;
-		sfr_t oc2fe:1;
-		sfr_t oc2pe:1;
-		sfr_t oc2m:3;
-		sfr_t oc2ce:1;
+		sfr_t cc3s:2;
+		sfr_t oc3fe:1;
+		sfr_t oc3pe:1;
+		sfr_t oc3m:3;
+		sfr_t oc3ce:1;
+		sfr_t cc4s:2;
+		sfr_t oc4fe:1;
+		sfr_t oc4pe:1;
+		sfr_t oc4m:3;
+		sfr_t oc4ce:1;
 		sfr_t reserved0:16; 
 	}fld;
 	
@@ -246,12 +252,12 @@ typedef union{
 typedef union{
 	sfr_t ccrm1;
 	struct{
-		sfr_t cc1s:2;
-		sfr_t ic1psc:2;
-		sfr_t ic1f:4;
-		sfr_t cc2s:2;
-		sfr_t ic2psc:2;
-		sfr_t ic2f:4;
+		sfr_t cc3s:2;
+		sfr_t ic3psc:2;
+		sfr_t ic3f:4;
+		sfr_t cc4s:2;
+		sfr_t ic4psc:2;
+		sfr_t ic4f:4;
 		sfr_t reserved0:16;
 	}fld;
 } timer_ccmr2_icm_t;
@@ -326,6 +332,22 @@ typedef volatile uint16_t *timer_ccr_t;
 #define TIMER2_CCR4 ((timer_ccr_t)(TIMER2_BASE_ADR+TMR_CCR4_OFS))
 #define TIMER3_CCR4 ((timer_ccr_t)(TIMER3_BASE_ADR+TMR_CCR4_OFS))
 #define TIMER4_CCR4 ((timer_ccr_t)(TIMER4_BASE_ADR+TMR_CCR4_OFS))
+
+typedef union{
+	sfr16_t bdtr;
+	struct{
+		sfr16_t dtg:8;
+		sfr16_t lock:2;
+		sfr16_t ossi:1;
+		sfr16_t ossr:1;
+		sfr16_t bke:1;
+		sfr16_t bkp:1;
+		sfr16_t aoe:1;
+		sfr16_t moe:1;
+	}fld;
+}timer_bdtr_t;
+
+#define TIMER1_BDTR ((timer_bdtr_t*)(TIMER1_BASE_ADR+TMR_BDTR_OFS))
 
 typedef union{
 	sfr_t dcr;

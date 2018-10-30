@@ -16,6 +16,7 @@
 #include "../include/usart.h"
 #include "../include/console.h"
 #include "svcall.h"
+#include "tvout.h"
 
 #define _pause(tm)  ({do {_svc_call(SVC_GET_TIMER,&tm,NUL);} while (tm);})
 
@@ -177,10 +178,10 @@ void __attribute__((__interrupt__)) SVC_handler(){
 		print((const char*)arg1);
 		break;
 	case SVC_PRINT_INT:
-		print_int((int32_t)arg1,10);
+		print_int(*(int32_t*)arg1,10);
 		break;
 	case SVC_PRINT_HEX:
-		print_hex((uint32_t)arg1);
+		print_hex(*(uint32_t*)arg1);
 		break;
 	case SVC_PEEK8:
 	    *(uint8_t *)arg1=peek8((uint8_t *)*(uint32_t*)arg1);
@@ -253,7 +254,7 @@ static void set_sysclock(){
 // valeur reload 72Mhz/8/1000=9000
 #define MSEC_DLY 9000
 static void config_systicks(){
-	SYST_RVR=MSEC_DLY-1;
+	*SYST_RVR=MSEC_DLY-1;
 	SYST_CSR->csr=(1<<SYST_TICKINT)|(1<<SYST_ENABLE);
 }
 
@@ -364,6 +365,33 @@ static void cmd_print(){
 	_svc_call(SVC_PRINT,pad,NUL);
 }
 
+static void cmd_print_int(){
+	int cmd_id;
+    unsigned u32;
+    
+	word();
+	cmd_id=search_command((const char*)pad);
+	if (cmd_id>-1){
+		 commands[cmd_id].fn();
+	 }else{
+		cmd_id=atoi((const char*)pad);
+		*(int*)pad=cmd_id;
+	 }
+	_svc_call(SVC_PRINT_INT,pad,NUL);
+}
+
+static void cmd_print_hex(){
+	int cmd_id;
+	word();
+	cmd_id=search_command((const char*)pad);
+	if (cmd_id>-1){
+		 commands[cmd_id].fn();
+	 }else{
+		cmd_id=atoi((const char*)pad);
+		*(int*)pad=cmd_id;
+	 }
+	_svc_call(SVC_PRINT_HEX,pad,NUL);
+}
 
 static void cmd_run(){
 	((fn)proga)();
@@ -375,7 +403,7 @@ static void cmd_peek8(){
 	word();
 	u=atoi((const char*)pad);
 	_svc_call(SVC_PEEK8,&u,NUL);
-	pad[0]=(unsigned char)u;
+	*(uint32_t*)pad=u&0xff;
 }
 
 static void cmd_peek16(){
@@ -383,8 +411,7 @@ static void cmd_peek16(){
 	word();
 	u=atoi((const char*)pad);
 	_svc_call(SVC_PEEK16,&u,NUL);
-	pad[0]=(unsigned char)(u&0xff);
-	pad[1]=(unsigned char)((u>>8)&0xff);
+	*(uint32_t*)pad=u&0xffff;
 }
 
 static void cmd_peek32(){
@@ -393,10 +420,7 @@ static void cmd_peek32(){
 	word();
 	u=atoi((const char*)pad);
 	_svc_call(SVC_PEEK32,&u,NUL);
-	for (i=0;i<4;i++){
-		pad[i]=(unsigned char)(u&0xff);
-		u>>=8;
-	}
+	*(uint32_t*)pad=u;
 }
 
 static void cmd_poke8(){
@@ -440,6 +464,8 @@ static const shell_cmd_t commands[]={
 	{"putc",cmd_putc},
 	{"readln",cmd_readln},
 	{"print",cmd_print},
+	{"print_int",cmd_print_int},
+	{"print_hex",cmd_print_hex},
 	{"run",cmd_run},
 	{"peek8",cmd_peek8},
 	{"peek16",cmd_peek16},
@@ -590,12 +616,18 @@ void main(void){
 	set_sysclock();
 	set_int_priority(IRQ_SVC,15);
 	config_systicks();
-	port_c_setup();
+	//port_c_setup();
+	APB2ENR->fld.iopcen=1;
+	APB2ENR->fld.iopaen=1;
+	APB2ENR->fld.iopben=1;
+	APB2ENR->fld.afioen=1;
+	config_pin(GPIOC,LED_PIN,OUTPUT_OD_SLOW);
+	tvout_init();
 	uart_open_channel(CON,115200,FLOW_HARD);
 	cls();
 	print(VERSION); 
 	copy_blink_in_ram();
-	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,proga&0xfffffffe,NUL); conout(CR);
+	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,&proga,NUL); conout(CR);
 	_svc_call(SVC_LED_ON,NUL,NUL);
 	flush_rx_queue();
 	unsigned llen;// char c;

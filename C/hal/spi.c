@@ -8,11 +8,14 @@
  * 
  */
 
-#include "../include/spi.h"
+#include "../include/blue_pill.h"
 
 
-void spi_baudrate(unsigned channel, unsigned baud){
+void spi_baudrate(spi_sfr_t* channel, unsigned baud){
 	spi_cr1_t *cr1;
+	channel->cr1&=~(7<<SPI_CR1_BR);
+	channel->cr1|=baud<<SPI_CR1_BR;
+	/*
 	switch (channel){
 		case SPI1:
 		SPI1_CR1->field.br=baud;
@@ -21,10 +24,14 @@ void spi_baudrate(unsigned channel, unsigned baud){
 		SPI2_CR1->field.br=baud;
 		break;
 	}
+	*/
 }
 
 
-void spi_init(unsigned channel, unsigned baud){
+void spi_init(spi_sfr_t* channel, unsigned baud){
+	spi_baudrate(channel,baud);
+	channel->cr1|=(1<<SPI_CR1_MSTR);
+	channel->cr2|=(1<<SPI_CR1_SSOE);
 	switch (channel){
 	case SPI1:
 		// configuration port
@@ -36,10 +43,12 @@ void spi_init(unsigned channel, unsigned baud){
 		config_pin(GPIOA,6,INPUT_FLOAT);
 		// PA7 -> MOSI output (push-pull), alt PB5
 		config_pin(GPIOA,7,OUTPUT_PP_FAST);
+		/*
 		//configuration SPI
 		SPI1_CR1->field.br=baud;
 		SPI1.CR1->field.mstr=1;
 		SPI1.CR2->field.ssoe=1;
+		*/
 		break;
 	case SPI2:
 		// configuration port
@@ -51,15 +60,17 @@ void spi_init(unsigned channel, unsigned baud){
 		config_pin(GPIOB,14,INPUT_FLOAT);
 		// PB15 MOSI output (push-pull)
 		config_pin(GPIOB,15,OUTPUT_PP_FAST);
+		/*
 		//configuration SPI
 		SPI2_CR1->field.br=baud;
 		SPI2.CR1->field.mstr=1;
 		SPI1.CR2->field.ssoe=1;
+		*/
 		break;
 	}
 }
 
-void spi_enable(unsigned channel, unsigned mode){
+void spi_enable(spi_sfr_t* channel, unsigned mode){
 	unsigned mask;
 	switch (mode){
 		case SPI_MODE_READ:
@@ -84,7 +95,7 @@ void spi_enable(unsigned channel, unsigned mode){
 	}
 }
 
-void spi_disable(unsigned channel){
+void spi_disable(spi_sfr_t* channel){
 	switch(channel){
 		case SPI1:
 		SPI1_CR1->field.spe=0;
@@ -96,7 +107,7 @@ void spi_disable(unsigned channel){
 }
 
 // envoie un octet via le canla SPI
-void spi_write(unsigned channel, uint8_t b){
+void spi_write(spi_sfr_t* channel, uint8_t b){
 	uint8_t rx;
 	spi_enable(channel,SPI_MODE_WRITE);
 	switch(channel){
@@ -111,7 +122,7 @@ void spi_write(unsigned channel, uint8_t b){
 }
 
 // reçois un octet du canal SPI
-uint8_t spi_read(unsigned channel){
+uint8_t spi_read(spi_sfr_t* channel){
 	uint8_t rx;
 	spi_enable(channel,SPI_MODE_READ);
 	switch (channel){
@@ -131,7 +142,7 @@ uint8_t spi_read(unsigned channel){
 }
 
 // écriture d'un bloc d'octet
-void spi_block_write(unsigned channel, const char *buffer, int count){
+void spi_block_write(spi_sfr_t* channel, const char *buffer, int count){
 	spi_sr_t *sr;
 	(uint32_t*)dr;
 	
@@ -155,7 +166,7 @@ void spi_block_write(unsigned channel, const char *buffer, int count){
 }
 
 // lecture d'un bloc d'octet
-void spi_block_read(unsigned channel, char *buffer, int count){
+void spi_block_read(spi_sfr_t* channel, char *buffer, int count){
 	spi_sr_t *sr;
 	(uint32_t*)dr;
 	spi_enable(channel,SPI_MODE_READ);

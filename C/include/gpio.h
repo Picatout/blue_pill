@@ -29,46 +29,46 @@
 // structures des différents registres
 
 typedef union{
-	sfr_t cr;
+	sfrnv_t cr;
 	struct{
-		sfr_t mode0:2;
-		sfr_t cnf0:2;
-		sfr_t mode1:2;
-		sfr_t cnf1:2;
-		sfr_t mode2:2;
-		sfr_t cnf2:2;
-		sfr_t mode3:2;
-		sfr_t cnf3:2;
-		sfr_t mode4:2;
-		sfr_t cnf4:2;
-		sfr_t mode5:2;
-		sfr_t cnf5:2;
-		sfr_t mode6:2;
-		sfr_t cnf6:2;
-		sfr_t mode7:2;
-		sfr_t cnf7:2;
+		sfrnv_t mode0:2;
+		sfrnv_t cnf0:2;
+		sfrnv_t mode1:2;
+		sfrnv_t cnf1:2;
+		sfrnv_t mode2:2;
+		sfrnv_t cnf2:2;
+		sfrnv_t mode3:2;
+		sfrnv_t cnf3:2;
+		sfrnv_t mode4:2;
+		sfrnv_t cnf4:2;
+		sfrnv_t mode5:2;
+		sfrnv_t cnf5:2;
+		sfrnv_t mode6:2;
+		sfrnv_t cnf6:2;
+		sfrnv_t mode7:2;
+		sfrnv_t cnf7:2;
 	};
 } gpio_crl_t;
 
 typedef union{
-	sfr_t cr;
+	sfrnv_t cr;
 	struct{
-		sfr_t mode8:2;
-		sfr_t cnf8:2;
-		sfr_t mode9:2;
-		sfr_t cnf9:2;
-		sfr_t mode10:2;
-		sfr_t cnf10:2;
-		sfr_t mode11:2;
-		sfr_t cnf11:2;
-		sfr_t mode12:2;
-		sfr_t cnf12:2;
-		sfr_t mode13:2;
-		sfr_t cnf13:2;
-		sfr_t mode14:2;
-		sfr_t cnf14:2;
-		sfr_t mode15:2;
-		sfr_t cnf15:2;
+		sfrnv_t mode8:2;
+		sfrnv_t cnf8:2;
+		sfrnv_t mode9:2;
+		sfrnv_t cnf9:2;
+		sfrnv_t mode10:2;
+		sfrnv_t cnf10:2;
+		sfrnv_t mode11:2;
+		sfrnv_t cnf11:2;
+		sfrnv_t mode12:2;
+		sfrnv_t cnf12:2;
+		sfrnv_t mode13:2;
+		sfrnv_t cnf13:2;
+		sfrnv_t mode14:2;
+		sfrnv_t cnf14:2;
+		sfrnv_t mode15:2;
+		sfrnv_t cnf15:2;
 	};
 } gpio_crh_t;
 
@@ -307,10 +307,10 @@ extern afio_mapr2_t * AFIO_MAPR2;//=(afio_mapr2_t *)(AFIO_BASE_ADR+AFIO_MAPR2_OF
 #define GPIO_INP_FLOAT 1
 #define GPIO_INP_PULL 2
 // modes sortie
-#define GPIO_OUTP_PP // push-pull
-#define GPIO_OUTP_OD // open drain
-#define GPIO_OUTP_ALT_PP // fonction alternative push-pull
-#define GPIO_OUTP_ALT_OD // fonction alternative open drain
+#define GPIO_OUTP_PP 0 // push-pull
+#define GPIO_OUTP_OD 1 // open drain
+#define GPIO_OUTP_ALT_PP 2 // fonction alternative push-pull
+#define GPIO_OUTP_ALT_OD 3 // fonction alternative open drain
 
 // configuration
 #define OUTPUT_PP_SLOW ((GPIO_OUTP_PP<<2)|GPIO_MODE_OUTP_2M)

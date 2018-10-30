@@ -105,7 +105,7 @@ static void set_sysclock(){
 // valeur reload 72Mhz/8/1000=9000
 #define MSEC_DLY 9000
 static void config_systicks(){
-	SYST_RVR=MSEC_DLY-1;
+	*SYST_RVR=MSEC_DLY-1;
 	SYST_CSR->csr=(1<<SYST_TICKINT)|(1<<SYST_ENABLE);
 }
 
