@@ -25,6 +25,8 @@
 #include "timer.h"
 #include "spi.h"  
 #include "dma.h"
-
+#include "flash.h"
+#include "usart.h"
+#include "nvic.h"
 
 #endif // STM32F103C8_H

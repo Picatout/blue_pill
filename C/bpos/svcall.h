@@ -33,6 +33,8 @@ typedef enum{
 	SVC_POKE8, // écris un entier 8 bits à l'adresse donnée
 	SVC_POKE16, // écris un entier 16 bits à l'adresse donnée
 	SVC_POKE32, // écris un entier 32 bits à l'adresse donnée 
+	SVC_FLASH_WR, // écris un mot de 16 dans la mémoire flash
+	SVC_FLASH_PGER, // efface une page de 1024 octets dans la mémoire flash
 } syscall_e;
 
 #define _svc_call(svc_no,arg1,arg2) ({asm volatile (\

@@ -12,8 +12,8 @@
 //#include <stdlib.h> 
 //#include <string.h>
 #include "../include/blue_pill.h"
-#include "../include/nvic.h"
-#include "../include/usart.h"
+//#include "../include/nvic.h"
+//#include "../include/usart.h"
 #include "../include/console.h"
 #include "svcall.h"
 #include "tvout.h"
@@ -200,6 +200,12 @@ void __attribute__((__interrupt__)) SVC_handler(){
 		break;
 	case SVC_POKE32:
 		poke32((uint32_t*)(*(uint32_t*)arg1),*(uint32_t*)arg2);
+		break;
+	case SVC_FLASH_WR:
+		*(int*)arg1=flash_write(*(uint32_t*)arg1,*(uint16_t*)arg2);
+		break;
+	case SVC_FLASH_PGER:
+		*(int*)arg1=flash_erase_page(*(uint32_t*)arg1);
 		break;
 /*	
 	case SVC_PRIVILIGED:
@@ -453,6 +459,23 @@ static void cmd_poke32(){
 	_svc_call(SVC_POKE32,&adr,&u32);
 }
 
+static void cmd_fwrite(){
+	uint32_t adr,u32;
+	word();
+	adr=atoi((const char*)pad);
+	word();
+	u32=atoi((const char*)pad);
+	_svc_call(SVC_FLASH_WR,&adr,&u32);
+	if (!adr) print(" failed\n");
+}
+
+static void cmd_pgerase(){
+	uint32_t adr;
+	word();
+	adr=atoi((const char*)pad);
+	_svc_call(SVC_FLASH_PGER,&adr,0);
+	if (!adr) print(" failed\n");
+}
 
 static const shell_cmd_t commands[]={
 	{"rst",cmd_reset},
@@ -472,7 +495,9 @@ static const shell_cmd_t commands[]={
 	{"peek32",cmd_peek32},
 	{"poke8",cmd_poke8},
 	{"poke16",cmd_poke16},
-	{"poke32",cmd_poke32}, 
+	{"poke32",cmd_poke32},
+	{"fwrite",cmd_fwrite},
+	{"pgerase",cmd_pgerase}, 
 	{NUL,NUL}
 };
 
@@ -573,6 +598,7 @@ static void parse_line(unsigned llen){
 		if (cmd_id>-1){
 			commands[cmd_id].fn();
 		}else{
+			conout(CR);
 			print((const char*)pad); conout('?');
 			break;
 		}
@@ -616,11 +642,13 @@ void main(void){
 	set_sysclock();
 	set_int_priority(IRQ_SVC,15);
 	config_systicks();
+	flash_enable();
 	//port_c_setup();
 	APB2ENR->fld.iopcen=1;
 	APB2ENR->fld.iopaen=1;
 	APB2ENR->fld.iopben=1;
 	APB2ENR->fld.afioen=1;
+	APB1ENR->fld.spi2en=1;
 	config_pin(GPIOC,LED_PIN,OUTPUT_OD_SLOW);
 	tvout_init();
 	uart_open_channel(CON,115200,FLOW_HARD);

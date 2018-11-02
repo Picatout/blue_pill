@@ -78,20 +78,21 @@ typedef union{
 }spi_cr1_t;
 
 // champs de bit registre SPI_CR1
-#define SPI_CR1_CPHA 0 // 1 bit phase clock
-#define SPI_CR1_CPOL 1 // 1 bit polarité clock
-#define SPI_CR1_MSTR 2 // 1 bit, master/slave
-#define SPI_CR1_BR 3 // 3 bits, baud rate  Fpclk/2...Fpclk/256
-#define SPI_CR1_SPE 6 // 1 bit, activation
-#define SPI_CR1_LSBFIRST 7 // 1 bit, quel bit sort en premier
-#define SPI_CR1_SSI 8 // 1 bit, internal slave select
-#define SPI_CR1_SSM 9 // 1 bit, software slave management
-#define SPI_CR1_RXONLY 10 // 1 bit, reçoit seulement
-#define SPI_CR1_DDF 11 // 1 bit, data 8/16 bits
-#define SPI_CR1_CRCNEXT 12 // 1 bit
-#define SPI_CR1_CRCEN 13 // activation CRC
-#define SPI_CR1_BIDIOE 14 // activation E/S bidirectionnel
-#define SPI_CR1_BIDIMODE 15 // mode bidirectionnel
+#define SPI_CR1_CPHA 1 // 1 bit phase clock
+#define SPI_CR1_CPOL 2 // 1 bit polarité clock
+#define SPI_CR1_MSTR 4 // 1 bit, master/slave
+#define SPI_CR1_BR_POS 8 // 3 bits, baud rate  Fpclk/2...Fpclk/256
+#define SPI_CR1_BR_MASK (~(7<<8))
+#define SPI_CR1_SPE (1<<6) // 1 bit, activation
+#define SPI_CR1_LSBFIRST 128 // 1 bit, quel bit sort en premier
+#define SPI_CR1_SSI 256 // 1 bit, internal slave select
+#define SPI_CR1_SSM 512 // 1 bit, software slave management
+#define SPI_CR1_RXONLY 1024 // 1 bit, reçoit seulement
+#define SPI_CR1_DDF 2048 // 1 bit, data 8/16 bits
+#define SPI_CR1_CRCNEXT 4096 // 1 bit
+#define SPI_CR1_CRCEN (1<<13) // activation CRC
+#define SPI_CR1_BIDIOE (1<<14) // activation E/S bidirectionnel
+#define SPI_CR1_BIDIMODE (1<<15) // mode bidirectionnel
 
 #define SPI1_CR1 ((spi_cr1_t*)(SPI1_BASE_ADR+SPI_CR1_OFS))
 
@@ -110,12 +111,12 @@ typedef union{
 }spi_cr2_t;
 
 // champs de bit registre SPI_CR2
-#define SPI_CR2_RXDMAEN 0 // 1 bit, utilisation DMA sur réception
-#define SPI_CR2_TXDMAEN 1 // 1 bit, utilisation DMA sur transmission
-#define SPI_CR2_SSOE 2 // 1 bit, activation sortie slave select
-#define SPI_CR2_ERRIE 5 // 1 bit, activation interruption sur erreur
-#define SPI_CR2_RXNEIE 6 // 1 bit, activation interruption sur rx buffer not empty
-#define SPI_CR2_TXEIE 7 // 1 bit, activation interruption sur tx buffer empty
+#define SPI_CR2_RXDMAEN 1 // 1 bit, utilisation DMA sur réception
+#define SPI_CR2_TXDMAEN 2 // 1 bit, utilisation DMA sur transmission
+#define SPI_CR2_SSOE 4 // 1 bit, activation sortie slave select
+#define SPI_CR2_ERRIE 32 // 1 bit, activation interruption sur erreur
+#define SPI_CR2_RXNEIE 64 // 1 bit, activation interruption sur rx buffer not empty
+#define SPI_CR2_TXEIE 128 // 1 bit, activation interruption sur tx buffer empty
  
 #define SPI2_CR2 ((spi_cr2_t *)(SPI2_BASE_ADR+SPI_CR2_OFS))
 
@@ -136,14 +137,14 @@ typedef union{
 }spi_sr_t;
  
 // champs de bit registre SPI_SR
-#define SPI_SR_RXNE 0 // 1 bit, rx buffer non vide
-#define SPI_SR_TXE 1 // 1 bit, tx buffer vide
-#define SPI_SR_CHSIDE 2 // 1 bit, channel side
-#define SPI_SR_UDR 3 // 1 bit, underrun erreur
-#define SPI_SR_CRCERR 4 // 1 bit, erreur CRC
-#define SPI_SR_MODF 5 // 1 bit, mode fault
-#define SPI_SR_OVR 6 //  1 bit, overrun flag
-#define SPI_SR_BSY 7 // 1 bit, busy flag
+#define SPI_SR_RXNE 1 // 1 bit, rx buffer non vide
+#define SPI_SR_TXE 2 // 1 bit, tx buffer vide
+#define SPI_SR_CHSIDE 4 // 1 bit, channel side
+#define SPI_SR_UDR 8 // 1 bit, underrun erreur
+#define SPI_SR_CRCERR 16 // 1 bit, erreur CRC
+#define SPI_SR_MODF 32 // 1 bit, mode fault
+#define SPI_SR_OVR 64 //  1 bit, overrun flag
+#define SPI_SR_BSY 128 // 1 bit, busy flag
 
 #define SPI1_SR ((spi_sr_t*)(SPI1_BASE_ADR+SPI_SR_OFS))
 #define SPI2_SR ((spi_sr_t*)(SPI2_BASE_ADR+SPI_SR_OFS))
@@ -164,14 +165,17 @@ typedef union{
 } spi_i2scfgr_t ;
 
 // champs de bits du registre SPI_I2SCFGR
-#define SPI_I2SCFGR_CHLEN 0 // 1 bit, channel length 16/32 bits
-#define SPI_I2SCFGR_DATLEN 1 // 2 bits, data length {16,24,32}
-#define SPI_I2SCFGR_CKPOL  3 // 1 bit, clock polarité
-#define SPI_I2SCFGR_I2SSTD 4 // 2 bit, standard {Phillips,LSB,MSP,PCM}
-#define SPI_I2SCFGR_PCMSYNC 7 // 1 bit, synchronisation PCM
-#define SPI_I2SCFGR_I2SCFG 8 // 2 bits, mode I2S
-#define SPI_I2SCFGR_I2SE 10 // 1 bit, activation I2S
-#define SPI_I2SCFGR_MODE 11 // 1 bit, sélection mode SPI/I2S 
+#define SPI_I2SCFGR_CHLEN 1 // 1 bit, channel length 16/32 bits
+#define SPI_I2SCFGR_DATLEN_POS 1 // 2 bits, data length {16,24,32}
+#define SPI_I2SCFGR_DATLEN_MASK (~(3<<1))
+#define SPI_I2SCFGR_CKPOL  8 // 1 bit, clock polarité
+#define SPI_I2SCFGR_I2SSTD_POS 4 // 2 bit, standard {Phillips,LSB,MSP,PCM}
+#define SPI_I2SCFGR_I2SSTD_MASK (~(3<<4))
+#define SPI_I2SCFGR_PCMSYNC 128 // 1 bit, synchronisation PCM
+#define SPI_I2SCFGR_I2SCFG_POS 8 // 2 bits, mode I2S
+#define SPI_I2SCFGR_I2SCFG_MASK (~(3<<8))
+#define SPI_I2SCFGR_I2SE 1024 // 1 bit, activation I2S
+#define SPI_I2SCFGR_MODE 2048 // 1 bit, sélection mode SPI/I2S 
 
 #define SPI1_I2SCFGR ((spi_i2scfgr_t *)(SPI1_BASE_ADR+SPI_SR_OFS))
 #define SPI2_I2SCFGR ((spi_i2scfgr_t *)(SPI2_BASE_ADR+SPI_SR_OFS))
@@ -186,9 +190,10 @@ typedef union{
 }spi_i2spr_t;
 
 // champ de bits du registre SPI_I2SPR
-#define SPI_I2SPR_I2SDIV 0 // 8 bits, diviseur signal clock > (2
-#define SPI_I2SPR_ODD 8 // 1 bit,  diviseur impaire I2SDIV*2+1
-#define SPI_I2SPR_MCKOE 9 // 1 bit, activation sortie master clock
+#define SPI_I2SPR_I2SDIV_POS 0 // 8 bits, diviseur signal clock > (2
+#define SPI_I2SPR_I2SDIV_MASK (~(255))
+#define SPI_I2SPR_ODD 256 // 1 bit,  diviseur impaire I2SDIV*2+1
+#define SPI_I2SPR_MCKOE 512 // 1 bit, activation sortie master clock
 
 #define SPI1_I2SPR ((spi_i2spr_t*)(SPI1_BASE_ADR+SPI_I2SPR_OFS))
 #define SPI2_I2SPR ((spi_i2spr_t*)(SPI2_BASE_ADR+SPI_I2SPR_OFS))
