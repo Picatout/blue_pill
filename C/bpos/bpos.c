@@ -207,6 +207,9 @@ void __attribute__((__interrupt__)) SVC_handler(){
 	case SVC_FLASH_PGER:
 		*(int*)arg1=flash_erase_page(*(uint32_t*)arg1);
 		break;
+	case SVC_TICKS:
+		*(unsigned*)arg1=ticks;
+		break;
 /*	
 	case SVC_PRIVILIGED:
 		asm volatile(
@@ -239,7 +242,7 @@ static void set_sysclock(){
      // sélection PREDIV1 pour la source du PLL
      // multiplie la fréquence HSE par 9 
      // pour une fréquence maximale Fsysclk de 72 Mhz
-    RCC_CFGR->cfgr|=(PLLSRC_PREDIV1<<RCC_CFGR_PLLSRC)|(PLLMUL9<<RCC_CFGR_PLLMUL);
+    RCC_CFGR->cfgr|=(PLLSRC_PREDIV1<<RCC_CFGR_PLLSRC)|(PLLMUL8<<RCC_CFGR_PLLMUL);
     // active le PLL
     RCC_CR->fld.pllon=1;
     // Attend que le PLL soit prêt
@@ -260,18 +263,11 @@ static void set_sysclock(){
 // valeur reload 72Mhz/8/1000=9000
 #define MSEC_DLY 9000
 static void config_systicks(){
+	set_int_priority(IRQ_STK,8);
 	*SYST_RVR=MSEC_DLY-1;
 	SYST_CSR->csr=(1<<SYST_TICKINT)|(1<<SYST_ENABLE);
 }
 
-#define _mask_cnf(cnf,bit) (cnf & ~(CNF_MASK<<((bit&7)*4)))
-#define _apply_cnf(cnf,bit,pin_cnf) (_mask_cnf(cnf,bit) | pin_cnf<<((bit&7)*4)) 
-// PC13 mode{0:1}=10, CNF{2:3}=01 -> 6
-#define PC13_CNF 6
-static void port_c_setup(){
-	APB2ENR->fld.iopcen=1;
-	GPIOC_CRH->cr=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
-}
 
 
 // supprime le mode d'exécution
@@ -477,6 +473,10 @@ static void cmd_pgerase(){
 	if (!adr) print(" failed\n");
 }
 
+static void cmd_ticks(){
+	_svc_call(SVC_TICKS,&pad,0);
+}
+
 static const shell_cmd_t commands[]={
 	{"rst",cmd_reset},
 	{"ledon",cmd_led_on},
@@ -498,6 +498,7 @@ static const shell_cmd_t commands[]={
 	{"poke32",cmd_poke32},
 	{"fwrite",cmd_fwrite},
 	{"pgerase",cmd_pgerase}, 
+	{"ticks",cmd_ticks},
 	{NUL,NUL}
 };
 
@@ -643,19 +644,19 @@ void main(void){
 	set_int_priority(IRQ_SVC,15);
 	config_systicks();
 	flash_enable();
-	//port_c_setup();
 	APB2ENR->fld.iopcen=1;
 	APB2ENR->fld.iopaen=1;
 	APB2ENR->fld.iopben=1;
 	APB2ENR->fld.afioen=1;
 	APB1ENR->fld.spi2en=1;
 	config_pin(GPIOC,LED_PIN,OUTPUT_OD_SLOW);
-	tvout_init();
 	uart_open_channel(CON,115200,FLOW_HARD);
+	tvout_init();
 	cls();
-	print(VERSION); 
+	print(VERSION);
 	copy_blink_in_ram();
 	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,&proga,NUL); conout(CR);
+	//print_int(VIDEO_DELAY,10);
 	_svc_call(SVC_LED_ON,NUL,NUL);
 	flush_rx_queue();
 	unsigned llen;// char c;

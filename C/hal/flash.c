@@ -9,8 +9,8 @@
 
 #include "../include/blue_pill.h"
 
-#define _flash_busy (FLASH_ITRF->SR&FLASH_SR_BSY) 
-#define _flash_eop (FLASH_ITRF->SR&FLASH_SR_EOP)
+#define _flash_busy (FLASH->SR&FLASH_SR_BSY) 
+#define _flash_eop (FLASH->SR&FLASH_SR_EOP)
 
 // activation interface de programmation
 //mémoire lash
@@ -28,25 +28,25 @@ int flash_enable(){
 		: "=r" FLASH_ITFR->KEYR
 		: "I" 0x45670123, "I" 0xCDEF89AB
 	);*/
-	FLASH_ITRF->KEYR=0x45670123;
-	FLASH_ITRF->KEYR=0xCDEF89AB;
-	return !(FLASH_ITRF->CR&FLASH_CR_LOCK);
+	FLASH->KEYR=0x45670123;
+	FLASH->KEYR=0xCDEF89AB;
+	return !(FLASH->CR&FLASH_CR_LOCK);
 }
 
 // désactivation interface de programmation
 // mémoire flash
 void flash_disable(){
-	FLASH_ITRF->CR|=FLASH_CR_LOCK;
+	FLASH->CR|=FLASH_CR_LOCK;
 }
 
 // écriture d'un mot 16 bits dans
 // la mémoire flash
 // retourne succès=1, erreur=0.
 int flash_write(unsigned address, uint16_t hword){
-	if (FLASH_ITRF->CR&FLASH_CR_LOCK || (*(uint16_t*)address!=0xffff)) return 0;
+	if (FLASH->CR&FLASH_CR_LOCK || (*(uint16_t*)address!=0xffff)) return 0;
 	while (_flash_busy);
-	FLASH_ITRF->SR|=FLASH_SR_PGERR|FLASH_SR_WRPTRERR|FLASH_SR_EOP;
-	FLASH_ITRF->CR=FLASH_CR_PG;
+	FLASH->SR|=FLASH_SR_PGERR|FLASH_SR_WRPTRERR|FLASH_SR_EOP;
+	FLASH->CR=FLASH_CR_PG;
 	*(uint16_t*)address=hword;
 	while (_flash_busy && ! _flash_eop);
 	return (*(uint16_t*)address)==hword;
@@ -60,12 +60,12 @@ int flash_erase_page(uint32_t address){
 
 #define ERASED 0xffffffff
 	
-	if (FLASH_ITRF->CR&FLASH_CR_LOCK) return 0; 
-	FLASH_ITRF->SR|=FLASH_SR_PGERR|FLASH_SR_WRPTRERR|FLASH_SR_EOP;
+	if (FLASH->CR&FLASH_CR_LOCK) return 0; 
+	FLASH->SR|=FLASH_SR_PGERR|FLASH_SR_WRPTRERR|FLASH_SR_EOP;
 	address&=0xfffffc00;
-	FLASH_ITRF->CR=FLASH_CR_PER;
-	FLASH_ITRF->AR=address;
-	FLASH_ITRF->CR|=FLASH_CR_STRT;
+	FLASH->CR=FLASH_CR_PER;
+	FLASH->AR=address;
+	FLASH->CR|=FLASH_CR_STRT;
 	while (_flash_busy && ! _flash_eop);
 	adr=(uint32_t*)address;
 	for (i=0;i<256;i++){

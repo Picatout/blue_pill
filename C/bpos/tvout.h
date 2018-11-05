@@ -13,14 +13,37 @@
 #include "font.h"
 
 // choisir le standard PAL ou NTSC
-#define NTSC
-//#define PAL
+//#define NTSC
+#define PAL
 
-#define CHARS_PER_LINE 80
-#define LINES_PER_SCREEN 30
+#define HRES (320)
+#ifdef NTSC
+	#define HFREQ (15734)
+	#define VIDEO_DELAY (1050)
+	#define VFREQ (60)
+	#define HLINES (525)
+	#define HSYNC (4.7e-6) //µsec
+	#define BACK_PORCH (4.7e-6)
+	#define FIELD_END (271)
+	#define TOP_LINE (36)
+	#define VRES (230)
+#else
+	#define HFREQ (15625)
+	#define VIDEO_DELAY (1100)
+	#define VFREQ (50)
+	#define HLINES (625)
+	#define HSYNC (4.7e-6) //µsec
+	#define BACK_PORCH (5.7e-6)
+	#define FIELD_END (321)
+	#define TOP_LINE 60
+	#define VRES (240)
+#endif
+#define CHARS_PER_LINE (HRES/CHAR_WIDTH)
+#define LINES_PER_SCREEN (VRES/CHAR_HEIGHT)
+#define ROW_SIZE (HRES/16)
 
-extern uint8_t video_buffer[CHARS_PER_LINE][LINES_PER_SCREEN];
-
+extern uint16_t video_buffer[ROW_SIZE*VRES];
+extern uint32_t *video_bb;
 
 void tvout_init();
 

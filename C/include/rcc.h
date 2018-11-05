@@ -22,7 +22,25 @@
 #define RCC_AHBENR_ADR (RCC_BASE+20) // activation des clock périphérique sur AHB
 #define RCC_APB2ENR_ADR (RCC_BASE+24) // activation des clock périphérique sur APB2
 #define RCC_APB1ENR_ADR (RCC_BASE+28) // activation des clock périphérique sur APB1
+#define RCC_BDCR_ADR (RCC_BASE+32)
+#define RCC_CSR_ADR (RCC_BASE+36) // contrôle et status
+#define RCC_AHBRSTR_ADR (RCC_BASE+40) // AHB clock reset
+#define RCC_CFGR2_ADR (RCC_BASE+44) // configuration 2
 
+typedef struct{
+	sfr_t CR;
+	sfr_t CFGR;
+	sfr_t CIR;
+	sfr_t APB2RSTR;
+	sfr_t APB1RSTR;
+	sfr_t AHBENR;
+	sfr_t APB2ENR;
+	sfr_t APB1ENR;
+	sfr_t BDCR;
+	sfr_t CSR;
+} rcc_t;
+
+#define RCC ((rcc_t*)RCC_BASE)
 
 // source SYSCLK pour RCC_CFGR_SW
 #define HSI_CLK 0
@@ -165,9 +183,6 @@ typedef union{
 #define RCC_BDCR ((rcc_bdcr_t*)RCC_BDCR_ADR)
 
 
-#define RCC_CSR_ADR (RCC_BASE+36) // contrôle et status
-#define RCC_AHBRSTR_ADR (RCC_BASE+40) // AHB clock reset
-#define RCC_CFGR2_ADR (RCC_BASE+44) // configuration 2
 
 // position des champs du registre RCC_APB1ENR
 #define APB1ENR_BKPEN (27)
@@ -265,65 +280,66 @@ extern void set_pll_scaling(unsigned pll,unsigned div,unsigned mul);
 extern void enable_system_clock(unsigned clk_src);
 
 typedef union{
-	sfrnv_t apb2enr;
+	sfr_t apb2enr;
 	struct{
-		sfrnv_t afioen:1; // alternate function IO clock enable
-		sfrnv_t res0:1;
-		sfrnv_t iopaen:1; // io port A clock enable
-		sfrnv_t iopben:1; // io port B clock enable
-		sfrnv_t iopcen:1; // io port C clock enable
-		sfrnv_t iopden:1; // io port D clock enable
-		sfrnv_t iopeen:1; // io port E clock enable
-		sfrnv_t iopfen:1; // io port F clock enable
-		sfrnv_t iopgen:1; // io port G clock enable
-		sfrnv_t adc1en:1; // ADC 1 clock enable
-		sfrnv_t adc2en:1; // ADC 2 clock enable
-		sfrnv_t tim1en:1; // timer 1 clock enable
-		sfrnv_t spi1en:1; // SPI1 clock enable
-		sfrnv_t tim8en:1; // timer 8 clock enable
-		sfrnv_t usart1en:1; // USART1 clock enable
-		sfrnv_t adc3en:1; // ADC 3 clock enable
-		sfrnv_t tim9en:1; // timer 9 clock enable
-		sfrnv_t tim10en:1; // timer 10 clock enable
-		sfrnv_t tim11en:1; // timer 11 clock enable
-		sfrnv_t res1:10; 
+		sfr_t afioen:1; // alternate function IO clock enable
+		sfr_t res0:1;
+		sfr_t iopaen:1; // io port A clock enable
+		sfr_t iopben:1; // io port B clock enable
+		sfr_t iopcen:1; // io port C clock enable
+		sfr_t iopden:1; // io port D clock enable
+		sfr_t iopeen:1; // io port E clock enable
+		sfr_t iopfen:1;
+		sfr_t iopgen:1;
+		sfr_t adc1en:1; // ADC 1 clock enable
+		sfr_t adc2en:1; // ADC 2 clock enable
+		sfr_t tim1en:1; // timer 1 clock enable
+		sfr_t spi1en:1; // SPI1 clock enable
+		sfr_t tim8en:1;
+		sfr_t usart1en:1;
+		sfr_t adc3en:1;
+		sfr_t res2:3; 
+		sfr_t tim9en:1; 
+		sfr_t tim10en:1;
+		sfr_t tim11en:1;
+		sfr_t res3:10; 
 	}fld;
 }rcc_apb2enr_t;
 
 #define APB2ENR ((rcc_apb2enr_t*)RCC_APB2ENR_ADR)
 
 typedef union{
-	sfrnv_t apb1enr;
+	sfr_t apb1enr;
 	struct{
-		sfrnv_t tim2en:1; // timer 2 clock enable
-		sfrnv_t tim3en:1; // timer 3 clock enable
-		sfrnv_t tim4en:1; // timer 4 clock enable
-		sfrnv_t tim5en:1; // timer 5 clock enable
-		sfrnv_t tim6en:1; // timer 6 clock enable
-		sfrnv_t tim7en:1; // timer 7 clock enable
-		sfrnv_t tim12en:1; // timer 12 clock enable
-		sfrnv_t tim13en:1; // timer 13 clock enable
-		sfrnv_t tim14en:1; // timer 14 clock enable
-		sfrnv_t res0:2;
-		sfrnv_t wwdgen:1; // window watchdog clock enable
-		sfrnv_t res1:2; 
-		sfrnv_t spi2en:1; // SPI2 clock enable
-		sfrnv_t spi3en:1; // SPI3 clock enable
-		sfrnv_t res2:1; 
-		sfrnv_t usart2en:1; // USART2 clock enable
-		sfrnv_t usart3en:1; // USART3 clock enable
-		sfrnv_t usart4en:1; // USART4 clock enable
-		sfrnv_t usart5en:1; // USART5 clock enable
-		sfrnv_t i2c1en:1; // I2C 1 clock enable
-		sfrnv_t i2c2en:1; // I2C 2 clock enable
-		sfrnv_t usben:1; // USB clock enable
-		sfrnv_t res3:1; 
-		sfrnv_t canen:1; // CAN clock enable
-		sfrnv_t res4:1;
-		sfrnv_t bkpen:1; // backup interface clock enable
-		sfrnv_t pwren:1; // power interface clock enable
-		sfrnv_t dacen:1; // DAC interface clock enable
-		sfrnv_t res5:2;
+		sfr_t tim2en:1; // timer 2 clock enable
+		sfr_t tim3en:1; // timer 3 clock enable
+		sfr_t tim4en:1; // timer 4 clock enable
+		sfr_t tim5en:1; // timer 5 clock enable
+		sfr_t tim6en:1; // timer 6 clock enable
+		sfr_t tim7en:1; // timer 7 clock enable
+		sfr_t tim12en:1; // timer 12 clock enable
+		sfr_t tim13en:1; // timer 13 clock enable
+		sfr_t tim14en:1; // timer 14 clock enable
+		sfr_t res0:2;
+		sfr_t wwdgen:1; // window watchdog clock enable
+		sfr_t res1:2; 
+		sfr_t spi2en:1; // SPI2 clock enable
+		sfr_t spi3en:1; // SPI3 clock enable
+		sfr_t res2:1; 
+		sfr_t usart2en:1; // USART2 clock enable
+		sfr_t usart3en:1; // USART3 clock enable
+		sfr_t usart4en:1; // USART4 clock enable
+		sfr_t usart5en:1; // USART5 clock enable
+		sfr_t i2c1en:1; // I2C 1 clock enable
+		sfr_t i2c2en:1; // I2C 2 clock enable
+		sfr_t usben:1; // USB enable
+		sfr_t res3:1;
+		sfr_t canen:1;
+		sfr_t res4:1;
+		sfr_t bkpen:1; // backup interface clock enable
+		sfr_t pwren:1; // power interface clock enable
+		sfr_t dacen:1; // DAC interface clock enable
+		sfr_t res5:2;
 	}fld;
 }rcc_apb1enr_t;
 

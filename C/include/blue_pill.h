@@ -16,7 +16,7 @@
 
 // cristal 8Mhz
 #define HSI_FREQ  8000000 
-#define FCLK 72000000U
+#define FCLK 64000000U
 #define FAHB  FCLK
 #define FAPB2 FCLK
 #define FAPB1 (FCLK/2)

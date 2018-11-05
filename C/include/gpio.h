@@ -26,6 +26,16 @@
 #define GPIO_BRR_OFS 20
 #define GPIO_LCKR_OFS 24
 
+typedef struct{
+	sfr_t CRL;
+	sfr_t CRH;
+	sfr_t IDR;
+	sfr_t ODR;
+	sfr_t BSRR;
+	sfr_t BRR;
+	sfr_t LCKR;
+}gpio_t;
+
 // structures des différents registres
 
 typedef union{
@@ -113,12 +123,30 @@ typedef union{
 	};
 } gpio_lckr_t;	
 
+#define BIT0 (1<<0)
+#define BIT1 (1<<1)
+#define BIT2 (1<<2)
+#define BIT3 (1<<3)
+#define BIT4 (1<<4)
+#define BIT5 (1<<5)
+#define BIT6 (1<<6)
+#define BIT7 (1<<7)
+#define BIT8 (1<<8)
+#define BIT9 (1<<9)
+#define BIT10 (1<<10)
+#define BIT11 (1<<11)
+#define BIT12 (1<<12)
+#define BIT13 (1<<13)
+#define BIT14 (1<<14)
+#define BIT15 (1<<15)
 
 /*********
 * PORT A
 ********/
 // registres port A
 #define GPIOA_BASE_ADR 0x40010800
+
+#define PORTA ((gpio_t*)GPIOA_BASE_ADR)
 
 #define GPIOA_CRL  ((gpio_crl_t*)(GPIOA_BASE_ADR+GPIO_CRL_OFS))
 #define GPIOA_CRH  ((gpio_crh_t*)(GPIOA_BASE_ADR+GPIO_CRH_OFS))
@@ -134,7 +162,7 @@ typedef union{
 ********/
 // registre port B
 #define GPIOB_BASE_ADR 0x40010C00
-
+#define PORTB ((gpio_t*)GPIOB_BASE_ADR)
 #define GPIOB_CRL  ((gpio_crl_t*)(GPIOB_BASE_ADR+GPIO_CRL_OFS))
 #define GPIOB_CRH  ((gpio_crh_t*)(GPIOB_BASE_ADR+GPIO_CRH_OFS))
 #define GPIOB_CR   ((gpio_crl_t*)(GPIOB_BASE_ADR+GPIO_CRL_OFS))
@@ -149,7 +177,7 @@ typedef union{
 **********/
 // adresse de base registres du port C
 #define GPIOC_BASE_ADR 0X40011000U 
-
+#define PORTC ((gpio_t*)GPIOC_BASE_ADR)
 #define GPIOC_CRL  ((gpio_crl_t*)(GPIOC_BASE_ADR+GPIO_CRL_OFS))
 #define GPIOC_CRH  ((gpio_crh_t*)(GPIOC_BASE_ADR+GPIO_CRH_OFS))
 #define GPIOC_CR   ((gpio_crl_t*)(GPIOC_BASE_ADR+GPIO_CRL_OFS))
@@ -319,6 +347,13 @@ extern afio_mapr2_t * AFIO_MAPR2;//=(afio_mapr2_t *)(AFIO_BASE_ADR+AFIO_MAPR2_OF
 #define OUTPUT_OD_SLOW ((GPIO_OUTP_OD<<2)|GPIO_MODE_OUTP_2M)
 #define OUTPUT_OD_MED ((GPIO_OUTP_OD<<2)|GPIO_MODE_OUTP_10M)
 #define OUTPUT_OD_FAST ((GPIO_OUTP_OD<<2)|GPIO_MODE_OUTP_50M)
+#define OUTPUT_ALT_PP_SLOW ((GPIO_OUTP_ALT_PP<<2)|GPIO_MODE_OUTP_2M)
+#define OUTPUT_ALT_PP_MED ((GPIO_OUTP_ALT_PP<<2)|GPIO_MODE_OUTP_10M)
+#define OUTPUT_ALT_PP_FAST ((GPIO_OUTP_ALT_PP<<2)|GPIO_MODE_OUTP_50M)
+#define OUTPUT_ALT_OD_SLOW ((GPIO_OUTP_ALT_OD<<2)|GPIO_MODE_OUTP_2M)
+#define OUTPUT_ALT_OD_MED ((GPIO_OUTP_ALT_OD<<2)|GPIO_MODE_OUTP_10M)
+#define OUTPUT_ALT_OD_FAST ((GPIO_OUTP_ALT_OD<<2)|GPIO_MODE_OUTP_50M)
+
 #define INPUT_FLOAT (GPIO_MODE_INP|(GPIO_INP_FLOAT<<2))
 #define INPUT_PULL  (GPIO_MODE_INP|(GPIO_INP_PULL<<2))
 #define INPUT_ANALOG (GPIO_MODE_INP|(GPIO_INP_ANALOG<<2))

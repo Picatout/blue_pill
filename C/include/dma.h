@@ -93,16 +93,18 @@ typedef struct{
 #define DMA2_CHN ((dma_chn_t*)(DMA2_BASE_ADR+8))
 
 // champs de bits de CCR
-#define DMA_CCR_EN 1
-#define DMA_CCR_TCIE 2
-#define DMA_CCR_HTIE 4
-#define DMA_CCR_TEIE 8
-#define DMA_CCR_DIR  16
-#define DMA_CCR_CIRC 32
-#define DMA_CCR_PINC 64
-#define DMA_CCR_MINC 128
+#define DMA_CCR_EN (1<<0)
+#define DMA_CCR_TCIE (1<<1)
+#define DMA_CCR_HTIE (1<<2)
+#define DMA_CCR_TEIE (1<<3)
+#define DMA_CCR_DIR  (1<<4)
+#define DMA_CCR_CIRC (1<<5)
+#define DMA_CCR_PINC (1<<6)
+#define DMA_CCR_MINC (1<<7)
 #define DMA_CCR_PSIZE_POS (8) 
 #define DMA_CCR_PSIZE_MASK (~(3<<8))
+#define DMA_CCR_MSIZE_POS (10)
+#define DMA_CCR_MSIZE_MASK (~(3<<10))
 #define DMA_CCR_PL_POS (12)
 #define DMA_CCR_PL_MASK (~(3<<12))
 #define DMA_CCR_MEM2MEM (1<<14)

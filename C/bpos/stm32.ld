@@ -2,6 +2,7 @@
 MEMORY{
 	ROM (RX) : ORIGIN = 0, LENGTH = 64K
 	RAM (WRX) : ORIGIN = 0x20000000, LENGTH = 20K
+	RAMBB (WRX) : ORIGIN = 0x22000000, LENGTH = 640K
 }
 */
 
@@ -21,7 +22,7 @@ SECTIONS
     {
         *(.rodata)    /* Read only data */
     }
-	. = ALIGN(0x20) ;
+	. = ALIGN(0x400) ;
 	_FLASH_FREE = . ;
     
     .user_code : AT(_FLASH_FREE)
@@ -47,7 +48,7 @@ SECTIONS
     }
     _BSS_END = .;     /* Indicates where BSS section ends in RAM */
 	
-	. = ALIGN(0x20) ;
+	. = ALIGN(0x100) ;
 	_TCA_START = . ;
 	
 	.transient : AT(_TCA_START)
@@ -56,4 +57,4 @@ SECTIONS
 
 	}
 
-}  
+} 
