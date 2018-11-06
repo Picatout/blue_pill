@@ -14,10 +14,9 @@
   
 
 //#define ROW_SIZE 60 // nombre d'octets par ligne vidéo 
-// canal DMA
-#define DMACHAN 5
 
-static dma_chn_t* dma=DMA1_CHN;
+
+
  
 uint16_t video_buffer[ROW_SIZE*VRES];
 
@@ -25,9 +24,10 @@ uint32_t *video_bb;
 
 //volatile static uint8_t line_buffer[ROW_SIZE];
 
-#define _enable_dma()  dma[DMACHAN].ccr|=DMA_CCR_EN
-#define _disable_dma() dma[DMACHAN].ccr&=~DMA_CCR_EN
- 
+#define _enable_dma()  DMA1[DMACH5].ccr|=DMA_CCR_EN
+#define _disable_dma() DMA1[DMACH5].ccr&=~DMA_CCR_EN
+#define _enable_spi_dma() SPI2->CR2|=SPI_CR2_TXDMAEN;
+#define _disable_spi_dma() SPI2->CR2&=~SPI_CR2_TXDMAEN; 
  void tvout_init(){
 	video_bb = (uint32_t*)(0x22000000+(((unsigned int)video_buffer&0x7ffff)<<5)); 
 	//sortie sync sur PA8
@@ -55,11 +55,11 @@ uint32_t *video_bb;
 	//SPI2-MOSI utilisé pour sérialisaton pixels.
 	SPI2->CR1=(FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF;
 	// configuration du canal dma
-	
-	dma[DMACHAN].ccr=DMA_CCR_DIR|DMA_CCR_CIRC|DMA_CCR_MINC|(3<<DMA_CCR_PL_POS)|(1<<DMA_CCR_PSIZE_POS)|(1<<DMA_CCR_MSIZE_POS);
-	dma[DMACHAN].cndtr=ROW_SIZE;
-	dma[DMACHAN].cpar=(uint32_t)SPI2_DR;
-	
+	DMA1[DMACH5].ccr=DMA_CCR_DIR|DMA_CCR_MINC|(3<<DMA_CCR_PL_POS)|DMA_CCR_TCIE|(1<<DMA_CCR_PSIZE_POS)|(1<<DMA_CCR_MSIZE_POS);
+	DMA1[DMACH5].cpar=(uint32_t)SPI2_DR;
+	_enable_spi_dma();
+	set_int_priority(IRQ_DMA1CH5,7);
+	enable_interrupt(IRQ_DMA1CH5);
 	// activation de l'interruption
 	TIMER1_DIER->fld.cc1ie=1;
 	set_int_priority(IRQ_TIM1_CC,7);
@@ -91,7 +91,6 @@ __attribute__((optimize("-Os"))) void TIM1_CC_handler(){
     uint16_t cnt;
 	uint16_t* line_adr;
     
-	//_disable_spi();
 	line_count++;
 	TIMER1_SR->fld.cc1if=0;
 	switch(line_count){
@@ -141,23 +140,28 @@ __attribute__((optimize("-Os"))) void TIM1_CC_handler(){
 	    break;
 	default: 
 		if (video){
-			line_adr=(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
-			//dma[DMACHAN].cmar=(uint32_t)(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
+			//line_adr=(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
+			_disable_dma();
+			DMA1[DMACH5].cmar=(uint32_t)(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
+			DMA1[DMACH5].cndtr=ROW_SIZE;
 			cnt=VIDEO_DELAY;
 			while ((*TIMER1_CNT)<cnt){asm volatile("");}
-			//dma[DMACHAN].ccr|=BIT0;
-			
+			_enable_dma();
+			/*
 			for (i=0;i<(ROW_SIZE);i++){
 				while (!(SPI2->SR&SPI_SR_TXE));
 				SPI2->DR=line_adr[i];
 			}
 			while (!(SPI2->SR&SPI_SR_TXE));
 			SPI2->DR=0;
-			
-		}else{
-		//	dma[DMACHAN].ccr&=~BIT0;
+			*/
 		}
 		break;
 	}//switch (line_count)
 }
 
+void DMA1CH5_handler(){
+	DMA1_FLAGS->IFCR|=DMA_ISR_CGIF5;
+	while (!(SPI2->SR&SPI_SR_TXE));
+	SPI2->DR=0;
+}

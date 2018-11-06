@@ -9,16 +9,22 @@
  */
 
 
-#define DMA1_BASE_ADR 0x40000000
-#define DMA2_BASE_ADR 0x40020400
+#define DMA1_BASE_ADR 0x40020000
+
+#define DMACH1 (0)
+#define DMACH2 (1)
+#define DMACH3 (2)
+#define DMACH4 (3)
+#define DMACH5 (4)
+#define DMACH6 (5)
+#define DMACH7 (6)
 
 typedef struct {
-	sfr_t isr;
-	sfr_t ifcr;
+	sfr_t ISR;
+	sfr_t IFCR;
 } dma_flags_t;
 
 #define DMA1_FLAGS ((dma_flags_t*)DMA1_BASE_ADR)
-#define DMA2_FLAGS ((dma_flags_t*)DMA2_BASE_ADR)
 
 // champs de bits de ISR
 #define DMA_ISR_GIF1 (1<<0)
@@ -89,8 +95,7 @@ typedef struct{
 	sfr_t res;
 }dma_chn_t;
 
-#define DMA1_CHN ((dma_chn_t*)(DMA1_BASE_ADR+8))
-#define DMA2_CHN ((dma_chn_t*)(DMA2_BASE_ADR+8))
+#define DMA1 ((dma_chn_t*)(DMA1_BASE_ADR+8))
 
 // champs de bits de CCR
 #define DMA_CCR_EN (1<<0)

@@ -649,6 +649,7 @@ void main(void){
 	APB2ENR->fld.iopben=1;
 	APB2ENR->fld.afioen=1;
 	APB1ENR->fld.spi2en=1;
+	RCC->AHBENR|=RCC_AHBENR_DMA1EN; // activation DMA1
 	config_pin(GPIOC,LED_PIN,OUTPUT_OD_SLOW);
 	uart_open_channel(CON,115200,FLOW_HARD);
 	tvout_init();

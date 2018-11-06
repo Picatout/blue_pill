@@ -185,8 +185,8 @@ typedef union{
 
 
 // position des champs du registre RCC_APB1ENR
-#define APB1ENR_BKPEN (27)
-#define APB1ENR_PWREN (28)
+#define RCC_APB1ENR_BKPEN (27)
+#define RCC_APB1ENR_PWREN (28)
 #define RCC_APB1ENR_USART2EN (17)
 #define RCC_APB1ENR_USART3EN (18)
 // position des champs du registre RCC_APB2ENR
@@ -194,7 +194,14 @@ typedef union{
 #define RCC_APB2ENR_IOPBEN (3)
 #define RCC_APB2ENR_IOPCEN (4)
 #define RCC_APB2ENR_USART1EN (14)
-
+// position des champs du registre RCC_AHBENR
+#define RCC_AHBENR_DMA1EN (1<<0)
+#define RCC_AHBENR_DMA2EN (1<<1)
+#define RCC_AHBENR_SRAMEN (1<<2)
+#define RCC_AHBENR_FLITFEN (1<<4)
+#define RCC_AHBENR_CRCEN (1<<6)
+#define RCC_AHBENR_FSMCEN (1<<8)
+#define RCC_AHBENR_SDIOEN (1<<10)
 // position des champs du registre RCC_CR
 #define RCC_CR_HSION  (0) // 1 bit
 #define RCC_CR_HSIRDY (1) // 1 bit
