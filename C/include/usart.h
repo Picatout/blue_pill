@@ -125,6 +125,9 @@
 #define USART_GTPR_PSC 0 // 8 bits, diviseur pour le mode IrDA
 #define USART_GTPR_GT 8 // 8 bits, utilisé par le mode smartcard
  
+ #define PARITY_ENABLE (1)
+ #define PARITY_DISABLE (0)
+ 
 /************************
  *  fonctions
  ************************/
@@ -134,7 +137,7 @@ void uart_set_baud(unsigned channel, unsigned baud);
  
 // configure l'USART pour comminication selon protocole RS-232
 // 8 bit 1 stop pas de parité
-void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl);
+void uart_open_channel(unsigned channel, unsigned baud,unsigned parity, unsigned flow_ctrl);
 
 // status récepction
 // retourne 0 si pas de caractère disponible

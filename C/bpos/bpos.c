@@ -17,6 +17,9 @@
 #include "../include/console.h"
 #include "svcall.h"
 #include "tvout.h"
+#include "keyboard.h"
+#include "gdi.h"
+
 
 #define _pause(tm)  ({do {_svc_call(SVC_GET_TIMER,&tm,NUL);} while (tm);})
 
@@ -639,6 +642,7 @@ void copy_blink_in_ram(){
 
 extern void print_fault(const char *msg, sfrp_t adr);
 
+
 void main(void){
 	set_sysclock();
 	set_int_priority(IRQ_SVC,15);
@@ -651,7 +655,8 @@ void main(void){
 	APB1ENR->fld.spi2en=1;
 	RCC->AHBENR|=RCC_AHBENR_DMA1EN; // activation DMA1
 	config_pin(GPIOC,LED_PIN,OUTPUT_OD_SLOW);
-	uart_open_channel(CON,115200,FLOW_HARD);
+	uart_open_channel(CON,115200,PARITY_DISABLE,FLOW_HARD);
+	keyboard_init();
 	tvout_init();
 	cls();
 	print(VERSION);
@@ -661,6 +666,12 @@ void main(void){
 	_svc_call(SVC_LED_ON,NUL,NUL);
 	flush_rx_queue();
 	unsigned llen;// char c;
+	char c;
+	int i;
+	gdi_clear_screen();
+	for (i=0;i<128;i++){
+		gdi_putc((unsigned char)i);
+	}
 	while (1){ // if ((c=conin())) conout(c);
 		llen=read_line(tib,CMD_MAX_LEN);
 		parse_line(llen);

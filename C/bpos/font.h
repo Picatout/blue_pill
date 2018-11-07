@@ -32,7 +32,7 @@ extern "C" {
 
 #define CHAR_HEIGHT 8
 #define CHAR_WIDTH 6   // incluant l'espace à droite
-#define FONT_SIZE 96  // nombre de caractères dans la table
+#define FONT_SIZE 128  // nombre de caractères dans la table
     
 
 extern const unsigned char font6x8[FONT_SIZE][CHAR_HEIGHT];

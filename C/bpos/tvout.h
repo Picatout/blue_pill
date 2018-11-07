@@ -26,7 +26,7 @@
 	#define BACK_PORCH (4.7e-6)
 	#define FIELD_END (271)
 	#define TOP_LINE (36)
-	#define VRES (230)
+	#define VRES (224)
 #else
 	#define HFREQ (15625)
 	#define VIDEO_DELAY (1000)

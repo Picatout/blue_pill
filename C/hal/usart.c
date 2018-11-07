@@ -37,7 +37,7 @@ void uart_set_baud(unsigned channel, unsigned baud){
 
 // configure l'USART pour communication selon protocole RS-232
 // 8 bit 1 stop pas de parité
-void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
+void uart_open_channel(unsigned channel, unsigned baud,unsigned parity, unsigned flow_ctrl){
 	sfrp_t cr1, cr3;
 	
 	switch(channel){ // activation du périphérique USART et du PORT
@@ -85,6 +85,9 @@ void uart_open_channel(unsigned channel, unsigned baud, unsigned flow_ctrl){
 	cr1=(sfrp_t)(channel+USART_CR1_OFS);
 	uart_getc(channel);
 	*cr1=(1<<USART_CR1_UE)|(1<<USART_CR1_TE)|(1<<USART_CR1_RE)|(1<<USART_CR1_RXNEIE);
+	if (parity){
+		*cr1|=(1<<USART_CR1_PEIE)|(1<<USART_CR1_PCE);
+    }
 }
 
 // status de la console récepction
@@ -102,7 +105,7 @@ char uart_getc(unsigned channel){
 	sfrp_t dr;
 	
 	dr=(sfrp_t)(channel+USART_DR_OFS);
-	return *dr&0x7f;
+	return *dr;
 }
 
 // transmet un caractère à la console
@@ -113,6 +116,6 @@ void uart_putc(unsigned channel, char c){
 	dr=(sfrp_t)(channel+USART_DR_OFS);
 	//attend que dr soit vide
 	while (!(*sr&(1<<USART_SR_TXE)));
-	*dr=c&0x7f;
+	*dr=c;
 }
 
