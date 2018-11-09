@@ -49,6 +49,34 @@ enum timer_e{
 #define TMR_DCR_OFS 72
 #define TMR_DMAR_OFS 76
 
+typedef struct{
+	sfr_t CR1;
+	sfr_t CR2;
+	sfr_t SMCR;
+	sfr_t DIER;
+	sfr_t SR;
+	sfr_t EGR;
+	sfr_t CCMR1;
+	sfr_t CCMR2;
+	sfr_t CCER;
+	sfr_t CNT;
+	sfr_t PSC;
+	sfr_t ARR;
+	sfr_t RCR;
+	sfr_t CCR1;
+	sfr_t CCR2;
+	sfr_t CCR3;
+	sfr_t CCR4;
+	sfr_t BDTR;
+	sfr_t DCR;
+	sfr_t DMAR;
+}tmr_t;
+
+#define TMR1 ((tmr_t*)TIMER1_BASE_ADR)
+#define TMR2 ((tmr_t*)TIMER2_BASE_ADR)
+#define TMR3 ((tmr_t*)TIMER3_BASE_ADR)
+#define TMR4 ((tmr_t*)TIMER4_BASE_ADR)
+
 
 typedef union{
 	sfr_t cr1;

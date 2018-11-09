@@ -15,9 +15,9 @@
 // activation interface de programmation
 //mémoire lash
 int flash_enable(){
-	if (!RCC_CR->fld.hsion){ // activation clock HSI
-		RCC_CR->fld.hsion=1;
-		while (!RCC_CR->fld.hsirdy);
+	if (!(RCC->CR&RCC_CR_HSION)){ // activation clock HSI
+		RCC->CR|=RCC_CR_HSION;
+		while (!(RCC->CR&RCC_CR_HSIRDY));
 	}
 	/*
 	asm volatile (

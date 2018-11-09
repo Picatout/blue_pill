@@ -14,17 +14,35 @@
 
 static rx_queue_t rx_queue;
 // interruption USART2 (console)
-void __attribute__((__interrupt__)) USART2_handler(){
-	if (USART2_SR&(1<<USART_SR_RXNE)){
-		rx_queue.queue[rx_queue.head++]=USART2_DR&0x7f;
+void CON_handler(){
+	if (CON->SR&USART_SR_RXNE){
+		rx_queue.queue[rx_queue.head++]=CON->DR&0x7f;
 		rx_queue.head&=RX_QUEUE_SIZE-1;
 	}
 }
 
+void console_init(){
+	// activation clock USART2
+	RCC->APB1ENR|=RCC_APB1ENR_USART2EN;
+	//configure USART pins
+	RCC->APB2ENR|=RCC_APB2ENR_IOPAEN;
+	// PA0 -> CTS input   (floating)
+	// PA1 -> RTS output  (push-pull)
+	// PA2 -> TX  output (push-pull)
+	// PA3 -> RX input (floating)
+	usart_set_baud(CON,115200);
+	CON_PORT->CRL&=~((15<<GPIO_MODE1)|(15<<GPIO_MODE2));
+	CON_PORT->CRL|=(0xA<<GPIO_MODE1)|(0xA<<GPIO_MODE2);
+	CON->CR1|=USART_CR1_TE|USART_CR1_RE|USART_CR1_RXNEIE;
+	CON->CR3=USART_CR3_CTSE|USART_CR3_RTSE;
+	set_int_priority(IRQ_CON,7);
+	enable_interrupt(IRQ_CON);
+	CON->CR1|=USART_CR1_UE;
+}
 
 // envoie d'un caractère à la console
 void conout(char c){
-	uart_putc(CON,c);
+	usart_putc(CON,c);
 }
 
 

@@ -16,106 +16,113 @@
 
 
 // vitesse de transmission
-void uart_set_baud(unsigned channel, unsigned baud){
-	sfrp_t brr;
+void usart_set_baud(usart_t* channel, unsigned baud){
 	uint32_t rate;
-
-    brr=(sfrp_t)(channel+USART_BRR_OFS);		
-	switch (channel){
-	case USART1:
+    if ((uint32_t)channel==(uint32_t)USART1){
 		rate=(FAPB2/baud/16)<<4;
 		rate|=(FAPB2/baud)%16;
-		*brr=rate;
-		return;
-	case USART2:
-	case USART3:
+	}else{
 		rate=(FAPB1/baud/16)<<4;
 		rate|=(FAPB1/baud)%16;
 	}
-	*brr=rate;
+	channel->BRR=rate;
 }
 
+// direction communication 
+void usart_comm_dir(usart_t* channel, unsigned direction){
+	channel->CR1&=USART_CR1_DIR_MASK;
+	channel->CR1|=direction<<USART_CR1_DIR_POS;
+}
+
+
 // configure l'USART pour communication selon protocole RS-232
-// 8 bit 1 stop pas de parité
-void uart_open_channel(unsigned channel, unsigned baud,unsigned parity, unsigned flow_ctrl){
-	sfrp_t cr1, cr3;
-	
-	switch(channel){ // activation du périphérique USART et du PORT
-	case USART1:
-		APB2ENR->apb2enr|=(1<<RCC_APB2ENR_USART1EN)|(1<<RCC_APB2ENR_IOPAEN);
+void usart_open_channel(usart_t* channel, unsigned baud, unsigned parity, unsigned dir, unsigned flow_ctrl){
+	usart_set_baud(channel,baud);
+	switch((uint32_t)channel){ // activation du périphérique USART et du PORT
+	case (uint32_t)USART1:
+		RCC->APB2ENR|=RCC_APB2ENR_USART1EN|RCC_APB2ENR_IOPAEN;
 		// PA9 -> TX   output (push-pull)
 		// PA10 -> RX  input (floating)
 		// PA11 -> CTS input (floating)
 		// PA12 -> RTS output (push-pull)
-		GPIOA_CRH->cr&=~((15<<GPIO_MODE9)|(15<<GPIO_MODE12));
-		GPIOA_CRH->cr|=(0xA<<GPIO_MODE9)|(0xA<<GPIO_MODE12);
+		if (flow_ctrl==FLOW_HARD){
+			GPIOA_CRH->cr&=~((15<<GPIO_MODE9)|(15<<GPIO_MODE12));
+			GPIOA_CRH->cr|=(0xA<<GPIO_MODE9)|(0xA<<GPIO_MODE12);
+		}else{
+			GPIOA_CRH->cr&=~(15<<GPIO_MODE9);
+			GPIOA_CRH->cr|=(0xA<<GPIO_MODE9);
+		}
 		set_int_priority(IRQ_USART1,7);
-		enable_interrupt(USART1_IRQ);
+		enable_interrupt(IRQ_USART1);
 		break;
-	case USART2:
-		APB1ENR->fld.usart2en=1;
-		APB2ENR->fld.iopaen=1;
+	case (uint32_t)USART2:
+		RCC->APB1ENR|=RCC_APB1ENR_USART2EN;
+		RCC->APB2ENR|=RCC_APB2ENR_IOPAEN;
 		// PA0 -> CTS input   (floating)
 		// PA1 -> RTS output  (push-pull)
 		// PA2 -> TX  output (push-pull)
 		// PA3 -> RX input (floating)
-		GPIOA_CRL->cr&=~((15<<GPIO_MODE1)|(15<<GPIO_MODE2));
-		GPIOA_CRL->cr|=(0xA<<GPIO_MODE1)|(0xA<<GPIO_MODE2);
+		if (flow_ctrl==FLOW_HARD){
+			GPIOA_CRL->cr&=~((15<<GPIO_MODE1)|(15<<GPIO_MODE2));
+			GPIOA_CRL->cr|=(0xA<<GPIO_MODE1)|(0xA<<GPIO_MODE2);
+		}else{
+			GPIOA_CRL->cr&=~(15<<GPIO_MODE2);
+			GPIOA_CRL->cr|=(0xA<<GPIO_MODE2);
+		}
 		set_int_priority(IRQ_USART2,7);
-		enable_interrupt(USART2_IRQ);
+		enable_interrupt(IRQ_USART2);
 		break;
-	case USART3:
-		APB1ENR->fld.usart3en=1;
-		APB2ENR->fld.iopben=1;
+	case (uint32_t)USART3:
+		RCC->APB1ENR|=RCC_APB1ENR_USART3EN;
+		RCC->APB2ENR|=RCC_APB2ENR_IOPBEN;
 		//PB10 -> TX output (push-pull)
 		//PB11 -> RX input (floating)
 		//PB13 -> CTS input (floating)
 		//PB14 -> RTS output (push-pull)
-		GPIOB_CRH->cr&=~((15<<GPIO_MODE10)|(15<<GPIO_MODE14));
-		GPIOB_CRH->cr|=(0xA<<GPIO_MODE10)|(0xA<<GPIO_MODE14);
+		if (flow_ctrl==FLOW_HARD){
+			GPIOB_CRH->cr&=~((15<<GPIO_MODE10)|(15<<GPIO_MODE14));
+			GPIOB_CRH->cr|=(0xA<<GPIO_MODE10)|(0xA<<GPIO_MODE14);
+		}else{
+			GPIOB_CRH->cr&=~((15<<GPIO_MODE10));
+			GPIOB_CRH->cr|=(0xA<<GPIO_MODE10);
+		}
 		set_int_priority(IRQ_USART3,7);
-		enable_interrupt(USART3_IRQ);
+		enable_interrupt(IRQ_USART3);
 		break;
 	}
-	uart_set_baud(channel,baud);
 	if (flow_ctrl==FLOW_HARD){
-		cr3=(sfrp_t)(channel+USART_CR3_OFS);
-		*cr3=(1<<USART_CR3_CTSE)|(1<<USART_CR3_RTSE);
+		channel->CR3=USART_CR3_CTSE|USART_CR3_RTSE;
 	}
-	cr1=(sfrp_t)(channel+USART_CR1_OFS);
-	uart_getc(channel);
-	*cr1=(1<<USART_CR1_UE)|(1<<USART_CR1_TE)|(1<<USART_CR1_RE)|(1<<USART_CR1_RXNEIE);
-	if (parity){
-		*cr1|=(1<<USART_CR1_PEIE)|(1<<USART_CR1_PCE);
+	usart_comm_dir(channel,dir);
+	switch (parity){
+	case PARITY_NONE:
+		channel->CR1|=USART_CR1_UE;
+		break;
+	case PARITY_ODD:
+		channel->CR1|=USART_CR1_UE|USART_CR1_PEIE|USART_CR1_PCE|USART_CR1_PS;
+		break;
+	case PARITY_EVEN:
+		channel->CR1|=USART_CR1_UE|USART_CR1_PEIE|USART_CR1_PCE;
+		break;
     }
 }
 
 // status de la console récepction
 // retourne 0 si pas de caractère disponible
 // retourne -1 si caractère disponible
-int uart_stat(unsigned channel){
-	sfrp_t sr;
-	
-	sr=(sfrp_t)(channel+USART_SR_OFS);
-	return *sr&(1<<USART_SR_RXNE)?-1:0;
+int usart_stat(usart_t* channel){
+	return channel->SR&USART_SR_RXNE;
 }
 
 // reçoit un caractère de la console
-char uart_getc(unsigned channel){
-	sfrp_t dr;
-	
-	dr=(sfrp_t)(channel+USART_DR_OFS);
-	return *dr;
+char usart_getc(usart_t* channel){
+	return channel->DR;
 }
 
 // transmet un caractère à la console
-void uart_putc(unsigned channel, char c){
-	sfrp_t dr, sr;
-	
-	sr=(sfrp_t)(channel+USART_SR_OFS);
-	dr=(sfrp_t)(channel+USART_DR_OFS);
+void usart_putc(usart_t* channel, char c){
 	//attend que dr soit vide
-	while (!(*sr&(1<<USART_SR_TXE)));
-	*dr=c;
+	while (!(channel->SR&USART_SR_TXE));
+	channel->DR=c;
 }
 

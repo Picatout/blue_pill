@@ -239,26 +239,24 @@ void __attribute__((naked)) STK_handler(){
 // en utilisant le cristal externe (HSE) et le PLL
 static void set_sysclock(){
 	 // active l'oscillateur externe
-	RCC_CR->fld.hseon=1;
+	RCC->CR|=RCC_CR_HSEON;
 	 // attend que l'oscillateur soit prêt
-   while (!RCC_CR->fld.hserdy);
+   while (!(RCC->CR&RCC_CR_HSERDY));
      // sélection PREDIV1 pour la source du PLL
-     // multiplie la fréquence HSE par 9 
-     // pour une fréquence maximale Fsysclk de 72 Mhz
-    RCC_CFGR->cfgr|=(PLLSRC_PREDIV1<<RCC_CFGR_PLLSRC)|(PLLMUL8<<RCC_CFGR_PLLMUL);
+     // multiplie la fréquence HSE par 8 
+     // pour une fréquence  Fsysclk de 64 Mhz
+    RCC->CFGR|=RCC_CFGR_PLLSRC_HSE|(RCC_CFGR_PLLMUL8<<RCC_CFGR_PLLMUL_POS);
     // active le PLL
-    RCC_CR->fld.pllon=1;
+    RCC->CR|=RCC_CR_PLLON;
     // Attend que le PLL soit prêt
-    while (!RCC_CR->fld.pllrdy);
+    while (!(RCC->CR&RCC_CR_PLLRDY));
     // ajoute délais d'accès à la mémoire flash
-    FLASH_ACR->fld.latency=WAIT_2_CY;
     // active le prefetch buffer
-    FLASH_ACR->fld.prftbe=1;
-    // SélectionNE le PLL comme source pour SYSCLK
-    RCC_CFGR->fld.sw=PLL_CLK;
+    FLASH->ACR|=(WAIT_2_CY<<FLASH_ACR_LATENCY_POS)|FLASH_ACR_PRFTBE;
 	// La fréquence maximale pour APB1 doit-être de 36 Mhz
 	// donc divise SYSCLK/2
-	RCC_CFGR->fld.ppre1=PPRECLK_DIV2;
+    // Sélectionne le PLL comme source pour SYSCLK dans CR
+	RCC->CFGR|=(RCC_CFGR_PPREx_DIV2<<RCC_CFGR_PPRE1_POS)|(RCC_CFGR_SW_PLL<<RCC_CFGR_SW_POS);
 }
 
 // configure SYSTICKS pour un cycle 1 msec
@@ -266,7 +264,7 @@ static void set_sysclock(){
 // valeur reload 72Mhz/8/1000=9000
 #define MSEC_DLY 9000
 static void config_systicks(){
-	set_int_priority(IRQ_STK,8);
+	set_int_priority(IRQ_STK,9);
 	*SYST_RVR=MSEC_DLY-1;
 	SYST_CSR->csr=(1<<SYST_TICKINT)|(1<<SYST_ENABLE);
 }
@@ -642,37 +640,35 @@ void copy_blink_in_ram(){
 
 extern void print_fault(const char *msg, sfrp_t adr);
 
-
 void main(void){
 	set_sysclock();
 	set_int_priority(IRQ_SVC,15);
 	config_systicks();
 	flash_enable();
-	APB2ENR->fld.iopcen=1;
-	APB2ENR->fld.iopaen=1;
-	APB2ENR->fld.iopben=1;
-	APB2ENR->fld.afioen=1;
-	APB1ENR->fld.spi2en=1;
+	RCC->APB2ENR=RCC_APB2ENR_IOPAEN|RCC_APB2ENR_IOPBEN|RCC_APB2ENR_IOPCEN|RCC_APB2ENR_AFIOEN;
+	RCC->APB1ENR=RCC_APB1ENR_SPI2EN;
 	RCC->AHBENR|=RCC_AHBENR_DMA1EN; // activation DMA1
 	config_pin(GPIOC,LED_PIN,OUTPUT_OD_SLOW);
-	uart_open_channel(CON,115200,PARITY_DISABLE,FLOW_HARD);
+	console_init();
+	cls();
 	keyboard_init();
 	tvout_init();
-	cls();
 	print(VERSION);
 	copy_blink_in_ram();
 	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,&proga,NUL); conout(CR);
-	//print_int(VIDEO_DELAY,10);
 	_svc_call(SVC_LED_ON,NUL,NUL);
 	flush_rx_queue();
-	unsigned llen;// char c;
 	char c;
-	int i;
 	gdi_clear_screen();
-	for (i=0;i<128;i++){
-		gdi_putc((unsigned char)i);
-	}
-	while (1){ // if ((c=conin())) conout(c);
+	gdi_putc('O'); gdi_putc('K');gdi_putc(' ');
+	while (1){
+		c=kbd_getc();
+		if (c){
+			gdi_putc(c);
+		}
+	 }
+	unsigned llen;
+	while (1){
 		llen=read_line(tib,CMD_MAX_LEN);
 		parse_line(llen);
 	}

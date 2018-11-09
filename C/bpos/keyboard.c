@@ -14,19 +14,33 @@
  
 
 #define QUEUE_SIZE (32)
-static char queue[QUEUE_SIZE];
+static unsigned char queue[QUEUE_SIZE];
 static int head=0,tail=0;
  
 void keyboard_init(){
-	set_int_priority(IRQ_USART1,8);
-	uart_open_channel(KEYBRD,12500,PARITY_ENABLE,FLOW_SOFT);
 	head=0;
 	tail=0;
+	// activation clock IOPA et AFIO
+	RCC->APB2ENR|=RCC_APB2ENR_IOPAEN|RCC_APB2ENR_AFIOEN;
+	// activation clock TMR2
+	RCC->APB1ENR|=RCC_APB1ENR_TIM2EN; 
+	TMR2->ARR=FAPB1/20*.04;
+	TMR2->PSC=20;
+	TMR2->CR1=BIT0|BIT7; // ARPE
+	TMR2->DIER=BIT0; // UIE
+	set_int_priority(IRQ_KBD_CLK,2);
+	set_int_priority(IRQ_TIM2,14);
+	// trigger sur signal descendant
+	EXTI->FTSR|=KBD_CLK_PIN;
+	EXTI->IMR|=KBD_CLK_PIN;
+	enable_interrupt(IRQ_KBD_CLK);
+	TMR2->SR&=~BIT0;
+	enable_interrupt(IRQ_TIM2);
 }
 
 
-char kbd_getc(){
-	char c=0;
+unsigned char kbd_getc(){
+	unsigned char c=0;
 	if (head!=tail){
 		c=queue[head++];
 		head&=QUEUE_SIZE-1;
@@ -49,11 +63,11 @@ char kbd_getc(){
 static unsigned flags;
 
 typedef struct{
-	char code;
-	char ascii;
+	unsigned char code;
+	unsigned char ascii;
 } key_translate_t;
 
-const key_translate_t mcsaite_key[]={
+static const key_translate_t mcsaite_key[]={
 	{0x1c,'a'},
 	{0x32,'b'},
 	{0x21,'c'},
@@ -126,7 +140,7 @@ const key_translate_t mcsaite_key[]={
 	{0,0}
 };
 
-const key_translate_t mcsaite_shey[]={ // shifted key
+static const key_translate_t mcsaite_shey[]={ // shifted key
 	{'`','~'},
 	{'1','!'},
 	{'2','@'},
@@ -151,13 +165,13 @@ const key_translate_t mcsaite_shey[]={ // shifted key
 	{0,0}
 };
 
-const key_translate_t mcsaite_alt[]={
+static const key_translate_t mcsaite_alt[]={
 };
 
-const key_translate_t mcsaite_xkey[]={
+static const key_translate_t mcsaite_xkey[]={
 };
 
-char search_table(const key_translate_t *table,char code){
+static unsigned char search_table(const key_translate_t *table,unsigned char code){
 	while (table->code){
 		if (table->code==code) break;
 		table++;
@@ -165,15 +179,11 @@ char search_table(const key_translate_t *table,char code){
 	return table->ascii;
 }
 
-// interruption USART1 (clavier PS/2)
-void USART1_handler(){
-	char c,s;
-	int shift;
-	if (USART1_SR&(1<<USART_SR_PE)){
-		uart_getc(USART1);
-	}else if (USART1_SR&(1<<USART_SR_RXNE)){
-		c=uart_getc(USART1);
-		switch (c){
+static void convert_code(unsigned char code){
+		unsigned char c,s;
+		int shift;
+		
+		switch (code){
 		case 0xF0:
 			flags |= RELEASE;
 			break;
@@ -243,10 +253,10 @@ void USART1_handler(){
 		default:
 			if (!(flags&RELEASE)){
 					if (flags&XTD_CODE){
-						c=search_table(mcsaite_xkey,c);
+						c=search_table(mcsaite_xkey,code);
 						flags&=~XTD_CODE;
 					}else{
-						c=search_table(mcsaite_key,c);
+						c=search_table(mcsaite_key,code);
 					}
 					shift=(flags&(LEFT_SHIFT|RIGHT_SHIFT));
 					if (c>='a' && c<='z' && ((shift && !(flags&CAPSLOCK))||(!shift && (flags&CAPSLOCK)))){
@@ -262,7 +272,60 @@ void USART1_handler(){
 				flags &= ~(XTD_CODE|RELEASE);
 			}
 			break;
+		}//switch
+}// convert_code()
+
+#define F_ERROR (1)
+#define F_RCVD (2)
+
+#define PS2_QUEUE_SIZE (16)
+volatile static unsigned char ps2_head,ps2_tail;
+volatile static unsigned char ps2_queue[PS2_QUEUE_SIZE];
+volatile static unsigned char ps2_flags;
+volatile  static unsigned char  in_byte=0,bit_cnt=0;
+// signal clock du clavier PS/2
+/*__attribute__((optimize("-O3")))*/ void KBD_CLK_handler(){
+   volatile unsigned char parity; 
+    switch (bit_cnt){
+	case 0:   // start bit
+		ps2_flags=0;
+		if (!(KBD_PORT->IDR & KBD_DAT_PIN)){
+			in_byte=0;
+            parity=0;
+            bit_cnt++;
+        }
+		break;
+	case 9:   // paritée
+		if (KBD_PORT->IDR & KBD_DAT_PIN) parity++;
+		if (!(parity & 1)){
+			ps2_flags |= F_ERROR;
 		}
+		bit_cnt++;
+		break;
+	case 10:  // stop bit
+		if (!ps2_flags && (KBD_PORT->IDR&KBD_DAT_PIN)){
+			ps2_queue[ps2_tail++]=in_byte;
+			ps2_tail&=PS2_QUEUE_SIZE-1;
+	    }
+	    bit_cnt=0;
+		break;
+	default:
+		in_byte >>=1;
+		if(KBD_PORT->IDR & KBD_DAT_PIN){
+			in_byte |=128;
+			parity++;
+		}
+		bit_cnt++;
+		break;
+	}
+	EXTI->PR|=KBD_CLK_PIN;
+}
+
+void TIM2_handler(){
+	TMR2->SR&=~(BIT0);
+	if (ps2_tail!=ps2_head){
+		convert_code(ps2_queue[ps2_head++]);
+		ps2_head&=PS2_QUEUE_SIZE-1;
 	}
 }
 

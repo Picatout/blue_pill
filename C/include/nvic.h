@@ -140,7 +140,23 @@
 #define IABR ((sfrp_t)NVIC_IABR0_ADR) // active bit
 #define IPR ((uint8_t*)NVIC_IPR0_ADR) // interrupt priority
 
+/*******************************
+ *  interruption externes
+ *******************************/
+#define EXTI_SFR_BASE_ADR 0x40010400
 
+typedef struct{
+	sfr_t IMR; // interrupt mask
+	sfr_t EMR; // event mask
+	sfr_t RTSR; // rising edge trigger set
+	sfr_t FTSR; // falling edge trigger set
+	sfr_t SWIER; // software inteterrupt even
+	sfr_t PR; // pending register
+} exti_sfr_t; 
+ 
+#define EXTI ((exti_sfr_t*)EXTI_SFR_BASE_ADR)
+ 
+ 
 void enable_interrupt(unsigned irq);
 void disable_interrupt(unsigned irq);
 void set_int_priority(int32_t irq, unsigned priority);

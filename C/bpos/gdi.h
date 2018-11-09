@@ -23,7 +23,7 @@ void gdi_scroll_up();
 
 void gdi_new_line();
 
-void gdi_put_sprite(int x, int y, int w, int h, const char * sprite);
+void gdi_put_sprite(int x, int y, int w, int h, const unsigned char * sprite);
 
 void gdi_putc(unsigned char c);
 

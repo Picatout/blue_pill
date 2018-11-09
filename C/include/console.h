@@ -14,7 +14,9 @@
 #include "ascii.h"
 
 #define CON USART2 // console utilise USART2
-
+#define IRQ_CON IRQ_USART2
+#define CON_handler USART2_handler
+#define CON_PORT PORTA
 
 #define RX_QUEUE_SIZE 32
 typedef struct{
@@ -23,7 +25,7 @@ typedef struct{
 	volatile unsigned tail;
 } rx_queue_t;
 
-
+void console_init();
 // envoie d'un caractère à la console
 void conout(char c);
 // réception d'un caractère de la console

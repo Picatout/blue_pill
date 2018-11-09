@@ -17,7 +17,12 @@
 
 #define XTD_KEY (1<<7)
  
-#define KEYBRD USART1
+#define IRQ_KBD_CLK IRQ_EXTI9_5
+#define KBD_CLK_handler EXTI9_5_handler
+#define KBD_PORT PORTA
+#define KBD_DAT_PIN BIT10
+#define KBD_CLK_PIN BIT9
+
 // touches spéciales
 #define ENTER           0x5A
 #define CAPS_LOCK		0x58
@@ -72,7 +77,8 @@
 #define KP8			0x75
 #define KP9			0x7d
 
-char kbd_getc();
+extern unsigned kbd_error;
+unsigned char kbd_getc();
 
 #endif //KEYBOARD_H
 

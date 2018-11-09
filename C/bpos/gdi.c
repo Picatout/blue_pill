@@ -45,7 +45,7 @@ void gdi_new_line(){
 	}
 }
 
-void gdi_put_sprite(int x, int y, int w, int h, const char *sprite){
+void gdi_put_sprite(int x, int y, int w, int h, const unsigned char *sprite){
 	int r,c;
 	char mask;
 	uint16_t bit;

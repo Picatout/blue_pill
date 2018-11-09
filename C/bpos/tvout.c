@@ -20,7 +20,6 @@
  
 uint16_t video_buffer[ROW_SIZE*VRES];
 
-uint32_t *video_bb;
 
 //volatile static uint8_t line_buffer[ROW_SIZE];
 
@@ -29,14 +28,13 @@ uint32_t *video_bb;
 #define _enable_spi_dma() SPI2->CR2|=SPI_CR2_TXDMAEN;
 #define _disable_spi_dma() SPI2->CR2&=~SPI_CR2_TXDMAEN; 
  void tvout_init(){
-	video_bb = (uint32_t*)(0x22000000+(((unsigned int)video_buffer&0x7ffff)<<5)); 
 	//sortie sync sur PA8
 	config_pin(GPIOA,8,(GPIO_OUTP_ALT_PP<<2)|GPIO_MODE_OUTP_2M);
 	//sortie video sur PB15, utilisation SPI2
 	config_pin(GPIOB,15,OUTPUT_ALT_PP_FAST);
 	PORTB->BRR=BIT15;
 	//timer 1 utilisé pour sync
-	APB2ENR->fld.tim1en=1;
+	RCC->APB2ENR|=RCC_APB2ENR_TIM1EN;
 	// clock source division
 	*TIMER1_PSC=0;
 	// période PWM
@@ -86,7 +84,7 @@ uint32_t *video_bb;
 volatile static int video=0; // activation sortie pixels
 volatile static int even=0; // odd/even field
 volatile static int line_count=-1; // horizontal line counter 
-__attribute__((optimize("-Os"))) void TIM1_CC_handler(){
+__attribute__((optimize("-O3"))) void TIM1_CC_handler(){
 	int i;
     uint16_t cnt;
 	uint16_t* line_adr;

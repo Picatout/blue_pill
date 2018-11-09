@@ -109,7 +109,9 @@ _default_handler(EXTI4_handler) // 10
 _default_handler(DMA1CH1_handler) // 11
 _default_handler(DMA1CH2_handler) // 12
 _default_handler(DMA1CH5_handler) // 12
+_default_handler(EXTI9_5_handler) // 23
 _default_handler(TIM1_CC_handler) // 27
+_default_handler(TIM2_handler) // 28
 _default_handler(USART1_handler) // 37
 _default_handler(USART2_handler) // 38
 _default_handler(USART3_handler) // 39
@@ -163,12 +165,12 @@ __attribute__ ((section("vectors")))= {
     (unsigned int *)  reset_mcu, // 20 USB_LP_CAN_RX0
     (unsigned int *)  reset_mcu, // 21 CAN_RX1
     (unsigned int *)  reset_mcu, // 22 CAN_SCE
-    (unsigned int *)  reset_mcu, // 23 EXTI9_5
+    (unsigned int *)  EXTI9_5_handler, // 23 EXTI9_5
     (unsigned int *)  reset_mcu, // 24 TIM1_BRK
     (unsigned int *)  reset_mcu, // 25 TIM1_UP
     (unsigned int *)  reset_mcu, // 26 TIM1_TRG_COM
     (unsigned int *)  TIM1_CC_handler, // 27 TIM1_CC
-    (unsigned int *)  reset_mcu, // 28 TIM2
+    (unsigned int *)  TIM2_handler, // 28 TIM2
     (unsigned int *)  reset_mcu, // 29 TIM3
     (unsigned int *)  reset_mcu, // 30 TIM4
     (unsigned int *)  reset_mcu, // 31 I2C1_EV
