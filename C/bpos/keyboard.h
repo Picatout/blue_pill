@@ -20,8 +20,10 @@
 #define IRQ_KBD_CLK IRQ_EXTI9_5
 #define KBD_CLK_handler EXTI9_5_handler
 #define KBD_PORT PORTA
-#define KBD_DAT_PIN BIT10
-#define KBD_CLK_PIN BIT9
+#define KBD_CLK_BIT 9
+#define KBD_DAT_BIT 10
+#define KBD_DAT_PIN (1<<10)
+#define KBD_CLK_PIN (1<<9)
 
 // touches spéciales
 #define ENTER           0x5A
@@ -77,7 +79,7 @@
 #define KP8			0x75
 #define KP9			0x7d
 
-extern unsigned kbd_error;
+
 unsigned char kbd_getc();
 
 #endif //KEYBOARD_H

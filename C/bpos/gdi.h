@@ -17,7 +17,18 @@
  #include "../include/ascii.h"
  #include "tvout.h"
 
+typedef enum BIT_OP{
+	BLACK_BIT,WHITE_BIT,XOR_BIT
+} bitop_e;
+
+
 void gdi_clear_screen();
+
+void gdi_cursor_left();
+
+void gdi_bit_op(int x, int y, bitop_e op);
+
+void gdi_box(int x, int y, int w, int h, bitop_e op);
 
 void gdi_scroll_up();
 

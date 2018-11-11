@@ -28,5 +28,6 @@
 #include "flash.h"
 #include "usart.h"
 #include "nvic.h"
+#include "systick.h"
 
 #endif // STM32F103C8_H

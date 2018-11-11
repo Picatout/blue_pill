@@ -17,6 +17,93 @@
 static unsigned char queue[QUEUE_SIZE];
 static int head=0,tail=0;
  
+// commande RAZ clavier
+#define KBD_RESET 0xFF  
+// test clavier réussi (Basic Assurance Test)
+#define BAT_OK    0xAA    
+
+
+// code réception clavier ps2
+#define F_ERR_PARITY 1 // erreur paritée dans rx_flags
+#define F_RCVD 2 // signal réception d'un octet du clavier dans rx_flags
+#define F_BATOK 4 // succès BAT
+#define F_ERR_FRAME 8 // erreur sur stop bit
+#define F_ERROR (F_ERR_PARITY|F_ERR_FRAME)
+
+volatile static unsigned char ps2_flags;
+
+
+/*
+// envoie une commande au clavier
+static int KbdSend(char cmd){
+    register unsigned int dly;
+    unsigned char bit_cnt,parity;
+    unsigned t0;
+     
+    bit_cnt=0;
+	parity=0;
+	// désactive les interruptions sur KBD_CLK
+	disable_interrupt(IRQ_KBD_CLK);
+	// MCU prend le contrôle de la ligne KBD_CLK 
+	config_pin((unsigned)KBD_PORT,KBD_CLK_BIT,OUTPUT_OD_FAST);
+	//KBD_PORT->CRH&=~(15<<(KBD_CLK_BIT-8)<<2);
+	//KBD_PORT->CRH|=(OUTPUT_OD_MED<<(KBD_CLK_BIT-8)<<2);
+    //  mis à 0  KBD_CLK
+    KBD_PORT->ODR&=~KBD_CLK_PIN; 
+    // délais
+    pause(1);
+    // prend le contrôle de la ligne KBD_DAT
+	config_pin((unsigned)KBD_PORT,KBD_DAT_BIT,OUTPUT_OD_FAST);
+	//KBD_PORT->CRH&=~(15<<(KBD_DAT_BIT-8)<<2);
+	//KBD_PORT->CRH|=(OUTPUT_OD_MED<<(KBD_DAT_BIT-8)<<2);
+	KBD_PORT->ODR&=~KBD_DAT_PIN; // met KBD_DAT à zéro
+	// libère la ligne clock
+	config_pin((unsigned)KBD_PORT,KBD_CLK_BIT,INPUT_FLOAT);
+	//KBD_PORT->CRH&=~(15<<(KBD_CLK_BIT-8)<<2);
+	//KBD_PORT->CRH|=(INPUT_FLOAT<<(KBD_CLK_BIT-8)<<2);
+    t0=ticks+100;
+    while (!(KBD_PORT->IDR&KBD_CLK_PIN)); // attend que la ligne revienne à 1
+    while (bit_cnt<8){      // envoie les 8 bits, le moins significatif en premier.
+		while ((ticks<t0) && KBD_PORT->IDR&KBD_CLK_PIN);   // attend clock à 0
+        if (ticks>=t0) return 0; // pas de réponse du clavier. (pas de clavier!!)
+        if (cmd&1){
+			KBD_PORT->ODR|=KBD_DAT_PIN;
+			parity++;
+		}else{
+			KBD_PORT->ODR&=~KBD_DAT_PIN;
+		}
+		cmd >>= 1;
+		while (!(KBD_PORT->IDR&KBD_CLK_PIN)); // attend clock à 1
+		bit_cnt++;				  // un bit de plus envoyé.
+	}
+    while (KBD_PORT->IDR&KBD_CLK_PIN);   // attend clock à 0
+	if (!(parity & 1)){
+			KBD_PORT->ODR|=KBD_DAT_PIN;
+	}else{
+			KBD_PORT->ODR&=~KBD_DAT_PIN;
+	}
+    while (!(KBD_PORT->IDR&KBD_CLK_PIN)); // attend clock à 1
+    while (KBD_PORT->IDR&KBD_CLK_PIN);   // attend clock à 0
+	//libère la ligne DATA
+	config_pin((unsigned)KBD_PORT,KBD_DAT_BIT,INPUT_FLOAT);
+	//KBD_PORT->CRH&=~(15<<(KBD_DAT_BIT-8)<<2);
+	//KBD_PORT->CRH|=(INPUT_FLOAT<<(KBD_DAT_BIT-8)<<2);// libère la ligne DAT
+	while (!(KBD_PORT->IDR&KBD_CLK_PIN)); // attend clock à 1
+	while (KBD_PORT->IDR&KBD_CLK_PIN);   // attend clock à 0
+	while (!((KBD_PORT->IDR & (KBD_DAT_PIN|KBD_CLK_PIN))==(KBD_DAT_PIN|KBD_CLK_PIN))); // attend que les 2 lignes reviennent à 1.
+    EXTI->PR|=KBD_CLK_PIN;
+	enable_interrupt(IRQ_KBD_CLK); // réactivation interruption
+	return 1;
+} // KbdSend()
+
+
+static int KbdReset(void){
+    unsigned int t0;
+    ps2_flags = 0;
+    return KbdSend(KBD_RESET);
+}//KbdReset()
+*/
+ 
 void keyboard_init(){
 	head=0;
 	tail=0;
@@ -24,11 +111,11 @@ void keyboard_init(){
 	RCC->APB2ENR|=RCC_APB2ENR_IOPAEN|RCC_APB2ENR_AFIOEN;
 	// activation clock TMR2
 	RCC->APB1ENR|=RCC_APB1ENR_TIM2EN; 
-	TMR2->ARR=FAPB1/20*.04;
+	TMR2->ARR=FAPB1/20*.01;
 	TMR2->PSC=20;
 	TMR2->CR1=BIT0|BIT7; // ARPE
 	TMR2->DIER=BIT0; // UIE
-	set_int_priority(IRQ_KBD_CLK,2);
+	set_int_priority(IRQ_KBD_CLK,0);
 	set_int_priority(IRQ_TIM2,14);
 	// trigger sur signal descendant
 	EXTI->FTSR|=KBD_CLK_PIN;
@@ -36,6 +123,8 @@ void keyboard_init(){
 	enable_interrupt(IRQ_KBD_CLK);
 	TMR2->SR&=~BIT0;
 	enable_interrupt(IRQ_TIM2);
+	//pause(700);
+	//if (!KbdReset()) print("keyboard reset failed\n");
 }
 
 
@@ -275,43 +364,50 @@ static void convert_code(unsigned char code){
 		}//switch
 }// convert_code()
 
-#define F_ERROR (1)
-#define F_RCVD (2)
+
 
 #define PS2_QUEUE_SIZE (16)
 volatile static unsigned char ps2_head,ps2_tail;
 volatile static unsigned char ps2_queue[PS2_QUEUE_SIZE];
-volatile static unsigned char ps2_flags;
-volatile  static unsigned char  in_byte=0,bit_cnt=0;
+
 // signal clock du clavier PS/2
-/*__attribute__((optimize("-O3")))*/ void KBD_CLK_handler(){
-   volatile unsigned char parity; 
+__attribute__((optimize("-O0"))) void KBD_CLK_handler(){
+	volatile  static unsigned char  in_byte=0,bit_cnt=0;
+    volatile unsigned char parity; 
+
+#define data_bit  (KBD_PORT->IDR & KBD_DAT_PIN)
     switch (bit_cnt){
 	case 0:   // start bit
-		ps2_flags=0;
-		if (!(KBD_PORT->IDR & KBD_DAT_PIN)){
+		ps2_flags&=~(F_ERROR|F_RCVD);
+		if (!data_bit){
 			in_byte=0;
             parity=0;
             bit_cnt++;
         }
 		break;
 	case 9:   // paritée
-		if (KBD_PORT->IDR & KBD_DAT_PIN) parity++;
+		if (data_bit) parity++;
 		if (!(parity & 1)){
-			ps2_flags |= F_ERROR;
+			//ps2_flags |= F_ERR_PARITY;
 		}
 		bit_cnt++;
 		break;
 	case 10:  // stop bit
-		if (!ps2_flags && (KBD_PORT->IDR&KBD_DAT_PIN)){
-			ps2_queue[ps2_tail++]=in_byte;
-			ps2_tail&=PS2_QUEUE_SIZE-1;
+	    if (!data_bit){
+			ps2_flags|=F_ERR_FRAME;
+		}else if (!(ps2_flags&F_ERROR)){
+			if (in_byte==BAT_OK){
+				ps2_flags|=F_BATOK;
+			}else{
+				ps2_queue[ps2_tail++]=in_byte;
+				ps2_tail&=PS2_QUEUE_SIZE-1;
+			}
 	    }
 	    bit_cnt=0;
 		break;
 	default:
 		in_byte >>=1;
-		if(KBD_PORT->IDR & KBD_DAT_PIN){
+		if(data_bit){
 			in_byte |=128;
 			parity++;
 		}
@@ -328,4 +424,5 @@ void TIM2_handler(){
 		ps2_head&=PS2_QUEUE_SIZE-1;
 	}
 }
+
 

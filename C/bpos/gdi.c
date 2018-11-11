@@ -45,6 +45,47 @@ void gdi_new_line(){
 	}
 }
 
+void gdi_cursor_left(){
+	if (!(cursor_x|cursor_y)) return;
+	if (cursor_x>=CHAR_WIDTH){
+		cursor_x-=CHAR_WIDTH;
+	}else if (cursor_y) {
+		cursor_x=CHAR_WIDTH*(CHARS_PER_LINE-1);
+		cursor_y-=CHAR_HEIGHT;
+		if (cursor_y<0) cursor_y=0;
+	}
+}
+
+
+void gdi_bit_op(int x, int y, bitop_e op){
+	uint16_t bit;
+	int offset=y*ROW_SIZE+(x>>4);
+	bit=1<<(15-(x&15));
+	switch (op){
+	case BLACK_BIT:
+		video_buffer[offset]&=~bit;
+		break;
+	case WHITE_BIT:
+		video_buffer[offset]|=bit;
+		break;
+	case XOR_BIT:
+		video_buffer[offset]^=bit;
+		break;
+	}
+}
+
+void gdi_box(int x, int y, int w, int h, bitop_e op){
+	int r,c;
+	
+	for (r=0;r<h;r++){
+		for (c=0;c<w;c++){
+			if ((x+c)>=0 && (x+c)<HRES && (r+y)>=0 && (r+y)<VRES){
+				gdi_bit_op(c+x,r+y,op);
+			}
+		}
+	}
+}
+
 void gdi_put_sprite(int x, int y, int w, int h, const unsigned char *sprite){
 	int r,c;
 	char mask;
@@ -59,6 +100,8 @@ void gdi_put_sprite(int x, int y, int w, int h, const unsigned char *sprite){
 			if ((x+c)>=0 && (x+c)<HRES && (r+y)>=0 && (r+y)<VRES){
 				bit=sprite[r]&mask?(1<<(15-((c+x)&15))):0;
 				video_buffer[(ROW_SIZE*(r+y))+((c+x)>>4)]^=bit;
+				//bit=sprite[r]&mask?WHITE_BIT:BLACK_BIT;
+				//gdi_bit_op(c+x,r+y,bit);
 			}
 			mask>>=1;
 		}//for (j...
@@ -72,6 +115,10 @@ void gdi_putc(unsigned char c){
 		switch (c){
 		case CR:
 			gdi_new_line();
+			break;
+		case BS:
+			gdi_cursor_left();
+			gdi_box(cursor_x,cursor_y,CHAR_WIDTH,CHAR_HEIGHT,BLACK_BIT);
 			break;
 		default:
 			if (c<FONT_SIZE){

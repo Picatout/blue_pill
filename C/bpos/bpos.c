@@ -89,8 +89,6 @@ typedef void (*fn)(void);
 
 
 
-static volatile unsigned ticks=0;
-static volatile unsigned timer=0;
 
 static int skip(char *buffer, int start, char c);
 static int scan(char *buffer, int start, char c);
@@ -228,12 +226,6 @@ void __attribute__((__interrupt__)) SVC_handler(){
 	}	
 }
 
-// interruption coretimer
-void __attribute__((naked)) STK_handler(){
-	ticks++;
-	if (timer) {timer--;}
-}
-
 
 // configure SYSCLK à la fréquence maximale de 72 Mhz
 // en utilisant le cristal externe (HSE) et le PLL
@@ -257,16 +249,6 @@ static void set_sysclock(){
 	// donc divise SYSCLK/2
     // Sélectionne le PLL comme source pour SYSCLK dans CR
 	RCC->CFGR|=(RCC_CFGR_PPREx_DIV2<<RCC_CFGR_PPRE1_POS)|(RCC_CFGR_SW_PLL<<RCC_CFGR_SW_POS);
-}
-
-// configure SYSTICKS pour un cycle 1 msec
-// source AHB/8
-// valeur reload 72Mhz/8/1000=9000
-#define MSEC_DLY 9000
-static void config_systicks(){
-	set_int_priority(IRQ_STK,9);
-	*SYST_RVR=MSEC_DLY-1;
-	SYST_CSR->csr=(1<<SYST_TICKINT)|(1<<SYST_ENABLE);
 }
 
 
@@ -658,6 +640,7 @@ void main(void){
 	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,&proga,NUL); conout(CR);
 	_svc_call(SVC_LED_ON,NUL,NUL);
 	flush_rx_queue();
+	/*
 	char c;
 	gdi_clear_screen();
 	gdi_putc('O'); gdi_putc('K');gdi_putc(' ');
@@ -667,6 +650,7 @@ void main(void){
 			gdi_putc(c);
 		}
 	 }
+	 */
 	unsigned llen;
 	while (1){
 		llen=read_line(tib,CMD_MAX_LEN);
