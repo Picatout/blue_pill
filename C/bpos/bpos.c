@@ -88,8 +88,6 @@ int atoi(const char *str){
 typedef void (*fn)(void);
 
 
-
-
 static int skip(char *buffer, int start, char c);
 static int scan(char *buffer, int start, char c);
 static int next(char *buffer, int start, char c);
@@ -97,23 +95,6 @@ static void move(char *src , char *dest, int len);
 static void word();
 
 // routine de services
-
-static inline void led_on(){
-	GPIOC_BRR->brr=GRN_LED;
-}
-
-static inline void led_off(){
-	GPIOC_BSRR->bsrr=GRN_LED;
-}
-
-static inline void set_timer(unsigned time){
-	timer=time;
-}
-
-
-static inline unsigned get_timer(){
-	return timer;
-}
 
 
 static inline uint8_t peek8(uint8_t *adr){
@@ -154,17 +135,19 @@ void __attribute__((__interrupt__)) SVC_handler(){
     :: "r0","r1" 
     );
 	switch (svc_id){
-	case SVC_LED_ON: 
-		led_on();
+	case SVC_LED_ON:
+		write_pin(LED_PORT,LED_PIN,LED_ON);
+		//led_on();
 		break;
 	case SVC_LED_OFF:
-		led_off();
+		write_pin(LED_PORT,LED_PIN,LED_OFF);
+		//led_off();
 		break;
 	case SVC_TIMER:
-		set_timer(*(unsigned*)arg1);
+		timer=(*(unsigned*)arg1);
 		break;
 	case SVC_GET_TIMER:
-		*(unsigned*)arg1=get_timer();
+		*(unsigned*)arg1=timer;
 		break;
 	case SVC_CONIN:
 		*(char *)arg1=conin();
@@ -237,7 +220,7 @@ static void set_sysclock(){
      // sélection PREDIV1 pour la source du PLL
      // multiplie la fréquence HSE par 8 
      // pour une fréquence  Fsysclk de 64 Mhz
-    RCC->CFGR|=RCC_CFGR_PLLSRC_HSE|(RCC_CFGR_PLLMUL8<<RCC_CFGR_PLLMUL_POS);
+    RCC->CFGR|=RCC_CFGR_PLLSRC_HSE|(PLLMUL<<RCC_CFGR_PLLMUL_POS);
     // active le PLL
     RCC->CR|=RCC_CR_PLLON;
     // Attend que le PLL soit prêt
@@ -621,6 +604,8 @@ void copy_blink_in_ram(){
 }
 
 extern void print_fault(const char *msg, sfrp_t adr);
+const char PROMPT[]=" OK\n";
+
 
 void main(void){
 	set_sysclock();
@@ -630,7 +615,7 @@ void main(void){
 	RCC->APB2ENR=RCC_APB2ENR_IOPAEN|RCC_APB2ENR_IOPBEN|RCC_APB2ENR_IOPCEN|RCC_APB2ENR_AFIOEN;
 	RCC->APB1ENR=RCC_APB1ENR_SPI2EN;
 	RCC->AHBENR|=RCC_AHBENR_DMA1EN; // activation DMA1
-	config_pin(GPIOC,LED_PIN,OUTPUT_OD_SLOW);
+	config_pin(LED_PORT,LED_PIN,OUTPUT_OD_SLOW);
 	console_init();
 	cls();
 	keyboard_init();
@@ -640,17 +625,19 @@ void main(void){
 	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,&proga,NUL); conout(CR);
 	_svc_call(SVC_LED_ON,NUL,NUL);
 	flush_rx_queue();
-	/*
+	
 	char c;
-	gdi_clear_screen();
-	gdi_putc('O'); gdi_putc('K');gdi_putc(' ');
+	//gdi_clear_screen();
+	gdi_print(VERSION);
+	gdi_print(PROMPT);
+/*
 	while (1){
 		c=kbd_getc();
 		if (c){
 			gdi_putc(c);
 		}
 	 }
-	 */
+*/	 
 	unsigned llen;
 	while (1){
 		llen=read_line(tib,CMD_MAX_LEN);

@@ -100,13 +100,16 @@
 #define NVIC_ICER0_ADR (NVIC_BASE_ADR+0x80)
 #define NVIC_ICER0 _sfr(NVIC_BASE_ADR+0x80)
 #define NVIC_ICER1 _sfr(NVIC_BASE_ADR+0x84)
-//#define NVIC_ICER2 _sfr(NVIC_BASE_ADR+0x88) 
+//#define NVIC_ICER2 _sfr(NVIC_BASE_ADR+0x88)
+#define NVIC_ISPR0_ADR (NVIC_BASE_ADR+0x100) 
 #define NVIC_ISPR0 _sfr(NVIC_BASE_ADR+0x100)
 #define NVIC_ISPR1 _sfr(NVIC_BASE_ADR+0x104)
 //#define NVIC_ISPR2 _sfr(NVIC_BASE_ADR+0x108)
+#define NVIC_ICPR0_ADR (NVIC_BASE_ADR+0x180)
 #define NVIC_ICPR0 _sfr(NVIC_BASE_ADR+0x180)
 #define NVIC_ICPR1 _sfr(NVIC_BASE_ADR+0x184)
 //#define NVIC_ICPR2 _sfr(NVIC_BASE_ADR+0x188)
+#define NVIC_IABR0_ADR (NVIC_BASE_ADR+0x200)
 #define NVIC_IABR0 _sfr(NVIC_BASE_ADR+0x200)
 #define NVIC_IABR1 _sfr(NVIC_BASE_ADR+0x204)
 //#define NVIC_IABR2 _sfr(NVIC_BASE_ADR+0x208)
@@ -159,6 +162,10 @@ typedef struct{
  
 void enable_interrupt(unsigned irq);
 void disable_interrupt(unsigned irq);
+unsigned get_pending(unsigned irq);
+unsigned get_active(unsigned irq);
+void set_pending(unsigned irq);
+void clear_pending(unsigned irq);
 void set_int_priority(int32_t irq, unsigned priority);
 
 #endif // NVIC_H

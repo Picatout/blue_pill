@@ -376,6 +376,7 @@ __attribute__((optimize("-O0"))) void KBD_CLK_handler(){
     volatile unsigned char parity; 
 
 #define data_bit  (KBD_PORT->IDR & KBD_DAT_PIN)
+	EXTI->PR|=KBD_CLK_PIN; 
     switch (bit_cnt){
 	case 0:   // start bit
 		ps2_flags&=~(F_ERROR|F_RCVD);
@@ -389,6 +390,7 @@ __attribute__((optimize("-O0"))) void KBD_CLK_handler(){
 		if (data_bit) parity++;
 		if (!(parity & 1)){
 			//ps2_flags |= F_ERR_PARITY;
+			
 		}
 		bit_cnt++;
 		break;
@@ -414,11 +416,10 @@ __attribute__((optimize("-O0"))) void KBD_CLK_handler(){
 		bit_cnt++;
 		break;
 	}
-	EXTI->PR|=KBD_CLK_PIN;
 }
 
 void TIM2_handler(){
-	TMR2->SR&=~(BIT0);
+	TMR2->SR&=~(BIT0); // clear interrupt bit
 	if (ps2_tail!=ps2_head){
 		convert_code(ps2_queue[ps2_head++]);
 		ps2_head&=PS2_QUEUE_SIZE-1;

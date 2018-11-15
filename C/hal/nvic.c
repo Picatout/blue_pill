@@ -23,6 +23,25 @@ void disable_interrupt(unsigned irq){
 	ICER[irq>>5]&=~(1<<(irq&0x1f));
 }
 
+unsigned get_pending(unsigned irq){
+	if (irq>LAST_IRQ) return 0;
+	return ICPR[irq>>5]&(1<<(irq&0x1f));
+}
+
+unsigned get_active(unsigned irq){
+	if (irq>LAST_IRQ) return 0;
+	return IABR[irq>>5]&(1<<(irq&0x1f));
+}
+
+void set_pending(unsigned irq){
+	if (irq>LAST_IRQ) return;
+	ISPR[irq>>5]|=1<<(irq&0x1f);
+}
+
+void clear_pending(unsigned irq){
+	if (irq>LAST_IRQ) return;
+	ICPR[irq>>5]&=~(1<<(irq&0x1f));
+}
 
 
 void set_int_priority(int32_t irq, unsigned priority){

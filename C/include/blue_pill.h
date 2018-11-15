@@ -14,9 +14,10 @@
 #include "gen_macros.h"
 #include "stm32f103c8.h"
 
-// cristal 8Mhz
-#define HSI_FREQ  8000000 
-#define FCLK 64000000U
+// cristal 14.318181 Mhz
+#define HSI_FREQ  14318181U 
+#define PLLMUL RCC_CFGR_PLLMUL4
+#define FCLK (HSI_FREQ*(PLLMUL+2))
 #define FAHB  FCLK
 #define FAPB2 FCLK
 #define FAPB1 (FCLK/2)
@@ -24,8 +25,10 @@
 #define LSE_PRESENT 1
 #define LSE_FREQ 32768
 // LED verte sur PC13
-#define LED_GPIO GPIOC
+#define LED_PORT PORTC
 #define LED_PIN (13)
+#define LED_ON (0)
+#define LED_OFF (1)
 #define GRN_LED (1<<LED_PIN)
 
 

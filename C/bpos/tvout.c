@@ -20,6 +20,8 @@
  
 uint16_t video_buffer[ROW_SIZE*VRES];
 
+#define SPI_PIXELS ((FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF)
+#define SPI_CHROMA_SYNC ((FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF)
 
 //volatile static uint8_t line_buffer[ROW_SIZE];
 
@@ -29,9 +31,9 @@ uint16_t video_buffer[ROW_SIZE*VRES];
 #define _disable_spi_dma() SPI2->CR2&=~SPI_CR2_TXDMAEN; 
  void tvout_init(){
 	//sortie sync sur PA8
-	config_pin(GPIOA,8,(GPIO_OUTP_ALT_PP<<2)|GPIO_MODE_OUTP_2M);
+	config_pin(PORTA,8,(GPIO_OUTP_ALT_PP<<2)|GPIO_MODE_OUTP_2M);
 	//sortie video sur PB15, utilisation SPI2
-	config_pin(GPIOB,15,OUTPUT_ALT_PP_FAST);
+	config_pin(PORTB,15,OUTPUT_ALT_PP_FAST);
 	PORTB->BRR=BIT15;
 	//timer 1 utilisé pour sync
 	RCC->APB2ENR|=RCC_APB2ENR_TIM1EN;
@@ -51,7 +53,7 @@ uint16_t video_buffer[ROW_SIZE*VRES];
 	// activation timer1
 	TIMER1_CR1->fld.cen=1;
 	//SPI2-MOSI utilisé pour sérialisaton pixels.
-	SPI2->CR1=(FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF;
+	SPI2->CR1=SPI_PIXELS; //(FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF;
 	// configuration du canal dma
 	DMA1[DMACH5].ccr=DMA_CCR_DIR|DMA_CCR_MINC|(3<<DMA_CCR_PL_POS)|DMA_CCR_TCIE|(1<<DMA_CCR_PSIZE_POS)|(1<<DMA_CCR_MSIZE_POS);
 	DMA1[DMACH5].cpar=(uint32_t)SPI2_DR;
@@ -88,7 +90,8 @@ __attribute__((optimize("-O3"))) void TIM1_CC_handler(){
 	int i;
     uint16_t cnt;
 	uint16_t* line_adr;
-    
+	
+    _disable_dma();
 	line_count++;
 	TIMER1_SR->fld.cc1if=0;
 	switch(line_count){
@@ -117,11 +120,9 @@ __attribute__((optimize("-O3"))) void TIM1_CC_handler(){
 		break;
 	case TOP_LINE-1:
 		video=1;
-		//_enable_dma();
 		break;
 	case (TOP_LINE+VRES):
 		video=0;
-		//_disable_dma();
 		break;
 	case FIELD_END:
 		if (!even){
@@ -137,9 +138,17 @@ __attribute__((optimize("-O3"))) void TIM1_CC_handler(){
 		}
 	    break;
 	default: 
+/*chroma_sync:	
+		SPI2->CR1=SPI_CHROMA_SYNC;
+		while (*TIMER1_CNT<300);
+		SPI2->DR=0xaaaa;
+		while (SPI2->SR&SPI_SR_BSY);
+		SPI2->CR1=SPI_PIXELS;
+		SPI2->DR=0;
+*/	
 		if (video){
 			//line_adr=(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
-			_disable_dma();
+			//_disable_dma();
 			DMA1[DMACH5].cmar=(uint32_t)(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
 			DMA1[DMACH5].cndtr=ROW_SIZE;
 			cnt=VIDEO_DELAY;

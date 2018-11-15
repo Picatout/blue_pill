@@ -24,23 +24,23 @@ void spi_init(spi_sfr_t* channel, unsigned baud){
 	if (channel==SPI1){
 		// configuration port
 		// PA4 -> NSS output (push-pull),  alt PA15
-		config_pin(GPIOA,4,OUTPUT_PP_FAST);
+		config_pin(PORTA,4,OUTPUT_PP_FAST);
 		// PA5 -> SCK output (push-pull),  alt PB3
-		config_pin(GPIOA,5,OUTPUT_PP_FAST);
+		config_pin(PORTA,5,OUTPUT_PP_FAST);
 		// PA6 -> MISO input (floating),   alt PB4
-		config_pin(GPIOA,6,INPUT_FLOAT);
+		config_pin(PORTA,6,INPUT_FLOAT);
 		// PA7 -> MOSI output (push-pull), alt PB5
-		config_pin(GPIOA,7,OUTPUT_PP_FAST);
+		config_pin(PORTA,7,OUTPUT_PP_FAST);
 	}else{
 		// configuration port
 		// PB12 NSS output (push-pull)
-		config_pin(GPIOB,2,OUTPUT_PP_FAST);
+		config_pin(PORTB,2,OUTPUT_PP_FAST);
 		// PB13 SCK output (push-pull)
-		config_pin(GPIOB,13,OUTPUT_PP_FAST);
+		config_pin(PORTB,13,OUTPUT_PP_FAST);
 		// PB14 MISO input (floating)
-		config_pin(GPIOB,14,INPUT_FLOAT);
+		config_pin(PORTB,14,INPUT_FLOAT);
 		// PB15 MOSI output (push-pull)
-		config_pin(GPIOB,15,OUTPUT_PP_FAST);
+		config_pin(PORTB,15,OUTPUT_PP_FAST);
 	}
 }
 

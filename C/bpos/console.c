@@ -31,8 +31,8 @@ void console_init(){
 	// PA2 -> TX  output (push-pull)
 	// PA3 -> RX input (floating)
 	usart_set_baud(CON,115200);
-	CON_PORT->CRL&=~((15<<GPIO_MODE1)|(15<<GPIO_MODE2));
-	CON_PORT->CRL|=(0xA<<GPIO_MODE1)|(0xA<<GPIO_MODE2);
+	CON_PORT->CR[0]&=~((15<<GPIO_MODE1)|(15<<GPIO_MODE2));
+	CON_PORT->CR[0]|=(0xA<<GPIO_MODE1)|(0xA<<GPIO_MODE2);
 	CON->CR1|=USART_CR1_TE|USART_CR1_RE|USART_CR1_RXNEIE;
 	CON->CR3=USART_CR3_CTSE|USART_CR3_RTSE;
 	set_int_priority(IRQ_CON,7);

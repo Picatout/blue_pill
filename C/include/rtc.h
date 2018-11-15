@@ -1,5 +1,5 @@
 /*
- * Description: RTC (Real Time Clock) et backup domain
+ * Description: RTC (Real Time Clock)
  * Auteur: PICATOUT
  * Date: 2018-09-08
  * Copyright Jacques Deschênes, 2018
@@ -27,82 +27,34 @@
 
 #define RTC_BASE_ADR 0x40002800
 
-
-#define RTC_CRH_ADR (RTC_BASE_ADR)
-// champs de bits registre RTC_CRH
-#define RTC_CRH_SECIE (0) // 1 bit, activation interruption sur débordement compteur RTC_DIV
-#define RTC_CRH_ALRIE (1) // 1 bit, activation interruption sur alarme. ie. RTC_CNT==RCT_ALR
-#define RTC_CRH_OWIE  (2) // 1 bit, activation interruption sur débordement RTC_CNT
-
-typedef union{
-	sfr16_t crh;
-	struct{
-		sfr16_t secie:1;
-		sfr16_t alrie:1;
-		sfr16_t owie:1;
-		sfr16_t res0:13;
-	}fld;
-}rtc_crh_t;
-
-#define RTC_CRH ((rtc_crh_t*)RTC_CRH_ADR)
-
-#define RTC_CRL_ADR (RTC_BASE_ADR+4)
-//champs de bits registre RTC_CRL
-#define RTC_CRL_SECF (0) // 1 bit, indicateur interruption débordement RTC_DIV
-#define RTC_CRL_ALRF (1) // 1 bit, indicateur interruption alarme
-#define RTC_CRL_OWF  (2) // 1 bit, indicateur interruption débordement RTC_CNT
-#define RTC_CRL_RSF  (3) // 1 bit, indicateur synchronisation RTC_CNT et RTC_DIV
-#define RTC_CRL_CNF  (4) // 1 bit, déverrouillage écriture dans RTC_PR, RTC_ALR et RTC_CNT
-#define RTC_CRL_RTOFF (5) // 1 bit, indicateur opération écriture complétée.
-
-typedef union{
-	sfr16_t crl;
-	struct{
-		sfr16_t secf:1;
-		sfr16_t alrf:1;
-		sfr16_t owf:1;
-		sfr16_t rsf:1;
-		sfr16_t cnf:1;
-		sfr16_t rtoff:1;
-		sfr16_t res0:10; 
-	}fld;
-} rtc_crl_t;
-
-#define RTC_CRL ((rtc_crl_t*)RTC_CRL_ADR)
-
-#define RTC_PRLH_ADR (RTC_BASE_ADR+8)
 typedef struct{
-	sfr16_t prl:4;
-	sfr16_t res0:12;
-}rtc_prlh_t;
+	sfr_t CRH;
+	sfr_t CRL;
+	sfr_t PRLH;
+	sfr_t PRLL;
+	sfr_t DIVH;
+	sfr_t DIVL;
+	sfr_t CNTH;
+	sfr_t CNTL;
+	sfr_t ALRH;
+	sfr_t ALRL;
+	
+}rtc_t;
 
-#define RTC_PRLH ((rtc_prlh_t*)RTC_PRLH_ADR)
+#define RTC ((rtc_t*)RTC_BASE_ADR)
 
-#define RTC_PRLL_ADR (RTC_BASE_ADR+0xc)
-#define RTC_PRLL ((sfr16p_t) RTC_PRLL_ADR)
+// champs du registre CRH
+#define RTC_CRH_SECIE BIT0 // second interrupt enable
+#define RTC_CRH_ALRIE BIT1 // alarm interrupt enable
+#define RTC_CRH_OWIE BIT2 // overflow interrupt enable
 
-#define RTC_DIVH_ADR (RTC_BASE_ADR+0x10)
-typedef struct{
-	sfr16_t rtc_div:4;
-	sfr16_t res0:12;
-} rtc_divh_t;
-
-#define RTC_DIVH ((rtc_divh_t*)RTC_DIVH_ADR)
-
-#define RTC_DIVL_ADR (RTC_BASE_ADR+0x14)
-#define RTC_DIVL ((sfr16p_t) RTC_DIVL_ADR)
-
-#define RTC_CNTH_ADR (RTC_BASE_ADR+0x18)
-#define RTC_CNTH ((sfr16p_t) RTC_CNTH_ADR)
-
-#define RTC_CNTL_ADR (RTC_BASE_ADR+0x1c)
-#define RTC_CNTL ((sfr16p_t) RTC_CNTL_ADR)
-
-#define RTC_ALRH_ADR (RTC_BASE_ADR+0x20)
-#define RTC_ALRH ((sfr16p_t) RTC_ALRH_ADR)
-
-#define RTC_ALRL_ADR (RTC_BASE_ADR+0x24)
-#define RTC_ALRL ((sfr16p_t) RTC_ALRL_ADR)
+//champs de bits registre CRL
+#define RTC_CRL_SECF BIT0 //indicateur interruption débordement RTC_DIV
+#define RTC_CRL_ALRF BIT1 //indicateur interruption alarme
+#define RTC_CRL_OWF  BIT2 //indicateur interruption débordement RTC_CNT
+#define RTC_CRL_RSF  BIT3 //indicateur synchronisation RTC_CNT et RTC_DIV
+#define RTC_CRL_CNF  BIT4 //déverrouillage écriture dans RTC_PR, RTC_ALR et RTC_CNT
+#define RTC_CRL_RTOFF BIT5 //indicateur opération écriture complétée.
 
 // seconde par minute
 #define SEC_PER_MIN 60
@@ -114,6 +66,8 @@ typedef struct{
 #define SEC_PER_DAY (SEC_PER_MIN*MIN_PER_HR*HR_PER_DAY)
 // seconde par année
 #define SEC_PER_YEAR (SEC_PER_DAY*365)
+// secondes par année bisextile
+#define SEC_PER_LEAP_YEAR (SEC_PER_DAY*366)
 
 // Le temps de référence de départ de l'horloge système
 // est 2000/01/01 00:00:00
@@ -134,7 +88,7 @@ typedef struct{
  *   API
  **************/
 
-#define _wait_rtc_write()  ({while (!RTC_CRL->fld.rtoff);})
+#define _wait_rtc_write()  ({while (!(RTC->CRL&RTC_CRL_RTOFF));})
  
 typedef struct date_time{
 	uint32_t second:6;

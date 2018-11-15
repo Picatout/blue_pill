@@ -20,7 +20,7 @@
 #include "rcc.h"
 #include "gpio.h"
 #include "rtc.h"
-#include "power.h"
+#include "pwr.h"
 #include "flash.h"
 #include "timer.h"
 #include "spi.h"  
@@ -29,5 +29,6 @@
 #include "usart.h"
 #include "nvic.h"
 #include "systick.h"
+#include "pwr.h"
 
 #endif // STM32F103C8_H

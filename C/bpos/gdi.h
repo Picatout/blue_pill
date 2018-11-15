@@ -38,6 +38,7 @@ void gdi_put_sprite(int x, int y, int w, int h, const unsigned char * sprite);
 
 void gdi_putc(unsigned char c);
 
+void gdi_print(const char *str);
  
  #endif //GDI_H
  

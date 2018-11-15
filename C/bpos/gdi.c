@@ -98,8 +98,13 @@ void gdi_put_sprite(int x, int y, int w, int h, const unsigned char *sprite){
 				mask=128;
 			}
 			if ((x+c)>=0 && (x+c)<HRES && (r+y)>=0 && (r+y)<VRES){
-				bit=sprite[r]&mask?(1<<(15-((c+x)&15))):0;
-				video_buffer[(ROW_SIZE*(r+y))+((c+x)>>4)]^=bit;
+				if (sprite[r]&mask){
+					video_buffer[ROW_SIZE*(r+y)+((c+x)>>4)]|=(1<<(15-((c+x)&15)));
+				}else{
+					video_buffer[ROW_SIZE*(r+y)+((c+x)>>4)]&=~(1<<(15-((c+x)&15)));
+				}
+				//bit=sprite[r]&mask?(1<<(15-((c+x)&15))):0;
+				//video_buffer[(ROW_SIZE*(r+y))+((c+x)>>4)]|=bit;
 				//bit=sprite[r]&mask?WHITE_BIT:BLACK_BIT;
 				//gdi_bit_op(c+x,r+y,bit);
 			}
@@ -113,6 +118,7 @@ void gdi_put_sprite(int x, int y, int w, int h, const unsigned char *sprite){
 // à la position du curseur et avance le curseur.
 void gdi_putc(unsigned char c){
 		switch (c){
+		case '\n':
 		case CR:
 			gdi_new_line();
 			break;
@@ -130,5 +136,9 @@ void gdi_putc(unsigned char c){
 			}
 			break;
 		}//switch
+}
+
+void gdi_print(const char *str){
+	while (*str) gdi_putc(*str++);
 }
 

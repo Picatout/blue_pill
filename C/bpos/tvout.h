@@ -19,7 +19,7 @@
 #define HRES (320)
 #ifdef NTSC
 	#define HFREQ (15734)
-	#define VIDEO_DELAY (1050)
+	#define VIDEO_DELAY (600)
 	#define VFREQ (60)
 	#define HLINES (525)
 	#define HSYNC (4.7e-6) //µsec
@@ -29,7 +29,7 @@
 	#define VRES (224)
 #else
 	#define HFREQ (15625)
-	#define VIDEO_DELAY (1000)
+	#define VIDEO_DELAY (700)
 	#define VFREQ (50)
 	#define HLINES (625)
 	#define HSYNC (4.7e-6) //µsec

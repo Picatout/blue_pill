@@ -16,42 +16,42 @@
 // ref: note applicative AN2821
 void enable_rtc(unsigned period, unsigned interrupts){
 	// activation signaux clock sur power interface et backup domain interface
-	APB1ENR->apb1enr|=(1<APB1ENR_BKPEN)|(1<<APB1ENR_PWREN);
+	RCC->APB1ENR|=RCC_APB1ENR_BKPEN)|RCC_APB1ENR_PWREN;
 	// donne un accès en modification à RCC_DBCR
-	PWR_CR->fld.dbp=1;
+	PWR->CR|=PWR_CR_DBP;
 	// réinitialise le backup domain
 //	RCC_BDCR|=1<<BDCR_BDRST;
 //	RCC_BDCR&=~(1<<BDCR_BDRST);
 	// active l'oscillateur LSE
-	RCC_BDCR->fld.lseon=1;
+	RCC->BDCR|=RCC_BDCR_LSEON;
 	// attend qu'il soit prêt
-	while (!RCC_BDCR->fld.lserdy);
+	while (!(RCC->BDCR&RCC->RCC_BDCR_LSERDY));
 	// sélection LSE clock et active le RTC
-	RCC_BDCR->bdcr|=(1<<BDCR_RTCEN)|(RTC_LSECLK<<BDCR_RTCSEL);
+	RCC->BDCR|=RCC_BDCR_RTCEN|(RCC_BDCR_RTCSEL_LSE<<RCC_BDCR_RTCSEL_POS);
 	// attend la synchronisation de l'horloge LSE et du clock de APB1 
-	while (!RTC_CRL->fld.rsf);
+	while (!(RTC->CRL&RTC_CRL_RSF));
 	// attend que la dernière opération d'écriture dans RTC_CRL soit complétée.
 	_wait_rtc_write();
-	RTC_CRL->fld.cnf=1;
+	RTC->CRL|=RTC_CRL_CNF;
 	_wait_rtc_write();
 	// activation des interruptions désirées.
-	RTC_CRH->crh |= interrupts;
+	RTC->CRH|=interrupts;
 	_wait_rtc_write();
 	// configuration de la valeur du prescaler
-	*RTC_PRLL=_rtc_period_msec(period)&0xffff;
+	RTC->PRLL=_rtc_period_msec(period)&0xffff;
 	_wait_rtc_write();
-	RTC_PRLH->prl=(_rtc_period_msec(period)>>16) && 0xffff;
+	RTC->PRLH=(_rtc_period_msec(period)>>16)&0xf;
 	_wait_rtc_write();
-	RTC_CRL->fld.cnf=0;
+	RTC->CRL&=~RTC_CRL_CNF;
 	_wait_rtc_write();
-	PWR_CR->fld.dbp=0;
-	*RTC_CNTH=0;
-	*RTC_CNTL=0;
+	PWR->CR&=~PWR_CR_DBP;
+	RTC->CNTH=0;
+	RTC->CNTL=0;
 }
 
 // réinitialise le backup domain
 inline void reset_backup_domain(){
-	RCC_BDCR->fld.bdrst =1;
+	RCC->BDCR|=RCC_BDCR_BDRST;
 }
 
 // initialise date et heure dans RTC_CNT

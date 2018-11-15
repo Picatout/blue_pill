@@ -27,8 +27,9 @@
 #define GPIO_LCKR_OFS 24
 
 typedef struct{
-	sfr_t CRL;
-	sfr_t CRH;
+	sfr_t CR[2];
+	//sfr_t CRL;
+	//sfr_t CRH;
 	sfr_t IDR;
 	sfr_t ODR;
 	sfr_t BSRR;
@@ -123,22 +124,6 @@ typedef union{
 	};
 } gpio_lckr_t;	
 
-#define BIT0 (1<<0)
-#define BIT1 (1<<1)
-#define BIT2 (1<<2)
-#define BIT3 (1<<3)
-#define BIT4 (1<<4)
-#define BIT5 (1<<5)
-#define BIT6 (1<<6)
-#define BIT7 (1<<7)
-#define BIT8 (1<<8)
-#define BIT9 (1<<9)
-#define BIT10 (1<<10)
-#define BIT11 (1<<11)
-#define BIT12 (1<<12)
-#define BIT13 (1<<13)
-#define BIT14 (1<<14)
-#define BIT15 (1<<15)
 
 /*********
 * PORT A
@@ -243,6 +228,18 @@ typedef union{
 ************/
  
 #define AFIO_BASE_ADR 0X40010000
+typedef struct{
+	sfr_t EVCR;
+	sfr_t MAPR;
+	sfr_t EXTICR1;
+	sfr_t EXTICR2;
+	sfr_t EXTICR3;
+	sfr_t EXTICR4;
+	sfr_t MAPR2;
+} afio_t;
+
+#define AFIO ((afio_t*)AFIO_BASE_ADR)
+
 #define AFIO_EVCR_OFS 0
 #define AFIO_MAPR_OFS 4
 #define AFIO_EXTICR1_OFS 8
@@ -363,6 +360,12 @@ extern afio_mapr2_t * AFIO_MAPR2;//=(afio_mapr2_t *)(AFIO_BASE_ADR+AFIO_MAPR2_OF
 // 	port -> {GPIOA,GPIOB,GPIOC}
 //	pin -> {0..15}
 //  config -> {OUTPUT..., INPUT...}
-void config_pin(unsigned port, unsigned pin, unsigned config);
+void config_pin(gpio_t* port, unsigned pin, unsigned config);
+
+int read_pin(gpio_t* port, unsigned pin);
+
+void write_print(gpio_t* port, unsigned pin, int value);
+
+void toggle_pin(gpio_t* port, unsigned pin);
 
 #endif // GPIO_H
