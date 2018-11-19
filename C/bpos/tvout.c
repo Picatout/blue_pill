@@ -64,7 +64,7 @@ uint16_t video_buffer[ROW_SIZE*VRES];
 	TIMER1_DIER->fld.cc1ie=1;
 	set_int_priority(IRQ_TIM1_CC,7);
 	enable_interrupt(IRQ_TIM1_CC);
-	// video test
+	/* video test
 	int i;
 	for (i=0;i<ROW_SIZE;i++){
 		video_buffer[i]=0xffff;
@@ -74,7 +74,7 @@ uint16_t video_buffer[ROW_SIZE*VRES];
 		video_buffer[i*ROW_SIZE]=0x8000;
 		video_buffer[i*ROW_SIZE+ROW_SIZE-1]=1;
 	}
-	// test end
+	 test end */
  }
 
 //volatile static uint8_t line_buffer[60];

@@ -14,7 +14,7 @@
 #include "../include/blue_pill.h"
 //#include "../include/nvic.h"
 //#include "../include/usart.h"
-#include "../include/console.h"
+#include "console.h"
 #include "svcall.h"
 #include "tvout.h"
 #include "keyboard.h"
@@ -443,6 +443,17 @@ static void cmd_ticks(){
 	_svc_call(SVC_TICKS,&pad,0);
 }
 
+static void cmd_con(){
+	console_dev_t dev;
+	word();
+	if (!strcmp("local",(const char*)pad)){
+		dev=LOCAL;
+	}else{
+		dev=SERIAL;
+	}
+	con_select(dev);
+}
+
 static const shell_cmd_t commands[]={
 	{"rst",cmd_reset},
 	{"ledon",cmd_led_on},
@@ -465,6 +476,7 @@ static const shell_cmd_t commands[]={
 	{"fwrite",cmd_fwrite},
 	{"pgerase",cmd_pgerase}, 
 	{"ticks",cmd_ticks},
+	{"con",cmd_con},
 	{NUL,NUL}
 };
 
@@ -616,28 +628,15 @@ void main(void){
 	RCC->APB1ENR=RCC_APB1ENR_SPI2EN;
 	RCC->AHBENR|=RCC_AHBENR_DMA1EN; // activation DMA1
 	config_pin(LED_PORT,LED_PIN,OUTPUT_OD_SLOW);
-	console_init();
-	cls();
 	keyboard_init();
 	tvout_init();
+	console_init(SERIAL);
+	cls();
 	print(VERSION);
 	copy_blink_in_ram();
 	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,&proga,NUL); conout(CR);
 	_svc_call(SVC_LED_ON,NUL,NUL);
-	flush_rx_queue();
 	
-	char c;
-	//gdi_clear_screen();
-	gdi_print(VERSION);
-	gdi_print(PROMPT);
-/*
-	while (1){
-		c=kbd_getc();
-		if (c){
-			gdi_putc(c);
-		}
-	 }
-*/	 
 	unsigned llen;
 	while (1){
 		llen=read_line(tib,CMD_MAX_LEN);

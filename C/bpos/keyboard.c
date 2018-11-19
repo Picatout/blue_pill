@@ -10,12 +10,12 @@
  * 
  */
  
- #include "keyboard.h"
- 
+#include "keyboard.h"
+#include "console.h"
 
 #define QUEUE_SIZE (32)
-static unsigned char queue[QUEUE_SIZE];
-static int head=0,tail=0;
+//static unsigned char con_queue[QUEUE_SIZE];
+//static int head=0,tail=0;
  
 // commande RAZ clavier
 #define KBD_RESET 0xFF  
@@ -105,8 +105,6 @@ static int KbdReset(void){
 */
  
 void keyboard_init(){
-	head=0;
-	tail=0;
 	// activation clock IOPA et AFIO
 	RCC->APB2ENR|=RCC_APB2ENR_IOPAEN|RCC_APB2ENR_AFIOEN;
 	// activation clock TMR2
@@ -128,14 +126,6 @@ void keyboard_init(){
 }
 
 
-unsigned char kbd_getc(){
-	unsigned char c=0;
-	if (head!=tail){
-		c=queue[head++];
-		head&=QUEUE_SIZE-1;
-	}
-	return c;
-}
 
 #define XTD_CODE (1<<0)
 #define RELEASE (1<<1)
@@ -271,7 +261,7 @@ static unsigned char search_table(const key_translate_t *table,unsigned char cod
 static void convert_code(unsigned char code){
 		unsigned char c,s;
 		int shift;
-		
+		if (!(con.dev==LOCAL)) return;
 		switch (code){
 		case 0xF0:
 			flags |= RELEASE;
@@ -282,8 +272,7 @@ static void convert_code(unsigned char code){
 		case 0xE1: // extended 2 code (i.e. pause)
 			flags^=XTD2_CODE;
 			if (!(flags&XTD2_CODE)){
-				queue[tail++]=PAUSE;
-				tail&=QUEUE_SIZE-1;
+				con.insert(PAUSE);
 			}
 			break;
 		case LSHIFT:
@@ -303,11 +292,9 @@ static void convert_code(unsigned char code){
 			}else{
 				if (flags&(XTD_CODE|PRNSCR)==(XTD_CODE|PRNSCR)){
 					flags&=~(XTD_CODE|PRNSCR);
-					queue[tail++]=PRN;
-					tail&=QUEUE_SIZE-1;
+					con.insert(PRN);
 				}else{
-					queue[tail++]='*';
-					tail&=QUEUE_SIZE-1;
+					con.insert('*');
 				}
 			}
 			break;
@@ -354,8 +341,7 @@ static void convert_code(unsigned char code){
 						c=s;
 					}
 					if (c){
-						queue[tail++]=c;
-						tail&=QUEUE_SIZE-1;
+						con.insert(c);
 					}
 			}else{
 				flags &= ~(XTD_CODE|RELEASE);

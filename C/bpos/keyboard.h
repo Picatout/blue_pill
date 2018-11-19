@@ -80,7 +80,6 @@
 #define KP9			0x7d
 
 
-unsigned char kbd_getc();
 
 #endif //KEYBOARD_H
 

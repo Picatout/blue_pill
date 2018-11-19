@@ -1,6 +1,6 @@
 #include "../include/stm32f103c8.h"
 #include "../include/nvic.h"
-#include "../include/console.h"
+#include "console.h"
 
 
 /* NOTE:

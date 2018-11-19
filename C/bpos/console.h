@@ -11,21 +11,36 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#include "ascii.h"
+#include "../include/blue_pill.h"
+#include "../include/ascii.h"
 
-#define CON USART2 // console utilise USART2
-#define IRQ_CON IRQ_USART2
-#define CON_handler USART2_handler
-#define CON_PORT PORTA
+typedef enum console_device{
+	LOCAL,
+	SERIAL
+}console_dev_t;
 
-#define RX_QUEUE_SIZE 32
+#define SERIAL_USART USART2
+#define IRQ_SERIAL IRQ_USART2
+#define SERIAL_handler USART2_handler
+#define SERIAL_PORT PORTA
+
+#define CON_QUEUE_SIZE 32
+
 typedef struct{
-	volatile char queue[RX_QUEUE_SIZE];
+	console_dev_t dev;
+	volatile char queue[CON_QUEUE_SIZE];
 	volatile unsigned head;
 	volatile unsigned tail;
-} rx_queue_t;
+	void (*insert)(char);
+	char (*getc)(void);
+	void (*putc)(char);
+	void (*delete_back)(void);
+	void (*cls)(void);
+}console_t;
 
-void console_init();
+extern console_t con;
+
+void console_init(console_dev_t dev);
 // envoie d'un caractère à la console
 void conout(char c);
 // réception d'un caractère de la console
@@ -37,9 +52,6 @@ void print(const char *str);
 void delete_back();
 // vide l'écran de la console
 void cls();
-// vide la ligne du curseur
-// n -> nombre de caractère à effacer.
-void clear_line(unsigned n);
 // reçoit une ligne de texte de la console
 // retourne la longueur de la ligne.
 unsigned read_line(char *buffer,unsigned buf_len);
@@ -50,7 +62,9 @@ void print_int(int i, unsigned base);
 // imprime un entier non signé en hexadécimal
 void print_hex(unsigned u);
 // vide la file rx
-void flush_rx_queue();
+void con_queue_flush();
+//sélectionne le device pour la console
+void con_select(console_dev_t dev);
 
 #endif // CONSOLE_H
 

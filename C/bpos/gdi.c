@@ -113,22 +113,25 @@ void gdi_put_sprite(int x, int y, int w, int h, const unsigned char *sprite){
 	}//for(i...
 }
 
+void gdi_del_back(){
+	gdi_cursor_left();
+	gdi_box(cursor_x,cursor_y,CHAR_WIDTH,CHAR_HEIGHT,BLACK_BIT);
+}
 
 // place un caractère dans le tampon écran
 // à la position du curseur et avance le curseur.
-void gdi_putc(unsigned char c){
+void gdi_putc(char c){
 		switch (c){
 		case '\n':
 		case CR:
 			gdi_new_line();
 			break;
 		case BS:
-			gdi_cursor_left();
-			gdi_box(cursor_x,cursor_y,CHAR_WIDTH,CHAR_HEIGHT,BLACK_BIT);
+			gdi_del_back();
 			break;
 		default:
 			if (c<FONT_SIZE){
-				gdi_put_sprite(cursor_x,cursor_y,CHAR_WIDTH,CHAR_HEIGHT,&font6x8[c]);
+				gdi_put_sprite(cursor_x,cursor_y,CHAR_WIDTH,CHAR_HEIGHT,(const unsigned char *)&font6x8[c]);
 				cursor_x+=CHAR_WIDTH;
 				if (cursor_x>(HRES-CHAR_WIDTH)){
 					gdi_new_line();
@@ -140,5 +143,13 @@ void gdi_putc(unsigned char c){
 
 void gdi_print(const char *str){
 	while (*str) gdi_putc(*str++);
+}
+
+void gdi_clrln(){
+	int i;
+	cursor_x=0;
+	for (i=cursor_y*ROW_SIZE;i<cursor_y*ROW_SIZE*8;i++){
+		video_buffer[i]=0;
+	}
 }
 
