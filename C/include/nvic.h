@@ -160,13 +160,13 @@ typedef struct{
 #define EXTI ((exti_sfr_t*)EXTI_SFR_BASE_ADR)
  
  
-void enable_interrupt(unsigned irq);
-void disable_interrupt(unsigned irq);
-unsigned get_pending(unsigned irq);
-unsigned get_active(unsigned irq);
-void set_pending(unsigned irq);
-void clear_pending(unsigned irq);
-void set_int_priority(int32_t irq, unsigned priority);
+void enable_interrupt(int irq);
+void disable_interrupt(int irq);
+unsigned get_pending(int irq);
+unsigned get_active(int irq);
+void set_pending(int irq);
+void clear_pending(int irq);
+void set_int_priority(int irq, unsigned priority);
 
 #endif // NVIC_H
 

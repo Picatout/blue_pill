@@ -30,6 +30,8 @@ void gdi_clear_screen(){
 	hide_cursor();
 	for (i=0;i<(ROW_SIZE*VRES);){
 		video_buffer[i++]=0;
+		cursor_x=0;
+		cursor_y=0;
 	}
 	if (cursor_blink){
 		enable_interrupt(IRQ_CURSOR_BLINK);
@@ -191,7 +193,7 @@ void gdi_text_cursor(int enable){
 	if (enable){
 		// activation clock CURSOR_TMR
 		RCC->CURSOR_RCC_ENR|=CURSOR_RCC_EN_BIT; 
-		CURSOR_TMR->ARR=FAPB1/1000/2;
+		CURSOR_TMR->ARR=FTMR2_4/1000/2;
 		CURSOR_TMR->PSC=1000;
 		CURSOR_TMR->CR1=BIT0|BIT7; // ARPE
 		CURSOR_TMR->DIER=BIT0; // UIE

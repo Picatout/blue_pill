@@ -20,8 +20,7 @@
  
 uint16_t video_buffer[ROW_SIZE*VRES];
 
-#define SPI_PIXELS ((FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF)
-#define SPI_CHROMA_SYNC ((FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF)
+//#define SPI_PIXELS ((FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF)
 
 //volatile static uint8_t line_buffer[ROW_SIZE];
 
@@ -53,18 +52,18 @@ uint16_t video_buffer[ROW_SIZE*VRES];
 	// activation timer1
 	TIMER1_CR1->fld.cen=1;
 	//SPI2-MOSI utilisé pour sérialisaton pixels.
-	SPI2->CR1=SPI_PIXELS; //(FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF;
+	SPI2->CR1=(FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF;
 	// configuration du canal dma
 	DMA1[DMACH5].ccr=DMA_CCR_DIR|DMA_CCR_MINC|(3<<DMA_CCR_PL_POS)|DMA_CCR_TCIE|(1<<DMA_CCR_PSIZE_POS)|(1<<DMA_CCR_MSIZE_POS);
 	DMA1[DMACH5].cpar=(uint32_t)SPI2_DR;
 	_enable_spi_dma();
-	set_int_priority(IRQ_DMA1CH5,7);
+	set_int_priority(IRQ_DMA1CH5,1);
 	enable_interrupt(IRQ_DMA1CH5);
 	// activation de l'interruption
 	TIMER1_DIER->fld.cc1ie=1;
-	set_int_priority(IRQ_TIM1_CC,7);
+	set_int_priority(IRQ_TIM1_CC,1);
 	enable_interrupt(IRQ_TIM1_CC);
-	/* video test
+	//video test
 	int i;
 	for (i=0;i<ROW_SIZE;i++){
 		video_buffer[i]=0xffff;
@@ -74,7 +73,7 @@ uint16_t video_buffer[ROW_SIZE*VRES];
 		video_buffer[i*ROW_SIZE]=0x8000;
 		video_buffer[i*ROW_SIZE+ROW_SIZE-1]=1;
 	}
-	 test end */
+	// test end */
  }
 
 //volatile static uint8_t line_buffer[60];
@@ -153,15 +152,24 @@ __attribute__((optimize("-O3"))) void TIM1_CC_handler(){
 			DMA1[DMACH5].cndtr=ROW_SIZE;
 			cnt=VIDEO_DELAY;
 			while ((*TIMER1_CNT)<cnt){asm volatile("");}
+			// réduction de la gigue vidéo
+			asm volatile(
+			"mov r3, %0\n\t"
+			"ldr r3,[r3,#0]\n\t"
+			"and r3,#7\n\t"
+			"lsls r3,r3,#1\n\t"
+			"add pc,pc,r3\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			::"r" (TIMER1_CNT)
+			);
 			_enable_dma();
-			/*
-			for (i=0;i<(ROW_SIZE);i++){
-				while (!(SPI2->SR&SPI_SR_TXE));
-				SPI2->DR=line_adr[i];
-			}
-			while (!(SPI2->SR&SPI_SR_TXE));
-			SPI2->DR=0;
-			*/
 		}
 		break;
 	}//switch (line_count)

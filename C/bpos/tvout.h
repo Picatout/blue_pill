@@ -10,6 +10,7 @@
 #ifndef TVOUT_H
 #define TVOUT_H
 
+#include "../include/blue_pill.h"
 #include "font.h"
 
 // choisir le standard PAL ou NTSC
@@ -17,9 +18,10 @@
 #define PAL
 
 #define HRES (320)
+#define VIDEO_TIME (40e-6)
 #ifdef NTSC
 	#define HFREQ (15734)
-	#define VIDEO_DELAY (600)
+	#define VIDEO_DELAY (((4.7e-6+5.1e-6)+(52e-6-VIDEO_TIME)/2)*FTMR1)
 	#define VFREQ (60)
 	#define HLINES (525)
 	#define HSYNC (4.7e-6) //µsec
@@ -29,7 +31,7 @@
 	#define VRES (224)
 #else
 	#define HFREQ (15625)
-	#define VIDEO_DELAY (700)
+	#define VIDEO_DELAY (((4.7e-6+5.7e-6)+(52e-6-VIDEO_TIME)/2)*FTMR1)
 	#define VFREQ (50)
 	#define HLINES (625)
 	#define HSYNC (4.7e-6) //µsec

@@ -195,6 +195,9 @@ void __attribute__((__interrupt__)) SVC_handler(){
 	case SVC_TICKS:
 		*(unsigned*)arg1=ticks;
 		break;
+	case SVC_CLS:
+		cls();
+		break;
 /*	
 	case SVC_PRIVILIGED:
 		asm volatile(
@@ -455,6 +458,10 @@ static void cmd_con(){
 	con_select(dev);
 }
 
+void cmd_cls(){
+	_svc_call(SVC_CLS,0,0);
+}
+
 static const shell_cmd_t commands[]={
 	{"rst",cmd_reset},
 	{"ledon",cmd_led_on},
@@ -478,6 +485,7 @@ static const shell_cmd_t commands[]={
 	{"pgerase",cmd_pgerase}, 
 	{"ticks",cmd_ticks},
 	{"con",cmd_con},
+	{"cls",cmd_cls},
 	{NUL,NUL}
 };
 
@@ -592,7 +600,7 @@ void __attribute__((section(".user_code"),noinline,used/*,optimize(0)*/)) blink(
 	volatile unsigned int tm;
 	volatile char c=0;
 	
-	
+	_svc_call(SVC_PRINT,"blinking led, any key to stop.\n",0);
 	while(1){
 		_svc_call(SVC_LED_OFF,NUL,NUL);
 		_svc_call(SVC_TIMER,&delay,NUL);
