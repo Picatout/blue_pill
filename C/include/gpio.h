@@ -11,9 +11,9 @@
 #ifndef GPIO_H
 #define GPIO_H
 
-#include "blue_pill.h"
+//#include "blue_pill.h"
 #include "gen_macros.h"
-#include "stm32f103c8.h"
+//#include "stm32f103c8.h"
 
 
 
@@ -28,14 +28,13 @@
 
 typedef struct{
 	sfr_t CR[2];
-	//sfr_t CRL;
-	//sfr_t CRH;
 	sfr_t IDR;
 	sfr_t ODR;
 	sfr_t BSRR;
 	sfr_t BRR;
 	sfr_t LCKR;
 }gpio_t;
+
 
 // structures des différents registres
 

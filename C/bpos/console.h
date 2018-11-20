@@ -19,11 +19,6 @@ typedef enum console_device{
 	SERIAL
 }console_dev_t;
 
-#define SERIAL_USART USART2
-#define IRQ_SERIAL IRQ_USART2
-#define SERIAL_handler USART2_handler
-#define SERIAL_PORT PORTA
-
 #define CON_QUEUE_SIZE 32
 
 typedef struct{

@@ -12,6 +12,8 @@
  
 #include "keyboard.h"
 #include "console.h"
+#include "vt100.h"
+#include "gdi.h"
 
 #define QUEUE_SIZE (32)
 //static unsigned char con_queue[QUEUE_SIZE];

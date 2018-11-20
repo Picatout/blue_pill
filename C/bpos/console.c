@@ -12,6 +12,7 @@
 #include "console.h"
 #include "svcall.h"
 #include "gdi.h"
+#include "vt100.h"
 
 console_t con;
 
@@ -34,44 +35,7 @@ void con_queue_flush(){
 	con.tail=con.head=0;
 }
 
-static void vt_putc(char c){
-	usart_putc(SERIAL_USART,c);
-}
-
-static void vt_del_back(){
-	con.putc(BS);
-	con.putc(SPACE);
-	con.putc(BS);
-}
-
-static void vt_esc_seq(){
-	con.putc(ESC);
-	con.putc('[');
-}
-
-
-// vide l'écran de la console
-static void vt_cls(){
-	vt_esc_seq();
-	con.putc('2');
-	con.putc('J');
-}
-
-// vide la ligne du curseur
-// n -> nombre de caractère à effacer.
-static void vt_clear_line(unsigned n){
-	vt_esc_seq();
-	con.putc('2');
-	con.putc('K');
-	while (n){con.putc(BS);n--;}
-}
-
-// interruption serial console
-void SERIAL_handler(){
-	if ((con.dev==SERIAL) && (SERIAL_USART->SR&USART_SR_RXNE)){
-		con.insert(SERIAL_USART->DR);
-	}
-}
+static const char PROMPT[]=" OK\n";
 
 void con_select(console_dev_t dev){
 	con_queue_flush();
@@ -80,30 +44,17 @@ void con_select(console_dev_t dev){
 		con.putc=gdi_putc;
 		con.cls=gdi_clear_screen;
 		con.delete_back=gdi_del_back;
+		gdi_text_cursor(1);
 	}else{
+		gdi_text_cursor(0);
 		con.putc=vt_putc;
 		con.cls=vt_cls;
 		con.delete_back=vt_del_back;
 	}
+	print(PROMPT);
 }
 
 void console_init(console_dev_t dev){
-	// activation clock USART2
-	RCC->APB1ENR|=RCC_APB1ENR_USART2EN;
-	//configure USART pins
-	RCC->APB2ENR|=RCC_APB2ENR_IOPAEN;
-	// PA0 -> CTS input   (floating)
-	// PA1 -> RTS output  (push-pull)
-	// PA2 -> TX  output (push-pull)
-	// PA3 -> RX input (floating)
-	usart_set_baud(SERIAL_USART,115200);
-	SERIAL_PORT->CR[0]&=~((15<<GPIO_MODE1)|(15<<GPIO_MODE2));
-	SERIAL_PORT->CR[0]|=(0xA<<GPIO_MODE1)|(0xA<<GPIO_MODE2);
-	SERIAL_USART->CR1|=USART_CR1_TE|USART_CR1_RE|USART_CR1_RXNEIE;
-	SERIAL_USART->CR3=USART_CR3_CTSE|USART_CR3_RTSE;
-	set_int_priority(IRQ_SERIAL,7);
-	enable_interrupt(IRQ_SERIAL);
-	SERIAL_USART->CR1|=USART_CR1_UE;
 	con.getc=queue_getc;
 	con.insert=queue_insert;
 	con_select(dev);

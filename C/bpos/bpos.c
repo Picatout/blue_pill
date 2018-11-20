@@ -18,6 +18,7 @@
 #include "svcall.h"
 #include "tvout.h"
 #include "keyboard.h"
+#include "vt100.h"
 #include "gdi.h"
 
 
@@ -228,7 +229,7 @@ static void set_sysclock(){
     // ajoute délais d'accès à la mémoire flash
     // active le prefetch buffer
     FLASH->ACR|=(WAIT_2_CY<<FLASH_ACR_LATENCY_POS)|FLASH_ACR_PRFTBE;
-	// La fréquence maximale pour APB1 doit-être de 36 Mhz
+	// La fréquence maximale pour APB1 doit-être de <=36 Mhz
 	// donc divise SYSCLK/2
     // Sélectionne le PLL comme source pour SYSCLK dans CR
 	RCC->CFGR|=(RCC_CFGR_PPREx_DIV2<<RCC_CFGR_PPRE1_POS)|(RCC_CFGR_SW_PLL<<RCC_CFGR_SW_POS);
@@ -616,7 +617,7 @@ void copy_blink_in_ram(){
 }
 
 extern void print_fault(const char *msg, sfrp_t adr);
-const char PROMPT[]=" OK\n";
+
 
 
 void main(void){
@@ -628,9 +629,11 @@ void main(void){
 	RCC->APB1ENR=RCC_APB1ENR_SPI2EN;
 	RCC->AHBENR|=RCC_AHBENR_DMA1EN; // activation DMA1
 	config_pin(LED_PORT,LED_PIN,OUTPUT_OD_SLOW);
+	vt_init();
 	keyboard_init();
 	tvout_init();
 	console_init(SERIAL);
+	if (!vt_ready()){con_select(LOCAL);}
 	cls();
 	print(VERSION);
 	copy_blink_in_ram();

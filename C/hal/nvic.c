@@ -20,7 +20,7 @@ void enable_interrupt(unsigned irq){
 
 void disable_interrupt(unsigned irq){
 	if (irq>LAST_IRQ) return ;
-	ICER[irq>>5]&=~(1<<(irq&0x1f));
+	ICER[irq>>5]=(1<<(irq&0x1f));
 }
 
 unsigned get_pending(unsigned irq){
@@ -40,7 +40,7 @@ void set_pending(unsigned irq){
 
 void clear_pending(unsigned irq){
 	if (irq>LAST_IRQ) return;
-	ICPR[irq>>5]&=~(1<<(irq&0x1f));
+	ICPR[irq>>5]=(1<<(irq&0x1f));
 }
 
 

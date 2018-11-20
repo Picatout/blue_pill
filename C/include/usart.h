@@ -113,9 +113,43 @@ typedef struct{
 #define FLOW_SOFT 0  // XON/XOFF
 #define FLOW_HARD 1  // RTC/CTS
 
+// ports et bits utilisés par les USART
+// USART1 PINOUT
+#define USART1_PORT PORTA
+#define USART1_CTS_PIN 11
+#define USART1_CTS_BIT BIT11
+#define USART1_RTS_PIN 12
+#define USART1_TX_PIN 9
+#define USART1_RX_PIN 10
+#define USART1_CK_PIN 8
+// USART1 TX/RX ALTERNATE PINOUT
+#define USART1_ALT_PORT PORTB
+#define USART1_ALT_TX_PIN 6
+#define USART1_ALT_RX_PIN 7
+//USART2 PINOUT
+#define USART2_PORT PORTA
+#define USART2_CTS_PIN 0
+#define USART2_CTS_BIT BIT0
+#define USART2_RTS_PIN 1
+#define USART2_TX_PIN 2
+#define USART2_RX_PIN 3
+#define USART2_CK_PIN 4
+//USART3 PINOUT
+#define USART3_PORT PORTB
+#define USART3_CTS_PIN 13
+#define USART3_CTS_BIT BIT13
+#define USART3_RTS_PIN 14
+#define USART3_TX_PIN 10
+#define USART3_RX_PIN 11
+#define USART3_CK_PIN 12
+
+
 /************************
  *  fonctions
  ************************/
+ 
+// configuration dse broches
+void usart_config_port(usart_t* channel, gpio_t *port, unsigned flow_ctrl);
  
 // vitesse de transmission
 void usart_set_baud(usart_t* channel, unsigned baud); 
@@ -136,5 +170,8 @@ char usart_getc(usart_t* channel);
 
 // transmet un caractère à la console
 void usart_putc(usart_t* channel,char c);
+
+// vérifie l'état de la ligne CTS
+int usart_cts(usart_t* channel);
 		
 #endif // USART_H

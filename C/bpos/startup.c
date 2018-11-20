@@ -112,6 +112,8 @@ _default_handler(DMA1CH5_handler) // 12
 _default_handler(EXTI9_5_handler) // 23
 _default_handler(TIM1_CC_handler) // 27
 _default_handler(TIM2_handler) // 28
+_default_handler(TIM3_handler) // 29
+_default_handler(TIM4_handler) // 30
 _default_handler(USART1_handler) // 37
 _default_handler(USART2_handler) // 38
 _default_handler(USART3_handler) // 39
@@ -171,8 +173,8 @@ __attribute__ ((section("vectors")))= {
     (unsigned int *)  reset_mcu, // 26 TIM1_TRG_COM
     (unsigned int *)  TIM1_CC_handler, // 27 TIM1_CC
     (unsigned int *)  TIM2_handler, // 28 TIM2
-    (unsigned int *)  reset_mcu, // 29 TIM3
-    (unsigned int *)  reset_mcu, // 30 TIM4
+    (unsigned int *)  TIM3_handler, // 29 TIM3
+    (unsigned int *)  TIM4_handler, // 30 TIM4
     (unsigned int *)  reset_mcu, // 31 I2C1_EV
     (unsigned int *)  reset_mcu, // 32 I2C1_ER
     (unsigned int *)  reset_mcu, // 33 I2C2_EV

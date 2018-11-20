@@ -17,6 +17,12 @@
  #include "../include/ascii.h"
  #include "tvout.h"
 
+#define CURSOR_blink_handler TIM4_handler
+#define IRQ_CURSOR_BLINK  IRQ_TIM4
+#define CURSOR_TMR TMR4
+#define CURSOR_RCC_ENR  APB1ENR
+#define CURSOR_RCC_EN_BIT RCC_APB1ENR_TIM4EN
+
 typedef enum BIT_OP{
 	BLACK_BIT,WHITE_BIT,XOR_BIT
 } bitop_e;
@@ -43,6 +49,9 @@ void gdi_print(const char *str);
 void gdi_del_back();
 
 void gdi_clrln();
+
+// active désactive le curseur texte
+void gdi_text_cursor(int enable);
 
  #endif //GDI_H
  
