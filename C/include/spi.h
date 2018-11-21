@@ -95,15 +95,22 @@ typedef struct{
 #define SPI_SR_OVR (1<<6) //  1 bit, overrun flag
 #define SPI_SR_BSY (1<<7) // 1 bit, busy flag
 
- 
-void spi_baudrate(spi_sfr_t* channel, unsigned baud);
-void spi_init(spi_sfr_t* channel, unsigned baud);
+
+#define SPI1_STD_PORT 0
+#define SPI1_ALT_PORT 1
 
 #define SPI_MODE_READ 0
 #define SPI_MODE_WRITE 1
 #define SPI_MODE_READ_WRITE 2
-void spi_enable(spi_sfr_t* channel, unsigned mode);
-void spi_disable(spi_sfr_t* channel);
+
+#define _spi_slave_select(ch) ch->CR1&=~SPI_CR1_SSI
+#define _spi_slave_deselect(ch) ch->CR1|=SPI_CR1_SSI
+#define _spi_enable(ch)  ch->CR1|=SPI_CR1_SPE
+#define _spi_disable(ch) ch->CR1&=~SPI_CR1_SPE
+
+void spi_baudrate(spi_sfr_t* channel, unsigned baud);
+void spi_init(spi_sfr_t* channel, unsigned baud, unsigned mode, int afio_cfg);
+
 // envoie un octet via le canla SPI
 void spi_write(spi_sfr_t* channel, uint8_t b);
 // reçois un octet du canal SPI
