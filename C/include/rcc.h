@@ -161,7 +161,7 @@ typedef struct{
 #define RCC_APB2ENR_ADC1EN (1<<9)
 #define RCC_APB2ENR_ADC2EN (1<<10)
 #define RCC_APB2ENR_TIM1EN (1<<11)
-#define RCC_APB2ENR_SPI11EN (1<<12)
+#define RCC_APB2ENR_SPI1EN (1<<12)
 #define RCC_APB2ENR_TIM8EN (1<<13)
 #define RCC_APB2ENR_USART1EN (1<<14)
 #define RCC_APB2ENR_ADC3EN (1<<15)

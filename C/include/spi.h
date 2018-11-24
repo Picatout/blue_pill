@@ -37,20 +37,13 @@
 #define SPI_TXCRCR_OFS 24
 
 typedef struct{
-	sfr16_t CR1;
-	sfr16_t res0;
-	sfr16_t CR2;
-	sfr16_t res1;
-	sfr16_t SR;
-	sfr16_t res2;
-	sfr16_t DR;
-	sfr16_t res3;
-	sfr16_t CRCPR;
-	sfr16_t res4;
-	sfr16_t RXCRCR;
-	sfr16_t res5;
-	sfr16_t TXCRCR;
-	sfr16_t res6;
+	sfr_t CR1;
+	sfr_t CR2;
+	sfr_t SR;
+	sfr_t DR;
+	sfr_t CRCPR;
+	sfr_t RXCRCR;
+	sfr_t TXCRCR;
 } spi_sfr_t;
 
 #define SPI1 ((spi_sfr_t*)SPI1_BASE_ADR)
@@ -61,43 +54,43 @@ typedef struct{
 
 
 // champs de bit registre SPI_CR1
-#define SPI_CR1_CPHA 1 // 1 bit phase clock
-#define SPI_CR1_CPOL (1<<1) // 1 bit polarité clock
-#define SPI_CR1_MSTR (1<<2) // 1 bit, master/slave
+#define SPI_CR1_CPHA BIT0 // phase clock
+#define SPI_CR1_CPOL BIT1 // polarité clock
+#define SPI_CR1_MSTR BIT2 // master/slave
 #define SPI_CR1_BR_POS (3) // 3 bits, baud rate  Fpclk/2...Fpclk/256
-#define SPI_CR1_BR_MASK (~(7<<8))
-#define SPI_CR1_SPE (1<<6) // 1 bit, activation
-#define SPI_CR1_LSBFIRST (1<<7) // 1 bit, quel bit sort en premier
-#define SPI_CR1_SSI (1<<8) // 1 bit, internal slave select
-#define SPI_CR1_SSM (1<<9) // 1 bit, software slave management
-#define SPI_CR1_RXONLY (1<<10) // 1 bit, reçoit seulement
-#define SPI_CR1_DDF (1<<11) // 1 bit, data 8/16 bits
-#define SPI_CR1_CRCNEXT (1<<12) // 1 bit
-#define SPI_CR1_CRCEN (1<<13) // activation CRC
-#define SPI_CR1_BIDIOE (1<<14) // activation E/S bidirectionnel
-#define SPI_CR1_BIDIMODE (1<<15) // mode bidirectionnel
+#define SPI_CR1_BR_MASK (~(7<<3))
+#define SPI_CR1_SPE BIT6 // activation
+#define SPI_CR1_LSBFIRST BIT7 // quel bit sort en premier
+#define SPI_CR1_SSI BIT8 // internal slave select
+#define SPI_CR1_SSM BIT9 // software slave management
+#define SPI_CR1_RXONLY BIT10 // reçoit seulement
+#define SPI_CR1_DDF BIT11 // 1 bit, data 8/16 bits
+#define SPI_CR1_CRCNEXT BIT12 // CRC transfert next
+#define SPI_CR1_CRCEN BIT13 // activation CRC
+#define SPI_CR1_BIDIOE BIT14 // activation E/S bidirectionnel
+#define SPI_CR1_BIDIMODE BIT15 // mode bidirectionnel
 
 // champs de bit registre SPI_CR2
-#define SPI_CR2_RXDMAEN 1 // 1 bit, utilisation DMA sur réception
-#define SPI_CR2_TXDMAEN (1<<1) // 1 bit, utilisation DMA sur transmission
-#define SPI_CR2_SSOE (1<<2) // 1 bit, activation sortie slave select
-#define SPI_CR2_ERRIE (1<<5) // 1 bit, activation interruption sur erreur
-#define SPI_CR2_RXNEIE (1<<6) // 1 bit, activation interruption sur rx buffer not empty
-#define SPI_CR2_TXEIE (1<<7) // 1 bit, activation interruption sur tx buffer empty
+#define SPI_CR2_RXDMAEN BIT0 // 1 bit, utilisation DMA sur réception
+#define SPI_CR2_TXDMAEN BIT1 // 1 bit, utilisation DMA sur transmission
+#define SPI_CR2_SSOE BIT2 // 1 bit, activation sortie slave select
+#define SPI_CR2_ERRIE BIT5 // 1 bit, activation interruption sur erreur
+#define SPI_CR2_RXNEIE BIT6 // 1 bit, activation interruption sur rx buffer not empty
+#define SPI_CR2_TXEIE BIT7 // 1 bit, activation interruption sur tx buffer empty
  
 // champs de bit registre SPI_SR
-#define SPI_SR_RXNE 1 // 1 bit, rx buffer non vide
-#define SPI_SR_TXE (1<<1) // 1 bit, tx buffer vide
-#define SPI_SR_CHSIDE (1<<2) // 1 bit, channel side
-#define SPI_SR_UDR (1<<3) // 1 bit, underrun erreur
-#define SPI_SR_CRCERR (1<<4) // 1 bit, erreur CRC
-#define SPI_SR_MODF (1<<5) // 1 bit, mode fault
-#define SPI_SR_OVR (1<<6) //  1 bit, overrun flag
-#define SPI_SR_BSY (1<<7) // 1 bit, busy flag
+#define SPI_SR_RXNE BIT0 // 1 bit, rx buffer non vide
+#define SPI_SR_TXE BIT1 // 1 bit, tx buffer vide
+#define SPI_SR_CHSIDE BIT2 // 1 bit, channel side
+#define SPI_SR_UDR BIT3 // 1 bit, underrun erreur
+#define SPI_SR_CRCERR BIT4 // 1 bit, erreur CRC
+#define SPI_SR_MODF BIT5 // 1 bit, mode fault
+#define SPI_SR_OVR BIT6 //  1 bit, overrun flag
+#define SPI_SR_BSY BIT7 // 1 bit, busy flag
 
 
-#define SPI1_STD_PORT 0
-#define SPI1_ALT_PORT 1
+#define SPI_STD_PORT 0
+#define SPI_ALT_PORT 1
 
 #define SPI_MODE_READ 0
 #define SPI_MODE_WRITE 1

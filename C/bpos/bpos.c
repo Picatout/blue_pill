@@ -20,6 +20,7 @@
 #include "keyboard.h"
 #include "vt100.h"
 #include "gdi.h"
+#include "sdcard.h"
 
 
 #define _pause(tm)  ({do {_svc_call(SVC_GET_TIMER,&tm,NUL);} while (tm);})
@@ -647,7 +648,10 @@ void main(void){
 	copy_blink_in_ram();
 	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,&proga,NUL); conout(CR);
 	_svc_call(SVC_LED_ON,NUL,NUL);
-	
+	print("initializing SDcard\n");
+	sdcard_init(); 
+	print("card status: ");
+	 print_hex(sdc_status); conout(CR);
 	unsigned llen;
 	while (1){
 		llen=read_line(tib,CMD_MAX_LEN);

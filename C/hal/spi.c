@@ -60,15 +60,16 @@ void spi_config_port(spi_sfr_t *channel, int afio_cfg){
 }
 
 void spi_init(spi_sfr_t* channel, unsigned baud,unsigned mode, int afio_cfg){
-	spi_config_port(channel);
+	spi_config_port(channel,afio_cfg);
 	// activation clock SPI
 	if (channel==SPI1){
-		RCC->APB2ENR|=RCC_APB2ENR_SPI11EN;
+		RCC->APB2ENR|=RCC_APB2ENR_SPI1EN;
 	}else{
-		RCC->APB1ENR|=RCC_APB1ENR_SPI21EN;
+		RCC->APB1ENR|=RCC_APB1ENR_SPI2EN;
 	}
 	channel->CR1=mode;
 	spi_baudrate(channel,baud);
+	_spi_enable(channel);
 }
 
 
