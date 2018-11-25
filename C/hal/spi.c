@@ -17,19 +17,20 @@ void spi_baudrate(spi_sfr_t* channel, unsigned baud){
 }
 
 void spi_config_port(spi_sfr_t *channel, int afio_cfg){
+	RCC->APB2ENR|=RCC_APB2ENR_AFIOEN;
 	if (channel==SPI1){
 		if (!afio_cfg){
 			// activation clock du port
 			RCC->APB2ENR|=RCC_APB2ENR_IOPAEN;
 			// configuration port
-			// PA4 -> NSS output (push-pull),  alt PA15
+			// PA4 -> NSS output (push-pull)
 			config_pin(PORTA,4,OUTPUT_PP_FAST);
-			// PA5 -> SCK output (push-pull),  alt PB3
-			config_pin(PORTA,5,OUTPUT_PP_FAST);
-			// PA6 -> MISO input (floating),   alt PB4
+			// PA5 -> SCK output (push-pull)
+			config_pin(PORTA,5,OUTPUT_ALT_PP_FAST);
+			// PA6 -> MISO input (floating)
 			config_pin(PORTA,6,INPUT_FLOAT);
-			// PA7 -> MOSI output (push-pull), alt PB5
-			config_pin(PORTA,7,OUTPUT_PP_FAST);
+			// PA7 -> MOSI output (push-pull)
+			config_pin(PORTA,7,OUTPUT_ALT_PP_FAST);
 		}else{// mappage I/O alternatif
 			// activation clock du port
 			RCC->APB2ENR|=RCC_APB2ENR_IOPBEN+RCC_APB2ENR_IOPAEN+RCC_APB2ENR_AFIOEN;
@@ -38,11 +39,11 @@ void spi_config_port(spi_sfr_t *channel, int afio_cfg){
 			// PA4 -> NSS output (push-pull),  alt PA15
 			config_pin(PORTA,15,OUTPUT_PP_FAST);
 			// PA5 -> SCK output (push-pull),  alt PB3
-			config_pin(PORTB,3,OUTPUT_PP_FAST);
+			config_pin(PORTB,3,OUTPUT_ALT_PP_FAST);
 			// PA6 -> MISO input (floating),   alt PB4
 			config_pin(PORTB,4,INPUT_FLOAT);
 			// PA7 -> MOSI output (push-pull), alt PB5
-			config_pin(PORTB,5,OUTPUT_PP_FAST);
+			config_pin(PORTB,5,OUTPUT_ALT_PP_FAST);
 		}
 	}else{
 		// activation clock du port
@@ -51,11 +52,11 @@ void spi_config_port(spi_sfr_t *channel, int afio_cfg){
 		// PB12 NSS output (push-pull)
 		config_pin(PORTB,2,OUTPUT_PP_FAST);
 		// PB13 SCK output (push-pull)
-		config_pin(PORTB,13,OUTPUT_PP_FAST);
+		config_pin(PORTB,13,OUTPUT_ALT_PP_FAST);
 		// PB14 MISO input (floating)
 		config_pin(PORTB,14,INPUT_FLOAT);
 		// PB15 MOSI output (push-pull)
-		config_pin(PORTB,15,OUTPUT_PP_FAST);
+		config_pin(PORTB,15,OUTPUT_ALT_PP_FAST);
 	}
 }
 
@@ -76,6 +77,7 @@ void spi_init(spi_sfr_t* channel, unsigned baud,unsigned mode, int afio_cfg){
 // envoie un octet via le canla SPI
 inline void spi_write(spi_sfr_t* channel, uint8_t b){
 	uint8_t rx;
+	while (!(channel->SR&SPI_SR_TXE));
 	channel->DR=b;
 	while (!(channel->SR&SPI_SR_RXNE));
 	rx=(uint8_t)channel->DR;
@@ -84,6 +86,7 @@ inline void spi_write(spi_sfr_t* channel, uint8_t b){
 // reçois un octet du canal SPI
 uint8_t spi_read(spi_sfr_t* channel){
 	uint8_t rx;
+	while (!(channel->SR&SPI_SR_TXE));
 	channel->DR=255;
 	while (!(channel->SR&SPI_SR_RXNE));
 	rx=(uint8_t)channel->DR;

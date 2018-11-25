@@ -649,9 +649,11 @@ void main(void){
 	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,&proga,NUL); conout(CR);
 	_svc_call(SVC_LED_ON,NUL,NUL);
 	print("initializing SDcard\n");
-	sdcard_init(); 
-	print("card status: ");
-	 print_hex(sdc_status); conout(CR);
+	if (sdcard_init()){
+			print("SDcard capacity: ");print_int(sdcard_capacity(),10);print(" Mo\n");
+	}else{
+		print("SDcard initialization failed, status code: "); print_hex(sdc_status);conout('\n');
+	} 
 	unsigned llen;
 	while (1){
 		llen=read_line(tib,CMD_MAX_LEN);
