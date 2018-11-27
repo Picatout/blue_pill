@@ -197,13 +197,13 @@ typedef struct{
 #define RCC_APB1ENR_RST_VAL 0
 
 // champ BDCR
-#define RCC_BDCR_LSEON (1<<0)
-#define RCC_BDCR_LSERDY (1<<1)
-#define RCC_BDCR_LSEBYP (1<<2)
+#define RCC_BDCR_LSEON BIT0
+#define RCC_BDCR_LSERDY BIT1
+#define RCC_BDCR_LSEBYP BIT2
 #define RCC_BDCR_RTCSEL_POS (8)
 #define RCC_BDCR_RTCSEL_MASK (~(3<<8))
-#define RCC_BDCR_RTCEN (1<<15)
-#define RCC_BDCR_BDRST (1<<16)
+#define RCC_BDCR_RTCEN BIT15
+#define RCC_BDCR_BDRST BIT16
 #define RCC_BDCR_RST_VAL 0
 
 // champs CSR

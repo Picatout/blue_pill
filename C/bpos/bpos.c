@@ -54,6 +54,7 @@ int strcmp(const char *s1, const char *s2){
 	return result;
 }
 
+
 int digit(char c){
    return ((c>='0') && (c<='9'));
 }
@@ -163,7 +164,7 @@ void __attribute__((__interrupt__)) SVC_handler(){
 	case SVC_PRINT:
 		print((const char*)arg1);
 		break;
-	case SVC_PRINT_INT:
+	case SVC_PRINT_DEC:
 		print_int(*(int32_t*)arg1,10);
 		break;
 	case SVC_PRINT_HEX:
@@ -338,7 +339,7 @@ static void cmd_print(){
 	_svc_call(SVC_PRINT,pad,NUL);
 }
 
-static void cmd_print_int(){
+static void cmd_print_dec(){
 	int cmd_id;
     unsigned u32;
     
@@ -350,7 +351,7 @@ static void cmd_print_int(){
 		cmd_id=atoi((const char*)pad);
 		*(int*)pad=cmd_id;
 	 }
-	_svc_call(SVC_PRINT_INT,pad,NUL);
+	_svc_call(SVC_PRINT_DEC,pad,NUL);
 }
 
 static void cmd_print_hex(){
@@ -463,30 +464,45 @@ void cmd_cls(){
 	_svc_call(SVC_CLS,0,0);
 }
 
+void cmd_help(){
+	const char *str;
+	int i=0;
+	print("commands list:\n");
+	str=commands[i].name;
+	while (str){
+		print(str);
+		conout('\t');
+		i++;
+		if (!(i%6)) {conout('\n');}
+		str=commands[i].name;	
+	}
+}
+
 static const shell_cmd_t commands[]={
-	{"rst",cmd_reset},
-	{"ledon",cmd_led_on},
-	{"ledoff",cmd_led_off},
-	{"timer",cmd_set_timer},
-	{"pause",cmd_pause},
+	{"cls",cmd_cls},
+	{"con",cmd_con},
+	{"fwrite",cmd_fwrite},
 	{"getc",cmd_getc},
-	{"putc",cmd_putc},
-	{"readln",cmd_readln},
-	{"print",cmd_print},
-	{"print_int",cmd_print_int},
-	{"print_hex",cmd_print_hex},
-	{"run",cmd_run},
-	{"peek8",cmd_peek8},
+	{"help",cmd_help},
+	{"ledoff",cmd_led_off},
+	{"ledon",cmd_led_on},
+	{"pause",cmd_pause},
 	{"peek16",cmd_peek16},
 	{"peek32",cmd_peek32},
-	{"poke8",cmd_poke8},
+	{"peek8",cmd_peek8},
+	{"pgerase",cmd_pgerase}, 
 	{"poke16",cmd_poke16},
 	{"poke32",cmd_poke32},
-	{"fwrite",cmd_fwrite},
-	{"pgerase",cmd_pgerase}, 
+	{"poke8",cmd_poke8},
+	{"print",cmd_print},
+	{"printd",cmd_print_dec},
+	{"printx",cmd_print_hex},
+	{"putc",cmd_putc},
+	{"readln",cmd_readln},
+	{"rst",cmd_reset},
+	{"run",cmd_run},
 	{"ticks",cmd_ticks},
-	{"con",cmd_con},
-	{"cls",cmd_cls},
+	{"timer",cmd_set_timer},
 	{NUL,NUL}
 };
 

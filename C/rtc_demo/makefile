@@ -1,6 +1,8 @@
-
+PREFIX = arm-none-eabi-
 INC = ../include/
 HAL = ../hal/
+NAME= rtc_demo
+DBG = $(PREFIX)gdb
 
 all:
 	@echo "Construction des cibles"
@@ -9,34 +11,44 @@ all:
 flash:
 	st-flash write rtc_demo.bin 0x8000000
 
-build: rtc_demo.c startup.c $(HAL)nvic.c $(HAL)rtc.c stm32.ld clean
+debug:
+	$(DBG) -tui --eval-command="target remote localhost:4242" $(NAME).elf
+	
+
+build: rtc_demo.c startup.c $(HAL)nvic.c $(HAL)rtc.c $(HAL)systick.c $(HAL)gpio.c stm32.ld clean
 	@echo
 	@echo "Construction de l'image de production sans optimisation"
 	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o rtc_demo.o rtc_demo.c
 	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o startup.o startup.c
 	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o nvic.o $(HAL)nvic.c
 	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o rtc.o $(HAL)rtc.c
-	arm-none-eabi-ld -Tstm32.ld -o rtc_demo.elf startup.o rtc_demo.o nvic.o rtc.o
+	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o systick.o $(HAL)systick.c
+	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o gpio.o $(HAL)gpio.c
+	arm-none-eabi-ld -Tstm32.ld -o rtc_demo.elf startup.o rtc_demo.o nvic.o rtc.o systick.o gpio.o
 	arm-none-eabi-objcopy -O binary rtc_demo.elf rtc_demo.bin
 
-build_O1: rtc_demo.c startup.c $(HAL)nvic.c $(HAL)rtc.c stm32.ld clean
+build_O1: rtc_demo.c startup.c $(HAL)nvic.c $(HAL)rtc.c $(HAL)systick.c $(HAL)gpio.c stm32.ld clean
 	@echo
 	@echo "construction de l'image de débogage avec optimisation -O1"
 	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o rtc_demo.o rtc_demo.c
 	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
 	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o nvic.o $(HAL)nvic.c
 	arm-none-eabi-gcc  -O1 -c -g -mcpu=cortex-m3 -mthumb -o rtc.o $(HAL)rtc.c
-	arm-none-eabi-ld -Tstm32.ld -o rtc_demo.elf startup.o rtc_demo.o nvic.o rtc.o
+	arm-none-eabi-gcc  -O1 -c -mcpu=cortex-m3 -mthumb -o systick.o $(HAL)systick.c
+	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o gpio.o $(HAL)gpio.c
+	arm-none-eabi-ld -Tstm32.ld -o rtc_demo.elf startup.o rtc_demo.o nvic.o rtc.o systick.o gpio.o
 	arm-none-eabi-objcopy -O binary rtc_demo.elf rtc_demo.bin
 
-build_debug: rtc_demo.c startup.c $(HAL)nvic.c $(HAL)rtc.c stm32.ld clean
+build_debug: rtc_demo.c startup.c $(HAL)nvic.c $(HAL)rtc.c $(HAL)systick.c $(HAL)gpio.c stm32.ld clean
 	@echo
 	@echo "Construction d'une image pour débogage"
 	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o rtc_demo.o rtc_demo.c
 	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o startup.o startup.c
 	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o nvic.o $(HAL)nvic.c 
 	arm-none-eabi-gcc -O0  -c -g -mcpu=cortex-m3 -mthumb -o rtc.o $(HAL)rtc.c 
-	arm-none-eabi-ld -Tstm32.ld -o rtc_demo.elf startup.o rtc_demo.o nvic.o rtc.o
+	arm-none-eabi-gcc -O0 -c -mcpu=cortex-m3 -mthumb -o systick.o $(HAL)systick.c
+	arm-none-eabi-gcc  -c -mcpu=cortex-m3 -mthumb -o gpio.o $(HAL)gpio.c
+	arm-none-eabi-ld -Tstm32.ld -o rtc_demo.elf startup.o rtc_demo.o nvic.o rtc.o systick.o gpio.o
 	arm-none-eabi-objcopy -O binary rtc_demo.elf rtc_demo.bin
 
 print_gcc_assembler:

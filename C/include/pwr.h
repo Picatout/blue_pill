@@ -20,7 +20,7 @@ typedef struct{
 	sfr_t CSR;
 }pwr_t;
 
-#define PWR ((pwr_t*)PWR_BASE_ADR);
+#define PWR ((pwr_t*)PWR_BASE_ADR)
 
 //champs du registe PWR_CR (power control register)
 #define PWR_CR_LPDS BIT0 // lower deep sleep
@@ -30,7 +30,7 @@ typedef struct{
 #define PWR_CR_PVDE BIT4 // power voltage dectector enable
 #define PWR_CR_PLS_POS  (5) // 3 bits, PVD level selection
 #define PWR_CR_PLS_MASK (~(7<<5))
-#define PWR_CR_DBP  BIT8 // disable backup domain protection
+#define PWR_CR_BDP  BIT8 // disable backup domain protection
 // valeurs pour PLS
 #define PWR_CR_PLS_22 0  // 2.2 volt
 #define PWR_CR_PLS_23 1  // 2.3 volt

@@ -24,8 +24,8 @@ typedef enum{
 	SVC_CONIN,  // reçoit un caractère de la console
 	SVC_CONOUT, // envoie un caractère à la console
 	SVC_READLN, // lit une ligne de la console
-	SVC_PRINT,  // imprime une chaine
-	SVC_PRINT_INT, // imprime un entier
+	SVC_PRINT,  // imprime une chaine 
+	SVC_PRINT_DEC, // imprime un entier base décimale
 	SVC_PRINT_HEX, // imprime un entier en format hexadécimal
 	SVC_PEEK8, // lit un entier 8 bits à l'adresse donnée
 	SVC_PEEK16, // lit un entier 16 bits à l'acresse donnée

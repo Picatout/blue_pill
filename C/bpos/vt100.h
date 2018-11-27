@@ -19,6 +19,8 @@
 #define VT_CTS_BIT USART2_CTS_BIT
 #define VT_TX_PIN USART2_TX_PIN
 #define VT_RTS_PIN USART2_RTS_PIN
+#define VT_SCREEN_WIDTH 80   // caractères par ligne
+#define VT_SCREEN_HEIGHT 24  // lignes par écran.
 
 // initialise le port sériel
 void vt_init();

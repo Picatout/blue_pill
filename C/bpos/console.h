@@ -14,12 +14,19 @@
 #include "../include/blue_pill.h"
 #include "../include/ascii.h"
 
+#define CURSOR_blink_handler TIM4_handler
+#define IRQ_CURSOR_BLINK  IRQ_TIM4
+#define CURSOR_TMR TMR4
+#define CURSOR_RCC_ENR  APB1ENR
+#define CURSOR_RCC_EN_BIT RCC_APB1ENR_TIM4EN
+
 typedef enum console_device{
 	LOCAL,
 	SERIAL
 }console_dev_t;
 
 #define CON_QUEUE_SIZE 32
+#define DEFAULT_TAB_WIDTH 8
 
 typedef struct{
 	console_dev_t dev;
@@ -31,9 +38,12 @@ typedef struct{
 	void (*putc)(char);
 	void (*delete_back)(void);
 	void (*cls)(void);
+	void (*clrln)(void);
+	void (*crlf)(void);
 }console_t;
 
 extern console_t con;
+extern unsigned tab_width;
 
 void console_init(console_dev_t dev);
 // envoie d'un caractère à la console

@@ -11,21 +11,20 @@
 #include "../include/stm32f103c8.h"
 
 
-
 // activation du RTC avec LSE comme source
 // ref: note applicative AN2821
 void enable_rtc(unsigned period, unsigned interrupts){
 	// activation signaux clock sur power interface et backup domain interface
-	RCC->APB1ENR|=RCC_APB1ENR_BKPEN)|RCC_APB1ENR_PWREN;
-	// donne un accès en modification à RCC_DBCR
-	PWR->CR|=PWR_CR_DBP;
+	RCC->APB1ENR|=RCC_APB1ENR_BKPEN|RCC_APB1ENR_PWREN;
+	// donne un accès en modification à RCC_BDCR
+	PWR->CR|=PWR_CR_BDP;
 	// réinitialise le backup domain
 //	RCC_BDCR|=1<<BDCR_BDRST;
 //	RCC_BDCR&=~(1<<BDCR_BDRST);
 	// active l'oscillateur LSE
 	RCC->BDCR|=RCC_BDCR_LSEON;
 	// attend qu'il soit prêt
-	while (!(RCC->BDCR&RCC->RCC_BDCR_LSERDY));
+	while (!(RCC->BDCR&RCC_BDCR_LSERDY));
 	// sélection LSE clock et active le RTC
 	RCC->BDCR|=RCC_BDCR_RTCEN|(RCC_BDCR_RTCSEL_LSE<<RCC_BDCR_RTCSEL_POS);
 	// attend la synchronisation de l'horloge LSE et du clock de APB1 
@@ -44,7 +43,7 @@ void enable_rtc(unsigned period, unsigned interrupts){
 	_wait_rtc_write();
 	RTC->CRL&=~RTC_CRL_CNF;
 	_wait_rtc_write();
-	PWR->CR&=~PWR_CR_DBP;
+	PWR->CR&=~PWR_CR_BDP;
 	RTC->CNTH=0;
 	RTC->CNTL=0;
 }

@@ -22,7 +22,7 @@
 // PC13 mode{0:1}=10, CNF{2:3}=01 -> 6
 #define PC13_CNF 6
 void port_c_setup(){
-	APB2ENR->fld.iopcen=1;
+	RCC->APB2ENR|=RCC_APB2ENR_IOPCEN;
 	GPIOC_CRH->cr=_apply_cnf(DEFAULT_PORT_CNF,LED_PIN,PC13_CNF);
 }
 
