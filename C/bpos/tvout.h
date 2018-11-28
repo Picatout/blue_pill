@@ -44,6 +44,13 @@
 #define LINES_PER_SCREEN (VRES/CHAR_HEIGHT)
 #define ROW_SIZE (HRES/16)
 
+#define TV_SYNC_TMR TMR1
+#define IRQ_TV_SYNC IRQ_TIM1_CC
+#define TV_SYNC_handler TIM1_CC_handler
+#define TV_PIX_TMR TMR3
+#define IRQ_TV_PIX IRQ_TIM3
+#define TV_PIX_TMR_handler TIM3_handler
+
 extern uint16_t video_buffer[ROW_SIZE*VRES];
 extern uint32_t *video_bb;
 

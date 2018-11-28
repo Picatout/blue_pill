@@ -98,3 +98,17 @@ void gdi_clear_rows(int y, int count){
 	}
 }
 
+void gdi_rect(int x, int y, int w, int h, bitop_e op){
+	int i;
+	//ligne horizontales
+	for (i=x;i<(x+w);i++){
+			gdi_bit_op(i,y,op);
+			gdi_bit_op(i,y+h-1,op);
+	}
+    // lignes verticales
+	for (i=y+1;i<(y+h-1);i++){
+			gdi_bit_op(x,i,op);
+			gdi_bit_op(x+w-1,i,op);
+	}
+}
+

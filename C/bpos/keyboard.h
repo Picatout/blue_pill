@@ -24,6 +24,11 @@
 #define KBD_DAT_BIT 10
 #define KBD_DAT_PIN (1<<10)
 #define KBD_CLK_PIN (1<<9)
+#define KBD_TMR TMR2
+#define KBD_TMR_handler TIM2_handler
+#define IRQ_KBD_TMR IRQ_TIM2
+#define KBD_TMR_ENR APB1ENR
+#define KBD_TMR_EN  RCC_APB1ENR_TIM2EN
 
 // touches spéciales
 #define ENTER           0x5A
@@ -79,6 +84,7 @@
 #define KP8			0x75
 #define KP9			0x7d
 
+void kbd_enable(int );
 
 #endif //KEYBOARD_H
 

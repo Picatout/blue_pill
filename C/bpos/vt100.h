@@ -35,5 +35,7 @@ void vt_cls();
 void vt_clear_line(unsigned n);
 // vérifie si le terminal est prêt
 int vt_ready();
+// active/désactive l'interruption sur réception
+void vt_rx_enable(int);
 
 #endif // VT100_H

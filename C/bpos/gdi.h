@@ -37,6 +37,7 @@ void gdi_scroll_up(unsigned n);
 
 void gdi_clear_rows(int y, int count);
 
+void gdi_rect(int x, int y, int w, int h, bitop_e op);
 
  #endif //GDI_H
  

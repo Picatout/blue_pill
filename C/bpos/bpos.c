@@ -478,6 +478,19 @@ void cmd_help(){
 	}
 }
 
+void cmd_rect(){
+	int x,y,w,h;
+	word();
+	x=atoi((const char*)pad);
+	word();
+	y=atoi((const char*)pad);
+	word();
+	w=atoi((const char*)pad);
+	word();
+	h=atoi((const char*)pad);
+	gdi_rect(x,y,w,h,WHITE_BIT);		
+}
+
 static const shell_cmd_t commands[]={
 	{"cls",cmd_cls},
 	{"con",cmd_con},
@@ -499,6 +512,7 @@ static const shell_cmd_t commands[]={
 	{"printx",cmd_print_hex},
 	{"putc",cmd_putc},
 	{"readln",cmd_readln},
+	{"rect",cmd_rect},
 	{"rst",cmd_reset},
 	{"run",cmd_run},
 	{"ticks",cmd_ticks},

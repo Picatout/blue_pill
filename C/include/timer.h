@@ -93,6 +93,18 @@ typedef union{
 	}fld;
 } timer_cr1_t;
 
+#define TMR_CR1_CEN BIT0
+#define TMR_CR1_UDIS BIT1
+#define TMR_CR1_URS BIT2
+#define TMR_CR1_OPM BIT3
+#define TMR_CR1_DIR BIT4
+#define TMR_CR1_CMS_POS 5
+#define TMR_CR1_CMS_MASK (~(3<<5))
+#define TMR_CR1_ARPE BIT7
+#define TMR_CR1_CKD_POS 8
+#define TMR_CR1_CKD_MASK (~(3<<8))
+
+
 #define TIMER1_CR1 ((timer_cr1_t*)(TIMER1_BASE_ADR+TMR_CR1_OFS))
 #define TIMER2_CR1 ((timer_cr1_t*)(TIMER2_BASE_ADR+TMR_CR1_OFS))
 #define TIMER3_CR1 ((timer_cr1_t*)(TIMER3_BASE_ADR+TMR_CR1_OFS))
@@ -108,6 +120,11 @@ typedef union{
 		sfr_t reserved1:24;
 	}fld;
 } timer_cr2_t;
+
+#define TMR_CR2_CCDS BIT3
+#define TMR_CR2_MMS_POS 4
+#define TMR_CR2_MMS_MASK (~(7<<4))
+#define TMR_CR2_TI1S BIT7
 
 #define TIMER1_CR2 ((timer_cr2_t*)(TIMER1_BASE_ADR+TMR_CR2_OFS))
 #define TIMER2_CR2 ((timer_cr2_t*)(TIMER2_BASE_ADR+TMR_CR2_OFS))
@@ -128,6 +145,18 @@ typedef union{
 		sfr_t reserved1:16;
 	}fld;
 } timer_smcr_t;
+
+#define TMR_SMCR_SMS_POS 0
+#define TMR_SMCR_SMS_MASK (~(7<<0))
+#define TMR_SMCR_TS_POS 4
+#define TMR_SMCR_TS_MASK  (~(7<<0))
+#define TMR_SMCR_MSM BIT7
+#define TMR_SMCR_ETF_POS 8
+#define TMR_SMCR_ETF_MASK (~(15<<8))
+#define TMR_SMCR_ETPS_POS 12
+#define TMR_SMCR_ETPS_MASK (~(3<<12))
+#define TMR_SMCR_ECE BIT14
+#define TMR_SMCR_ETP BIT15
 
 #define TIMER1_SMCR ((timer_smcr_t*)(TIMER1_BASE_ADR+TMR_SMCR_OFS))
 #define TIMER2_SMCR ((timer_smcr_t*)(TIMER2_BASE_ADR+TMR_SMCR_OFS))
@@ -157,6 +186,20 @@ typedef union{
 	
 } timer_dier_t;
 
+#define TMR_DIER_UIE BIT0
+#define TMR_DIER_CC1IE BIT1
+#define TMR_DIER_CC2IE BIT2
+#define TMR_DIER_CC3IE BIT3
+#define TMR_DIER_CC4IE BIT4
+#define TMR_DIER_TIE BIT6
+#define TMR_DIER_UDE BIT8
+#define TMR_DIER_CC1DE BIT9
+#define TMR_DIER_CC2DE BIT10
+#define TMR_DIER_CC3DE BIT11
+#define TMR_DIER_CC4DE BIT12
+#define TMR_DIER_TDE BIT14
+
+
 #define TIMER1_DIER ((timer_dier_t*)(TIMER1_BASE_ADR+TMR_DIER_OFS))
 #define TIMER2_DIER ((timer_dier_t*)(TIMER2_BASE_ADR+TMR_DIER_OFS))
 #define TIMER3_DIER ((timer_dier_t*)(TIMER3_BASE_ADR+TMR_DIER_OFS))
@@ -183,6 +226,17 @@ typedef union{
 	}fld;
 } timer_sr_t;
 
+#define TMR_SR_UIF BIT0
+#define TMR_SR_CC1IF BIT1
+#define TMR_SR_CC2IF BIT2
+#define TMR_SR_CC3IF BIT3
+#define TMR_SR_CC4IF BIT4
+#define TMR_SR_TIF BIT6
+#define TMR_SR_CC1OF BIT9
+#define TMR_SR_CC2OF BIT10
+#define TMR_SR_CC3OF BIT11
+#define TMR_SR_CC4OF BIT12
+
 #define TIMER1_SR ((timer_sr_t*)(TIMER1_BASE_ADR+TMR_SR_OFS))
 #define TIMER2_SR ((timer_sr_t*)(TIMER2_BASE_ADR+TMR_SR_OFS))
 #define TIMER3_SR ((timer_sr_t*)(TIMER3_BASE_ADR+TMR_SR_OFS))
@@ -203,6 +257,13 @@ typedef union{
 		
 	}fld;
 } timer_egr_t;
+
+#define TMR_EGR_UG BIT0
+#define TMR_EGR_CC1G BIT1
+#define TMR_EGR_CC2G BIT2
+#define TMR_EGR_CC3G BIT3
+#define TMR_EGR_CC4G BIT4
+#define TMR_EGR_TG BIT6
 
 #define TIMER1_EGR ((timer_egr_t*)(TIMER1_BASE_ADR+TMR_EGR_OFS))
 #define TIMER2_EGR ((timer_egr_t*)(TIMER2_BASE_ADR+TMR_EGR_OFS))
@@ -227,6 +288,32 @@ typedef union{
 	}fld;
 	
 } timer_ccmr1_ocm_t;
+
+// output compare mode
+#define TMR_CCMR1_CC1S_POS 0
+#define TMR_CCMR1_CC1S_MASK (~(3<<0))
+#define TMR_CCMR1_OC1FE BIT2
+#define TMR_CCMR1_OC1PE BIT3
+#define TMR_CCMR1_OC1M_POS 4
+#define TMR_CCMR1_OC1M_MASK (~(7<<4))
+#define TMR_CCMR1_OC1CE BIT7
+#define TMR_CCMR1_CC2S_POS 8
+#define TMR_CCMR1_CC2S_MASK (~(3<<8))
+#define TMR_CCMR1_OC2FE BIT10
+#define TMR_CCMR1_OC2PE BIT11
+#define TMR_CCMR1_OC2M_POS 12
+#define TMR_CCMR1_OC2M_MASK (~(7<<12))
+#define TMR_CCMR1_OC2CE BIT15
+//input capture mode
+#define TMR_CCMR1_IC1PSC_POS 2
+#define TMR_CCMR1_IC1PSC_MASK (~(3<<2))
+#define TMR_CCMR1_IC1F_POS 4
+#define TMR_CCMR1_IC1F_MASK (~(15<<4))
+#define TMR_CCMR1_IC2PSC_POS 10
+#define TMR_CCMR1_IC2PSC_MASK (~(3<<10))
+#define TMR_CCMR1_IC2F_POS 12
+#define TMR_CCMR1_IC2F_MASK (~(15<<12))
+
 
 #define TIMER1_CCMR1_OCM ((timer_ccmr1_ocm_t*)(TIMER1_BASE_ADR+TMR_CCMR1_OCM_OFS))
 #define TIMER2_CCMR1_OCM ((timer_ccmr1_ocm_t*)(TIMER2_BASE_ADR+TMR_CCMR1_OCM_OFS))
@@ -271,6 +358,32 @@ typedef union{
 	
 } timer_ccmr2_ocm_t;
 
+// output compare mode canal 3 et 4
+#define TMR_CCMR2_CC3S_POS 0
+#define TMR_CCMR2_CC3S_MASK (~(3<<0))
+#define TMR_CCMR2_OC3FE BIT2
+#define TMR_CCMR2_OC3PE BIT3
+#define TMR_CCMR2_OC3M_POS 4
+#define TMR_CCMR2_OC3M_MASK (~(7<<4))
+#define TMR_CCMR2_OC3CE BIT7
+#define TMR_CCMR2_CC4S_POS 8
+#define TMR_CCMR2_CC4S_MASK (~(3<<8))
+#define TMR_CCMR2_OC4FE BIT10
+#define TMR_CCMR2_OC4PE BIT11
+#define TMR_CCMR2_OC4M_POS 12
+#define TMR_CCMR2_OC4M_MASK (~(7<<12))
+#define TMR_CCMR2_OC4CE BIT15
+//input capture mode canal 3 et 4
+#define TMR_CCMR2_IC3PSC_POS 2
+#define TMR_CCMR2_IC3PSC_MASK (~(3<<2))
+#define TMR_CCMR2_IC3F_POS 4
+#define TMR_CCMR2_IC3F_MASK (~(15<<4))
+#define TMR_CCMR2_IC4PSC_POS 10
+#define TMR_CCMR2_IC4PSC_MASK (~(3<<10))
+#define TMR_CCMR2_IC4F_POS 12
+#define TMR_CCMR2_IC4F_MASK (~(15<<12))
+
+
 #define TIMER1_CCMR2_OCM ((timer_ccmr2_ocm_t*)(TIMER1_BASE_ADR+TMR_CCMR2_OCM_OFS))
 #define TIMER2_CCMR2_OCM ((timer_ccmr2_ocm_t*)(TIMER2_BASE_ADR+TMR_CCMR2_OCM_OFS))
 #define TIMER3_CCMR2_OCM ((timer_ccmr2_ocm_t*)(TIMER3_BASE_ADR+TMR_CCMR2_OCM_OFS))
@@ -312,6 +425,7 @@ typedef union{
 		sfr_t reserved3:18;
 	}fld;
 } timer_ccer_t;
+
 
 #define TIMER1_CCER ((timer_ccer_t*)(TIMER1_BASE_ADR+TMR_CCER_OFS))
 #define TIMER2_CCER ((timer_ccer_t*)(TIMER2_BASE_ADR+TMR_CCER_OFS))

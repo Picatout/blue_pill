@@ -105,28 +105,45 @@ static int KbdReset(void){
     return KbdSend(KBD_RESET);
 }//KbdReset()
 */
+
+#define PS2_QUEUE_SIZE (16)
+volatile static unsigned char ps2_head,ps2_tail;
+volatile static unsigned char ps2_queue[PS2_QUEUE_SIZE];
+
+
+void kbd_enable(int enable){
+	if (enable){
+		ps2_head=ps2_tail=0;
+		EXTI->IMR|=KBD_CLK_PIN;
+		enable_interrupt(IRQ_KBD_CLK);
+		KBD_TMR->SR&=~BIT0;
+		enable_interrupt(IRQ_KBD_TMR);
+	}else{
+		disable_interrupt(IRQ_KBD_CLK);
+		disable_interrupt(IRQ_KBD_TMR);
+	}
+}
  
 void keyboard_init(){
 	// activation clock IOPA et AFIO
 	RCC->APB2ENR|=RCC_APB2ENR_IOPAEN|RCC_APB2ENR_AFIOEN;
-	// activation clock TMR2
-	RCC->APB1ENR|=RCC_APB1ENR_TIM2EN; 
-	TMR2->ARR=FTMR2_4/20*.01;
-	TMR2->PSC=20;
-	TMR2->CR1=BIT0|BIT7; // ARPE
-	TMR2->DIER=BIT0; // UIE
+	// activation clock KBD_TMR
+	RCC->KBD_TMR_ENR|=KBD_TMR_EN; 
+	KBD_TMR->ARR=FTMR2_4/20*.01;
+	KBD_TMR->PSC=20;
+	KBD_TMR->CR1=BIT0|BIT7; // ARPE
+	KBD_TMR->DIER=BIT0; // UIE
 	set_int_priority(IRQ_KBD_CLK,0);
-	set_int_priority(IRQ_TIM2,14);
+	set_int_priority(IRQ_KBD_TMR,14);
 	// trigger sur signal descendant
 	EXTI->FTSR|=KBD_CLK_PIN;
-	EXTI->IMR|=KBD_CLK_PIN;
-	enable_interrupt(IRQ_KBD_CLK);
-	TMR2->SR&=~BIT0;
-	enable_interrupt(IRQ_TIM2);
+//	EXTI->IMR|=KBD_CLK_PIN;
+//	enable_interrupt(IRQ_KBD_CLK);
+//	KBD_TMR->SR&=~BIT0;
+//	enable_interrupt(IRQ_KBD_TMR);
 	//pause(700);
 	//if (!KbdReset()) print("keyboard reset failed\n");
 }
-
 
 
 #define XTD_CODE (1<<0)
@@ -311,7 +328,12 @@ static void convert_code(unsigned char code){
 			if (flags&RELEASE){
 				flags&=~(RELEASE|LEFT_CTRL|XTD_CODE);
 			}else{
-				flags|=LEFT_CTRL;
+				if (flags&XTD_CODE){
+					flags|=RIGHT_CTRL;
+					flags&=~XTD_CODE;
+				}else{
+					flags|=LEFT_CTRL;
+				}
 			}
 			break;
 		case LALT:
@@ -336,11 +358,15 @@ static void convert_code(unsigned char code){
 					}else{
 						c=search_table(mcsaite_key,code);
 					}
-					shift=(flags&(LEFT_SHIFT|RIGHT_SHIFT));
-					if (c>='a' && c<='z' && ((shift && !(flags&CAPSLOCK))||(!shift && (flags&CAPSLOCK)))){
-						c-=32;
-					}else if (shift && (s=search_table(mcsaite_shey,c))){
-						c=s;
+					if (flags&(LEFT_CTRL|RIGHT_CTRL) && (c>='a') && (c<='z')){
+						c=c-32-'@';
+					}else{
+						shift=(flags&(LEFT_SHIFT|RIGHT_SHIFT));
+						if (c>='a' && c<='z' && ((shift && !(flags&CAPSLOCK))||(!shift && (flags&CAPSLOCK)))){
+							c-=32;
+						}else if (shift && (s=search_table(mcsaite_shey,c))){
+							c=s;
+						}
 					}
 					if (c){
 						con.insert(c);
@@ -353,10 +379,6 @@ static void convert_code(unsigned char code){
 }// convert_code()
 
 
-
-#define PS2_QUEUE_SIZE (16)
-volatile static unsigned char ps2_head,ps2_tail;
-volatile static unsigned char ps2_queue[PS2_QUEUE_SIZE];
 
 // signal clock du clavier PS/2
 __attribute__((optimize("-O0"))) void KBD_CLK_handler(){
@@ -406,8 +428,8 @@ __attribute__((optimize("-O0"))) void KBD_CLK_handler(){
 	}
 }
 
-void TIM2_handler(){
-	TMR2->SR&=~(BIT0); // clear interrupt bit
+void KBD_TMR_handler(){
+	KBD_TMR->SR&=~(BIT0); // clear interrupt bit
 	if (ps2_tail!=ps2_head){
 		convert_code(ps2_queue[ps2_head++]);
 		ps2_head&=PS2_QUEUE_SIZE-1;

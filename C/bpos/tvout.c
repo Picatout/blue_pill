@@ -28,7 +28,8 @@ uint16_t video_buffer[ROW_SIZE*VRES];
 #define _disable_dma() DMA1[DMACH5].ccr&=~DMA_CCR_EN
 #define _enable_spi_dma() SPI2->CR2|=SPI_CR2_TXDMAEN;
 #define _disable_spi_dma() SPI2->CR2&=~SPI_CR2_TXDMAEN; 
- void tvout_init(){
+
+void tvout_init(){
 	//sortie sync sur PA8
 	config_pin(PORTA,8,(GPIO_OUTP_ALT_PP<<2)|GPIO_MODE_OUTP_2M);
 	//sortie video sur PB15, utilisation SPI2
@@ -61,18 +62,10 @@ uint16_t video_buffer[ROW_SIZE*VRES];
 	enable_interrupt(IRQ_DMA1CH5);
 	// activation de l'interruption
 	TIMER1_DIER->fld.cc1ie=1;
-	set_int_priority(IRQ_TIM1_CC,1);
-	enable_interrupt(IRQ_TIM1_CC);
+	set_int_priority(IRQ_TV_SYNC,1);
+	enable_interrupt(IRQ_TV_SYNC);
 	//video test
-	int i;
-	for (i=0;i<ROW_SIZE;i++){
-		video_buffer[i]=0xffff;
-		video_buffer[i+(ROW_SIZE*(VRES-1))]=0xffff;
-	}
-	for(i=1;i<(VRES-2);i++){
-		video_buffer[i*ROW_SIZE]=0x8000;
-		video_buffer[i*ROW_SIZE+ROW_SIZE-1]=1;
-	}
+	gdi_rect(0,0,HRES,VRES,WHITE_BIT);
 	// test end */
  }
 
@@ -85,7 +78,7 @@ uint16_t video_buffer[ROW_SIZE*VRES];
 volatile static int video=0; // activation sortie pixels
 volatile static int even=0; // odd/even field
 volatile static int line_count=-1; // horizontal line counter 
-__attribute__((optimize("-O3"))) void TIM1_CC_handler(){
+__attribute__((optimize("-O3"))) void TV_SYNC_handler(){
 	int i;
     uint16_t cnt;
 	uint16_t* line_adr;
@@ -152,11 +145,11 @@ __attribute__((optimize("-O3"))) void TIM1_CC_handler(){
 			DMA1[DMACH5].cndtr=ROW_SIZE;
 			cnt=VIDEO_DELAY;
 			while ((*TIMER1_CNT)<cnt){asm volatile("");}
-			// réduction de la gigue vidéo
+/*			// réduction de la gigue vidéo
 			asm volatile(
 			"mov r3, %0\n\t"
 			"ldr r3,[r3,#0]\n\t"
-			"and r3,#7\n\t"
+			"and r3,#15\n\t"
 			"lsls r3,r3,#1\n\t"
 			"add pc,pc,r3\n\t"
 			"nop\n\t"
@@ -167,13 +160,28 @@ __attribute__((optimize("-O3"))) void TIM1_CC_handler(){
 			"nop\n\t"
 			"nop\n\t"
 			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
+			"nop\n\t"
 			::"r" (TIMER1_CNT)
-			);
+			);*/
 			_enable_dma();
 		}
 		break;
 	}//switch (line_count)
 }
+
+// démarre le transfert des pixels
+void TV_PIX_TMR_handler(){
+	TV_PIX_TMR->SR&=~TV_PIX_TMR_CCIF;
+	_enable_dma();
+}
+
 
 void DMA1CH5_handler(){
 	DMA1_FLAGS->IFCR|=DMA_ISR_CGIF5;

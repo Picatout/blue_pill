@@ -53,6 +53,16 @@ int vt_ready(){
 	return !(VT_PORT->IDR&VT_CTS_BIT);
 }
 
+void vt_rx_enable(int enable){
+	char c;
+	if (enable){
+		VT_USART->CR1|=USART_CR1_RXNEIE;
+	}else{
+		c=VT_USART->DR;
+		VT_USART->CR1&=~USART_CR1_RXNEIE;
+	}
+}
+
 // interruption serial console
 void VT_handler(){
 	if ((con.dev==SERIAL) && (VT_USART->SR&USART_SR_RXNE)){

@@ -220,11 +220,11 @@ void con_queue_flush(){
 static const char PROMPT[]=" OK\n";
 
 void con_select(console_dev_t dev){
+	local_text_cursor(0);
+	kbd_enable(0);
+	vt_rx_enable(0);
 	con_queue_flush();
 	con.dev=dev;
-	if (con.dev==LOCAL){
-		local_text_cursor(0);
-	}
 	cursor_home();
 	if (dev==LOCAL){
 		screen_width=GDI_SCREEN_WIDTH;
@@ -234,6 +234,7 @@ void con_select(console_dev_t dev){
 		con.delete_back=local_del_back;
 		con.clrln=local_clear_line;
 		con.crlf=local_crlf;
+		kbd_enable(1);
 		local_text_cursor(1);
 	}else{
 		screen_width=VT_SCREEN_WIDTH;
@@ -243,6 +244,7 @@ void con_select(console_dev_t dev){
 		con.delete_back=vt_del_back;
 		con.clrln=serial_clear_line;
 		con.crlf=serial_crlf;
+		vt_rx_enable(1);
 	}
 	cls();
 	print(PROMPT);
@@ -307,8 +309,8 @@ unsigned read_line(char *buffer,unsigned buf_len){
 	char c=0;
 	
 	buf_len--;
-	if (buf_len>(screen_width-cursor_x)){
-		buf_len=screen_width-cursor_x;
+	if (buf_len>(screen_width-cursor_x-1)){
+		buf_len=screen_width-cursor_x-1;
 	}
 	while (c!=CR){
 			c=con.getc();
@@ -321,12 +323,12 @@ unsigned read_line(char *buffer,unsigned buf_len){
 				con.crlf();
 				break;
 			case CTRL_X:
-			case CTRL_U:
+			case CTRL_U: // efface la ligne
 				while (line_len){con.delete_back();line_len--;}
 				//con.clear_line(line_len);
 				//line_len=0;
 				break;
-			case CTRL_W:
+			case CTRL_W: // efacce le dernier mot
 				while (line_len && (buffer[line_len-1]==SPACE)){
 					con.delete_back();
 					line_len--;
@@ -342,7 +344,7 @@ unsigned read_line(char *buffer,unsigned buf_len){
 					line_len--;
 				}
 				break;
-			case CTRL_E:
+			case CTRL_E: // efface l'écran
 				con.cls();
 				line_len=0;
 				break;
