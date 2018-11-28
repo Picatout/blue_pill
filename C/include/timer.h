@@ -426,6 +426,15 @@ typedef union{
 	}fld;
 } timer_ccer_t;
 
+#define TMR_CCER_CC1E BIT0
+#define TMR_CCER_CC1P BIT1
+#define TMR_CCER_CC2E BIT4
+#define TMR_CCER_CC2P BIT5
+#define TMR_CCER_CC3E BIT8
+#define TMR_CCER_CC3P BIT9
+#define TMR_CCER_CC4E BIT12
+#define TMR_CCER_CC4P BIT13
+
 
 #define TIMER1_CCER ((timer_ccer_t*)(TIMER1_BASE_ADR+TMR_CCER_OFS))
 #define TIMER2_CCER ((timer_ccer_t*)(TIMER2_BASE_ADR+TMR_CCER_OFS))
@@ -489,6 +498,19 @@ typedef union{
 	}fld;
 }timer_bdtr_t;
 
+//timer 1 et 8 BDTR 
+#define TMR_BDTR_DTG_POS 0
+#define TMR_BDTR_DTG_MASK (~255)
+#define TMR_BDTR_LOCK_POS 8
+#define TMR_BDTR_LOCK_MASK (~(2<<8))
+#define TMR_BDTR_OSSI BIT10
+#define TMR_BDTR_OSSR BIT11
+#define TMR_BDTR_BKE BIT12
+#define TMR_BDTR_BKP BIT13
+#define TMR_BDTR_AOE BIT14
+#define TMR_BDTR_MOE BIT15
+
+
 #define TIMER1_BDTR ((timer_bdtr_t*)(TIMER1_BASE_ADR+TMR_BDTR_OFS))
 
 typedef union{
@@ -500,6 +522,11 @@ typedef union{
 		sfr_t reserved1:19;
 	}fld;
 } timer_dcr_t;
+
+#define TMR_DCR_DBA_POS 0
+#define TMR_DCR_DBA_MASK (~31)
+#define TMR_DCR_DBL_POS 8
+#define TMR_DCR_DBL_MASK (~(31<<8))
 
 #define TIMER1_CCMR2_DCR ((timer_dcr_t*)(TIMER1_BASE_ADR+TMR_CCMR2_DCR_OFS))
 #define TIMER2_CCMR2_DCR ((timer_dcr_t*)(TIMER2_BASE_ADR+TMR_CCMR2_DCR_OFS))

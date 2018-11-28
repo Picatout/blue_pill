@@ -12,13 +12,13 @@ Disassembly of section .text:
       40:	81 02 00 00 85 02 00 00 8d 02 00 00 89 02 00 00     ................
       50:	91 02 00 00 95 02 00 00 99 02 00 00 9d 02 00 00     ................
       60:	a1 02 00 00 a5 02 00 00 a9 02 00 00 ad 02 00 00     ................
-      70:	b1 02 00 00 69 31 00 00 69 31 00 00 59 35 00 00     ....i1..i1..Y5..
+      70:	b1 02 00 00 69 31 00 00 69 31 00 00 61 35 00 00     ....i1..i1..a5..
       80:	69 31 00 00 69 31 00 00 69 31 00 00 69 31 00 00     i1..i1..i1..i1..
       90:	69 31 00 00 69 31 00 00 69 31 00 00 35 26 00 00     i1..i1..i1..5&..
-      a0:	69 31 00 00 69 31 00 00 69 31 00 00 09 34 00 00     i1..i1..i1...4..
+      a0:	69 31 00 00 69 31 00 00 69 31 00 00 d9 33 00 00     i1..i1..i1...3..
       b0:	9d 27 00 00 c5 02 00 00 19 1b 00 00 69 31 00 00     .'..........i1..
       c0:	69 31 00 00 69 31 00 00 69 31 00 00 69 31 00 00     i1..i1..i1..i1..
-      d0:	69 31 00 00 cd 02 00 00 59 3a 00 00 d5 02 00 00     i1......Y:......
+      d0:	69 31 00 00 cd 02 00 00 61 3a 00 00 d5 02 00 00     i1......a:......
       e0:	69 31 00 00 69 31 00 00 69 31 00 00 69 31 00 00     i1..i1..i1..i1..
       f0:	69 31 00 00 69 31 00 00 69 31 00 00 69 31 00 00     i1..i1..i1..i1..
      100:	69 31 00 00 69 31 00 00 69 31 00 00 69 31 00 00     i1..i1..i1..i1..
@@ -233,10 +233,10 @@ _exception(HARD_FAULT_handler){
      24c:	4770      	bx	lr
      24e:	bf00      	nop
      250:	e000ed28 	.word	0xe000ed28
-     254:	000041e0 	.word	0x000041e0
-     258:	000041f8 	.word	0x000041f8
-     25c:	00004204 	.word	0x00004204
-     260:	00004214 	.word	0x00004214
+     254:	000041e8 	.word	0x000041e8
+     258:	00004200 	.word	0x00004200
+     25c:	0000420c 	.word	0x0000420c
+     260:	0000421c 	.word	0x0000421c
 
 00000264 <NMI_handler>:
 // réinitialise le µC
@@ -1330,7 +1330,7 @@ static void cmd_putc(){
      8b4:	46bd      	mov	sp, r7
      8b6:	bd80      	pop	{r7, pc}
      8b8:	2000005c 	.word	0x2000005c
-     8bc:	00003b78 	.word	0x00003b78
+     8bc:	00003b80 	.word	0x00003b80
 
 000008c0 <cmd_readln>:
 
@@ -1421,7 +1421,7 @@ static void cmd_print_dec(){
      93c:	46bd      	mov	sp, r7
      93e:	bd80      	pop	{r7, pc}
      940:	2000005c 	.word	0x2000005c
-     944:	00003b78 	.word	0x00003b78
+     944:	00003b80 	.word	0x00003b80
 
 00000948 <cmd_print_hex>:
 
@@ -1469,7 +1469,7 @@ static void cmd_print_hex(){
      988:	46bd      	mov	sp, r7
      98a:	bd80      	pop	{r7, pc}
      98c:	2000005c 	.word	0x2000005c
-     990:	00003b78 	.word	0x00003b78
+     990:	00003b80 	.word	0x00003b80
 
 00000994 <cmd_run>:
 
@@ -1723,7 +1723,7 @@ static void cmd_fwrite(){
      b18:	bd80      	pop	{r7, pc}
      b1a:	bf00      	nop
      b1c:	2000005c 	.word	0x2000005c
-     b20:	00003a9c 	.word	0x00003a9c
+     b20:	00003aa4 	.word	0x00003aa4
 
 00000b24 <cmd_pgerase>:
 
@@ -1756,7 +1756,7 @@ static void cmd_pgerase(){
      b50:	46bd      	mov	sp, r7
      b52:	bd80      	pop	{r7, pc}
      b54:	2000005c 	.word	0x2000005c
-     b58:	00003a9c 	.word	0x00003a9c
+     b58:	00003aa4 	.word	0x00003aa4
 
 00000b5c <cmd_ticks>:
 
@@ -1809,7 +1809,7 @@ static void cmd_con(){
      ba2:	3708      	adds	r7, #8
      ba4:	46bd      	mov	sp, r7
      ba6:	bd80      	pop	{r7, pc}
-     ba8:	00003aa8 	.word	0x00003aa8
+     ba8:	00003ab0 	.word	0x00003ab0
      bac:	2000005c 	.word	0x2000005c
 
 00000bb0 <cmd_cls>:
@@ -1897,8 +1897,8 @@ void cmd_help(){
      c26:	3708      	adds	r7, #8
      c28:	46bd      	mov	sp, r7
      c2a:	bd80      	pop	{r7, pc}
-     c2c:	00003ab0 	.word	0x00003ab0
-     c30:	00003b78 	.word	0x00003b78
+     c2c:	00003ab8 	.word	0x00003ab8
+     c30:	00003b80 	.word	0x00003b80
      c34:	2aaaaaab 	.word	0x2aaaaaab
 
 00000c38 <cmd_rect>:
@@ -2014,7 +2014,7 @@ int search_command(const char * name){
      cda:	3710      	adds	r7, #16
      cdc:	46bd      	mov	sp, r7
      cde:	bd80      	pop	{r7, pc}
-     ce0:	00003b78 	.word	0x00003b78
+     ce0:	00003b80 	.word	0x00003b80
 
 00000ce4 <skip>:
 
@@ -2493,7 +2493,7 @@ static void parse_line(unsigned llen){
      f96:	bf00      	nop
      f98:	200000ac 	.word	0x200000ac
      f9c:	2000005c 	.word	0x2000005c
-     fa0:	00003b78 	.word	0x00003b78
+     fa0:	00003b80 	.word	0x00003b80
 
 00000fa4 <copy_blink_in_ram>:
 		_svc_call(SVC_CONIN,&c,NUL);
@@ -2589,7 +2589,7 @@ void main(void){
     1022:	2206      	movs	r2, #6
     1024:	f001 f892 	bl	214c <config_pin>
 	vt_init();
-    1028:	f002 fc78 	bl	391c <vt_init>
+    1028:	f002 fc7c 	bl	3924 <vt_init>
 	keyboard_init();
     102c:	f001 f93a 	bl	22a4 <keyboard_init>
 	tvout_init();
@@ -2598,7 +2598,7 @@ void main(void){
     1034:	2001      	movs	r0, #1
     1036:	f000 fb35 	bl	16a4 <console_init>
 	if (!vt_ready()){con_select(LOCAL);}
-    103a:	f002 fcdd 	bl	39f8 <vt_ready>
+    103a:	f002 fce1 	bl	3a00 <vt_ready>
     103e:	4603      	mov	r3, r0
     1040:	2b00      	cmp	r3, #0
     1042:	d102      	bne.n	104a <main+0x62>
@@ -2674,12 +2674,12 @@ void main(void){
     10d0:	40021000 	.word	0x40021000
     10d4:	40011000 	.word	0x40011000
     10d8:	20000000 	.word	0x20000000
-    10dc:	00003c68 	.word	0x00003c68
+    10dc:	00003c70 	.word	0x00003c70
     10e0:	200000f8 	.word	0x200000f8
-    10e4:	00003c84 	.word	0x00003c84
-    10e8:	00003c9c 	.word	0x00003c9c
-    10ec:	00003cb0 	.word	0x00003cb0
-    10f0:	00003cb8 	.word	0x00003cb8
+    10e4:	00003c8c 	.word	0x00003c8c
+    10e8:	00003ca4 	.word	0x00003ca4
+    10ec:	00003cb8 	.word	0x00003cb8
+    10f0:	00003cc0 	.word	0x00003cc0
     10f4:	20000144 	.word	0x20000144
     10f8:	2000000c 	.word	0x2000000c
 
@@ -3004,7 +3004,7 @@ void local_putc(char c){
     12fe:	bf00      	nop
     1300:	200000b0 	.word	0x200000b0
     1304:	200000b4 	.word	0x200000b4
-    1308:	00003cec 	.word	0x00003cec
+    1308:	00003cf4 	.word	0x00003cf4
 
 0000130c <local_clear_line>:
 
@@ -3290,7 +3290,7 @@ static void serial_putc(char c){
 	vt_putc(c);
     14de:	79fb      	ldrb	r3, [r7, #7]
     14e0:	4618      	mov	r0, r3
-    14e2:	f002 fa2b 	bl	393c <vt_putc>
+    14e2:	f002 fa2f 	bl	3944 <vt_putc>
 	serial_cursor_right();
     14e6:	f7ff ffe1 	bl	14ac <serial_cursor_right>
 }
@@ -3305,7 +3305,7 @@ static void serial_crlf(){
     14f2:	af00      	add	r7, sp, #0
 	vt_putc(CR);
     14f4:	200d      	movs	r0, #13
-    14f6:	f002 fa21 	bl	393c <vt_putc>
+    14f6:	f002 fa25 	bl	3944 <vt_putc>
 	serial_cursor_crlf();
     14fa:	f7ff ff97 	bl	142c <serial_cursor_crlf>
 }
@@ -3321,7 +3321,7 @@ static void serial_clear_line(){
     1506:	681b      	ldr	r3, [r3, #0]
     1508:	3301      	adds	r3, #1
     150a:	4618      	mov	r0, r3
-    150c:	f002 fa56 	bl	39bc <vt_clear_line>
+    150c:	f002 fa5a 	bl	39c4 <vt_clear_line>
 }
     1510:	bd80      	pop	{r7, pc}
     1512:	bf00      	nop
@@ -3333,7 +3333,7 @@ static void serial_clear_screen(){
     1518:	b580      	push	{r7, lr}
     151a:	af00      	add	r7, sp, #0
 	vt_cls();
-    151c:	f002 fa3e 	bl	399c <vt_cls>
+    151c:	f002 fa42 	bl	39a4 <vt_cls>
 	cursor_home();
     1520:	f7ff fdec 	bl	10fc <cursor_home>
 }
@@ -3455,7 +3455,7 @@ void con_select(console_dev_t dev){
     15d6:	f000 fe33 	bl	2240 <kbd_enable>
 	vt_rx_enable(0);
     15da:	2000      	movs	r0, #0
-    15dc:	f002 fa1e 	bl	3a1c <vt_rx_enable>
+    15dc:	f002 fa22 	bl	3a24 <vt_rx_enable>
 	con_queue_flush();
     15e0:	f7ff ffe2 	bl	15a8 <con_queue_flush>
 	con.dev=dev;
@@ -3534,7 +3534,7 @@ void con_select(console_dev_t dev){
     1654:	645a      	str	r2, [r3, #68]	; 0x44
 		vt_rx_enable(1);
     1656:	2001      	movs	r0, #1
-    1658:	f002 f9e0 	bl	3a1c <vt_rx_enable>
+    1658:	f002 f9e4 	bl	3a24 <vt_rx_enable>
 	}
 	cls();
     165c:	f000 fa54 	bl	1b08 <cls>
@@ -3555,10 +3555,10 @@ void con_select(console_dev_t dev){
     1688:	0000116d 	.word	0x0000116d
     168c:	000014d5 	.word	0x000014d5
     1690:	00001519 	.word	0x00001519
-    1694:	0000395d 	.word	0x0000395d
+    1694:	00003965 	.word	0x00003965
     1698:	00001501 	.word	0x00001501
     169c:	000014f1 	.word	0x000014f1
-    16a0:	00003ce4 	.word	0x00003ce4
+    16a0:	00003cec 	.word	0x00003cec
 
 000016a4 <console_init>:
 
@@ -5931,8 +5931,8 @@ static void convert_code(unsigned char code){
     258e:	e037      	b.n	2600 <convert_code+0x2c0>
     2590:	200000fc 	.word	0x200000fc
     2594:	200000dc 	.word	0x200000dc
-    2598:	000041a4 	.word	0x000041a4
-    259c:	000040ec 	.word	0x000040ec
+    2598:	000041ac 	.word	0x000041ac
+    259c:	000040f4 	.word	0x000040f4
 					}else{
 						shift=(flags&(LEFT_SHIFT|RIGHT_SHIFT));
     25a0:	4b21      	ldr	r3, [pc, #132]	; (2628 <convert_code+0x2e8>)
@@ -6022,7 +6022,7 @@ static void convert_code(unsigned char code){
     2624:	bd80      	pop	{r7, pc}
     2626:	bf00      	nop
     2628:	200000dc 	.word	0x200000dc
-    262c:	00004178 	.word	0x00004178
+    262c:	00004180 	.word	0x00004180
     2630:	200000fc 	.word	0x200000fc
 
 00002634 <EXTI9_5_handler>:
@@ -7336,7 +7336,7 @@ int sdcard_init(){
     2ec0:	200000e4 	.word	0x200000e4
     2ec4:	40013000 	.word	0x40013000
     2ec8:	200000e8 	.word	0x200000e8
-    2ecc:	000041a4 	.word	0x000041a4
+    2ecc:	000041ac 	.word	0x000041ac
 
 00002ed0 <spi_baudrate>:
  */
@@ -7843,11 +7843,11 @@ void print_fault(const char *msg, uint32_t adr){
     31d6:	f7fe fc35 	bl	1a44 <print_hex>
 	while(1);
     31da:	e7fe      	b.n	31da <print_fault+0x62>
-    31dc:	000041b8 	.word	0x000041b8
-    31e0:	000041c4 	.word	0x000041c4
+    31dc:	000041c0 	.word	0x000041c0
+    31e0:	000041cc 	.word	0x000041cc
     31e4:	e000ed28 	.word	0xe000ed28
-    31e8:	000041cc 	.word	0x000041cc
-    31ec:	000041d4 	.word	0x000041d4
+    31e8:	000041d4 	.word	0x000041d4
+    31ec:	000041dc 	.word	0x000041dc
 
 000031f0 <config_systicks>:
 
@@ -7955,1379 +7955,1235 @@ static void led_off(){
     3286:	bf00      	nop
 
 00003288 <tvout_init>:
-#define _enable_dma()  DMA1[DMACH5].ccr|=DMA_CCR_EN
-#define _disable_dma() DMA1[DMACH5].ccr&=~DMA_CCR_EN
-#define _enable_spi_dma() SPI2->CR2|=SPI_CR2_TXDMAEN;
-#define _disable_spi_dma() SPI2->CR2&=~SPI_CR2_TXDMAEN; 
+#define _enable_spi_dma() SPI2->CR2|=SPI_CR2_TXDMAEN
+#define _disable_spi_dma() SPI2->CR2&=~SPI_CR2_TXDMAEN 
+#define _disable_pixel_int() TIMER1_DIER->fld.cc2ie=0
+#define _enable_pixel_int() ({TIMER1_SR->fld.cc2if=0;TIMER1_DIER->fld.cc2ie=1;})
 
 void tvout_init(){
     3288:	b580      	push	{r7, lr}
     328a:	b082      	sub	sp, #8
-    328c:	af00      	add	r7, sp, #0
+    328c:	af02      	add	r7, sp, #8
 	//sortie sync sur PA8
 	config_pin(PORTA,8,(GPIO_OUTP_ALT_PP<<2)|GPIO_MODE_OUTP_2M);
-    328e:	484f      	ldr	r0, [pc, #316]	; (33cc <tvout_init+0x144>)
+    328e:	4843      	ldr	r0, [pc, #268]	; (339c <tvout_init+0x114>)
     3290:	2108      	movs	r1, #8
     3292:	220a      	movs	r2, #10
     3294:	f7fe ff5a 	bl	214c <config_pin>
 	//sortie video sur PB15, utilisation SPI2
 	config_pin(PORTB,15,OUTPUT_ALT_PP_FAST);
-    3298:	484d      	ldr	r0, [pc, #308]	; (33d0 <tvout_init+0x148>)
+    3298:	4841      	ldr	r0, [pc, #260]	; (33a0 <tvout_init+0x118>)
     329a:	210f      	movs	r1, #15
     329c:	220b      	movs	r2, #11
     329e:	f7fe ff55 	bl	214c <config_pin>
 	PORTB->BRR=BIT15;
-    32a2:	4b4b      	ldr	r3, [pc, #300]	; (33d0 <tvout_init+0x148>)
+    32a2:	4b3f      	ldr	r3, [pc, #252]	; (33a0 <tvout_init+0x118>)
     32a4:	f44f 4200 	mov.w	r2, #32768	; 0x8000
     32a8:	615a      	str	r2, [r3, #20]
 	//timer 1 utilisé pour sync
 	RCC->APB2ENR|=RCC_APB2ENR_TIM1EN;
-    32aa:	4a4a      	ldr	r2, [pc, #296]	; (33d4 <tvout_init+0x14c>)
-    32ac:	4b49      	ldr	r3, [pc, #292]	; (33d4 <tvout_init+0x14c>)
+    32aa:	4a3e      	ldr	r2, [pc, #248]	; (33a4 <tvout_init+0x11c>)
+    32ac:	4b3d      	ldr	r3, [pc, #244]	; (33a4 <tvout_init+0x11c>)
     32ae:	699b      	ldr	r3, [r3, #24]
     32b0:	f443 6300 	orr.w	r3, r3, #2048	; 0x800
     32b4:	6193      	str	r3, [r2, #24]
 	// clock source division
 	*TIMER1_PSC=0;
-    32b6:	4b48      	ldr	r3, [pc, #288]	; (33d8 <tvout_init+0x150>)
+    32b6:	4b3c      	ldr	r3, [pc, #240]	; (33a8 <tvout_init+0x120>)
     32b8:	2200      	movs	r2, #0
     32ba:	801a      	strh	r2, [r3, #0]
 	// période PWM
 	*TIMER1_ARR=FCLK/HFREQ-1;
-    32bc:	4b47      	ldr	r3, [pc, #284]	; (33dc <tvout_init+0x154>)
+    32bc:	4b3b      	ldr	r3, [pc, #236]	; (33ac <tvout_init+0x124>)
     32be:	f640 72ff 	movw	r2, #4095	; 0xfff
     32c2:	801a      	strh	r2, [r3, #0]
 	// rapport cyclique
 	*TIMER1_CCR1=FCLK*HSYNC-1;
-    32c4:	4b46      	ldr	r3, [pc, #280]	; (33e0 <tvout_init+0x158>)
+    32c4:	4b3a      	ldr	r3, [pc, #232]	; (33b0 <tvout_init+0x128>)
     32c6:	f240 122b 	movw	r2, #299	; 0x12b
     32ca:	801a      	strh	r2, [r3, #0]
 	//pwm1 utilisé comme générateur sync
 	TIMER1_CCMR1_OCM->fld.oc1m=6;  // pwm mode
-    32cc:	4b45      	ldr	r3, [pc, #276]	; (33e4 <tvout_init+0x15c>)
+    32cc:	4b39      	ldr	r3, [pc, #228]	; (33b4 <tvout_init+0x12c>)
     32ce:	681a      	ldr	r2, [r3, #0]
     32d0:	f022 0270 	bic.w	r2, r2, #112	; 0x70
     32d4:	f042 0260 	orr.w	r2, r2, #96	; 0x60
     32d8:	601a      	str	r2, [r3, #0]
 	TIMER1_CCMR1_OCM->fld.oc1pe=1; // preload ccr1 enable
-    32da:	4b42      	ldr	r3, [pc, #264]	; (33e4 <tvout_init+0x15c>)
+    32da:	4b36      	ldr	r3, [pc, #216]	; (33b4 <tvout_init+0x12c>)
     32dc:	681a      	ldr	r2, [r3, #0]
     32de:	f042 0208 	orr.w	r2, r2, #8
     32e2:	601a      	str	r2, [r3, #0]
 	//activation sortie OC1
 	TIMER1_CCER->fld.cc1e=1; // OC1 output enable
-    32e4:	4b40      	ldr	r3, [pc, #256]	; (33e8 <tvout_init+0x160>)
+    32e4:	4b34      	ldr	r3, [pc, #208]	; (33b8 <tvout_init+0x130>)
     32e6:	681a      	ldr	r2, [r3, #0]
     32e8:	f042 0201 	orr.w	r2, r2, #1
     32ec:	601a      	str	r2, [r3, #0]
 	TIMER1_CCER->fld.cc1p=1; // output polarity
-    32ee:	4b3e      	ldr	r3, [pc, #248]	; (33e8 <tvout_init+0x160>)
+    32ee:	4b32      	ldr	r3, [pc, #200]	; (33b8 <tvout_init+0x130>)
     32f0:	681a      	ldr	r2, [r3, #0]
     32f2:	f042 0202 	orr.w	r2, r2, #2
     32f6:	601a      	str	r2, [r3, #0]
 	TIMER1_BDTR->fld.moe=1;  // main output enable
-    32f8:	4a3c      	ldr	r2, [pc, #240]	; (33ec <tvout_init+0x164>)
+    32f8:	4a30      	ldr	r2, [pc, #192]	; (33bc <tvout_init+0x134>)
     32fa:	8813      	ldrh	r3, [r2, #0]
     32fc:	ea6f 4343 	mvn.w	r3, r3, lsl #17
     3300:	ea6f 4353 	mvn.w	r3, r3, lsr #17
     3304:	8013      	strh	r3, [r2, #0]
+	// canal 2 utilisé pour démarrer sortie pixels
+	*TIMER1_CCR2=VIDEO_DELAY;
+    3306:	4b2e      	ldr	r3, [pc, #184]	; (33c0 <tvout_init+0x138>)
+    3308:	f240 4219 	movw	r2, #1049	; 0x419
+    330c:	801a      	strh	r2, [r3, #0]
+	TIMER1_CCMR1_OCM->fld.oc2m=6;
+    330e:	4b29      	ldr	r3, [pc, #164]	; (33b4 <tvout_init+0x12c>)
+    3310:	681a      	ldr	r2, [r3, #0]
+    3312:	f422 42e0 	bic.w	r2, r2, #28672	; 0x7000
+    3316:	f442 42c0 	orr.w	r2, r2, #24576	; 0x6000
+    331a:	601a      	str	r2, [r3, #0]
+	//TIMER1_CCMR1_OCM->fld.oc2pe=1;
 	// activation timer1
 	TIMER1_CR1->fld.cen=1;
-    3306:	4b3a      	ldr	r3, [pc, #232]	; (33f0 <tvout_init+0x168>)
-    3308:	681a      	ldr	r2, [r3, #0]
-    330a:	f042 0201 	orr.w	r2, r2, #1
-    330e:	601a      	str	r2, [r3, #0]
+    331c:	4b29      	ldr	r3, [pc, #164]	; (33c4 <tvout_init+0x13c>)
+    331e:	681a      	ldr	r2, [r3, #0]
+    3320:	f042 0201 	orr.w	r2, r2, #1
+    3324:	601a      	str	r2, [r3, #0]
 	//SPI2-MOSI utilisé pour sérialisaton pixels.
 	SPI2->CR1=(FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF;
-    3310:	4b38      	ldr	r3, [pc, #224]	; (33f4 <tvout_init+0x16c>)
-    3312:	f640 324c 	movw	r2, #2892	; 0xb4c
-    3316:	601a      	str	r2, [r3, #0]
+    3326:	4b28      	ldr	r3, [pc, #160]	; (33c8 <tvout_init+0x140>)
+    3328:	f640 324c 	movw	r2, #2892	; 0xb4c
+    332c:	601a      	str	r2, [r3, #0]
+	SPI2->DR=0;
+    332e:	4b26      	ldr	r3, [pc, #152]	; (33c8 <tvout_init+0x140>)
+    3330:	2200      	movs	r2, #0
+    3332:	60da      	str	r2, [r3, #12]
 	// configuration du canal dma
 	DMA1[DMACH5].ccr=DMA_CCR_DIR|DMA_CCR_MINC|(3<<DMA_CCR_PL_POS)|DMA_CCR_TCIE|(1<<DMA_CCR_PSIZE_POS)|(1<<DMA_CCR_MSIZE_POS);
-    3318:	4b37      	ldr	r3, [pc, #220]	; (33f8 <tvout_init+0x170>)
-    331a:	f243 5292 	movw	r2, #13714	; 0x3592
-    331e:	601a      	str	r2, [r3, #0]
+    3334:	4b25      	ldr	r3, [pc, #148]	; (33cc <tvout_init+0x144>)
+    3336:	f243 5292 	movw	r2, #13714	; 0x3592
+    333a:	601a      	str	r2, [r3, #0]
 	DMA1[DMACH5].cpar=(uint32_t)SPI2_DR;
-    3320:	4b35      	ldr	r3, [pc, #212]	; (33f8 <tvout_init+0x170>)
-    3322:	4a36      	ldr	r2, [pc, #216]	; (33fc <tvout_init+0x174>)
-    3324:	609a      	str	r2, [r3, #8]
+    333c:	4b23      	ldr	r3, [pc, #140]	; (33cc <tvout_init+0x144>)
+    333e:	4a24      	ldr	r2, [pc, #144]	; (33d0 <tvout_init+0x148>)
+    3340:	609a      	str	r2, [r3, #8]
 	_enable_spi_dma();
-    3326:	4a33      	ldr	r2, [pc, #204]	; (33f4 <tvout_init+0x16c>)
-    3328:	4b32      	ldr	r3, [pc, #200]	; (33f4 <tvout_init+0x16c>)
-    332a:	685b      	ldr	r3, [r3, #4]
-    332c:	f043 0302 	orr.w	r3, r3, #2
-    3330:	6053      	str	r3, [r2, #4]
+    3342:	4a21      	ldr	r2, [pc, #132]	; (33c8 <tvout_init+0x140>)
+    3344:	4b20      	ldr	r3, [pc, #128]	; (33c8 <tvout_init+0x140>)
+    3346:	685b      	ldr	r3, [r3, #4]
+    3348:	f043 0302 	orr.w	r3, r3, #2
+    334c:	6053      	str	r3, [r2, #4]
 	set_int_priority(IRQ_DMA1CH5,1);
-    3332:	200f      	movs	r0, #15
-    3334:	2101      	movs	r1, #1
-    3336:	f7ff fb1d 	bl	2974 <set_int_priority>
+    334e:	200f      	movs	r0, #15
+    3350:	2101      	movs	r1, #1
+    3352:	f7ff fb0f 	bl	2974 <set_int_priority>
 	enable_interrupt(IRQ_DMA1CH5);
-    333a:	200f      	movs	r0, #15
-    333c:	f7ff fa5e 	bl	27fc <enable_interrupt>
+    3356:	200f      	movs	r0, #15
+    3358:	f7ff fa50 	bl	27fc <enable_interrupt>
 	// activation de l'interruption
 	TIMER1_DIER->fld.cc1ie=1;
-    3340:	4b2f      	ldr	r3, [pc, #188]	; (3400 <tvout_init+0x178>)
-    3342:	681a      	ldr	r2, [r3, #0]
-    3344:	f042 0202 	orr.w	r2, r2, #2
-    3348:	601a      	str	r2, [r3, #0]
+    335c:	4b1d      	ldr	r3, [pc, #116]	; (33d4 <tvout_init+0x14c>)
+    335e:	681a      	ldr	r2, [r3, #0]
+    3360:	f042 0202 	orr.w	r2, r2, #2
+    3364:	601a      	str	r2, [r3, #0]
 	set_int_priority(IRQ_TV_SYNC,1);
-    334a:	201b      	movs	r0, #27
-    334c:	2101      	movs	r1, #1
-    334e:	f7ff fb11 	bl	2974 <set_int_priority>
+    3366:	201b      	movs	r0, #27
+    3368:	2101      	movs	r1, #1
+    336a:	f7ff fb03 	bl	2974 <set_int_priority>
 	enable_interrupt(IRQ_TV_SYNC);
-    3352:	201b      	movs	r0, #27
-    3354:	f7ff fa52 	bl	27fc <enable_interrupt>
+    336e:	201b      	movs	r0, #27
+    3370:	f7ff fa44 	bl	27fc <enable_interrupt>
 	//video test
-	int i;
-	for (i=0;i<ROW_SIZE;i++){
-    3358:	2300      	movs	r3, #0
-    335a:	607b      	str	r3, [r7, #4]
-    335c:	e011      	b.n	3382 <tvout_init+0xfa>
-		video_buffer[i]=0xffff;
-    335e:	4a29      	ldr	r2, [pc, #164]	; (3404 <tvout_init+0x17c>)
-    3360:	687b      	ldr	r3, [r7, #4]
-    3362:	f64f 71ff 	movw	r1, #65535	; 0xffff
-    3366:	f822 1013 	strh.w	r1, [r2, r3, lsl #1]
-		video_buffer[i+(ROW_SIZE*(VRES-1))]=0xffff;
-    336a:	687b      	ldr	r3, [r7, #4]
-    336c:	f503 5395 	add.w	r3, r3, #4768	; 0x12a0
-    3370:	330c      	adds	r3, #12
-    3372:	4a24      	ldr	r2, [pc, #144]	; (3404 <tvout_init+0x17c>)
-    3374:	f64f 71ff 	movw	r1, #65535	; 0xffff
-    3378:	f822 1013 	strh.w	r1, [r2, r3, lsl #1]
-	TIMER1_DIER->fld.cc1ie=1;
-	set_int_priority(IRQ_TV_SYNC,1);
-	enable_interrupt(IRQ_TV_SYNC);
-	//video test
-	int i;
-	for (i=0;i<ROW_SIZE;i++){
-    337c:	687b      	ldr	r3, [r7, #4]
-    337e:	3301      	adds	r3, #1
-    3380:	607b      	str	r3, [r7, #4]
-    3382:	687b      	ldr	r3, [r7, #4]
-    3384:	2b13      	cmp	r3, #19
-    3386:	ddea      	ble.n	335e <tvout_init+0xd6>
-		video_buffer[i]=0xffff;
-		video_buffer[i+(ROW_SIZE*(VRES-1))]=0xffff;
-	}
-	for(i=1;i<(VRES-2);i++){
-    3388:	2301      	movs	r3, #1
-    338a:	607b      	str	r3, [r7, #4]
-    338c:	e018      	b.n	33c0 <tvout_init+0x138>
-		video_buffer[i*ROW_SIZE]=0x8000;
-    338e:	687a      	ldr	r2, [r7, #4]
-    3390:	4613      	mov	r3, r2
-    3392:	009b      	lsls	r3, r3, #2
-    3394:	4413      	add	r3, r2
-    3396:	009b      	lsls	r3, r3, #2
-    3398:	461a      	mov	r2, r3
-    339a:	4b1a      	ldr	r3, [pc, #104]	; (3404 <tvout_init+0x17c>)
-    339c:	f44f 4100 	mov.w	r1, #32768	; 0x8000
-    33a0:	f823 1012 	strh.w	r1, [r3, r2, lsl #1]
-		video_buffer[i*ROW_SIZE+ROW_SIZE-1]=1;
-    33a4:	687b      	ldr	r3, [r7, #4]
-    33a6:	1c5a      	adds	r2, r3, #1
-    33a8:	4613      	mov	r3, r2
-    33aa:	009b      	lsls	r3, r3, #2
-    33ac:	4413      	add	r3, r2
-    33ae:	009b      	lsls	r3, r3, #2
-    33b0:	3b01      	subs	r3, #1
-    33b2:	4a14      	ldr	r2, [pc, #80]	; (3404 <tvout_init+0x17c>)
-    33b4:	2101      	movs	r1, #1
-    33b6:	f822 1013 	strh.w	r1, [r2, r3, lsl #1]
-	int i;
-	for (i=0;i<ROW_SIZE;i++){
-		video_buffer[i]=0xffff;
-		video_buffer[i+(ROW_SIZE*(VRES-1))]=0xffff;
-	}
-	for(i=1;i<(VRES-2);i++){
-    33ba:	687b      	ldr	r3, [r7, #4]
-    33bc:	3301      	adds	r3, #1
-    33be:	607b      	str	r3, [r7, #4]
-    33c0:	687b      	ldr	r3, [r7, #4]
-    33c2:	2bed      	cmp	r3, #237	; 0xed
-    33c4:	dde3      	ble.n	338e <tvout_init+0x106>
-		video_buffer[i*ROW_SIZE]=0x8000;
-		video_buffer[i*ROW_SIZE+ROW_SIZE-1]=1;
-	}
+	gdi_rect(0,0,HRES,VRES,WHITE_BIT);
+    3374:	2301      	movs	r3, #1
+    3376:	9300      	str	r3, [sp, #0]
+    3378:	2000      	movs	r0, #0
+    337a:	2100      	movs	r1, #0
+    337c:	f44f 72a0 	mov.w	r2, #320	; 0x140
+    3380:	23f0      	movs	r3, #240	; 0xf0
+    3382:	f7fe fe9b 	bl	20bc <gdi_rect>
+	gdi_box(80,60,160,120,WHITE_BIT);
+    3386:	2301      	movs	r3, #1
+    3388:	9300      	str	r3, [sp, #0]
+    338a:	2050      	movs	r0, #80	; 0x50
+    338c:	213c      	movs	r1, #60	; 0x3c
+    338e:	22a0      	movs	r2, #160	; 0xa0
+    3390:	2378      	movs	r3, #120	; 0x78
+    3392:	f7fe fd6f 	bl	1e74 <gdi_box>
 	// test end */
  }
-    33c6:	3708      	adds	r7, #8
-    33c8:	46bd      	mov	sp, r7
-    33ca:	bd80      	pop	{r7, pc}
-    33cc:	40010800 	.word	0x40010800
-    33d0:	40010c00 	.word	0x40010c00
-    33d4:	40021000 	.word	0x40021000
-    33d8:	40012c28 	.word	0x40012c28
-    33dc:	40012c2c 	.word	0x40012c2c
-    33e0:	40012c34 	.word	0x40012c34
-    33e4:	40012c18 	.word	0x40012c18
-    33e8:	40012c20 	.word	0x40012c20
-    33ec:	40012c44 	.word	0x40012c44
-    33f0:	40012c00 	.word	0x40012c00
-    33f4:	40003800 	.word	0x40003800
-    33f8:	40020058 	.word	0x40020058
-    33fc:	4000380c 	.word	0x4000380c
-    3400:	40012c0c 	.word	0x40012c0c
-    3404:	20000148 	.word	0x20000148
+    3396:	46bd      	mov	sp, r7
+    3398:	bd80      	pop	{r7, pc}
+    339a:	bf00      	nop
+    339c:	40010800 	.word	0x40010800
+    33a0:	40010c00 	.word	0x40010c00
+    33a4:	40021000 	.word	0x40021000
+    33a8:	40012c28 	.word	0x40012c28
+    33ac:	40012c2c 	.word	0x40012c2c
+    33b0:	40012c34 	.word	0x40012c34
+    33b4:	40012c18 	.word	0x40012c18
+    33b8:	40012c20 	.word	0x40012c20
+    33bc:	40012c44 	.word	0x40012c44
+    33c0:	40012c38 	.word	0x40012c38
+    33c4:	40012c00 	.word	0x40012c00
+    33c8:	40003800 	.word	0x40003800
+    33cc:	40020058 	.word	0x40020058
+    33d0:	4000380c 	.word	0x4000380c
+    33d4:	40012c0c 	.word	0x40012c0c
 
-00003408 <TIM1_CC_handler>:
-__attribute__((optimize("-O3"))) void TV_SYNC_handler(){
-	int i;
-    uint16_t cnt;
-	uint16_t* line_adr;
-	
-    _disable_dma();
-    3408:	484a      	ldr	r0, [pc, #296]	; (3534 <TIM1_CC_handler+0x12c>)
-	line_count++;
-    340a:	4b4b      	ldr	r3, [pc, #300]	; (3538 <TIM1_CC_handler+0x130>)
-__attribute__((optimize("-O3"))) void TV_SYNC_handler(){
-	int i;
-    uint16_t cnt;
-	uint16_t* line_adr;
-	
-    _disable_dma();
-    340c:	6802      	ldr	r2, [r0, #0]
-	line_count++;
-	TIMER1_SR->fld.cc1if=0;
-    340e:	494b      	ldr	r1, [pc, #300]	; (353c <TIM1_CC_handler+0x134>)
-__attribute__((optimize("-O3"))) void TV_SYNC_handler(){
-	int i;
-    uint16_t cnt;
-	uint16_t* line_adr;
-	
-    _disable_dma();
-    3410:	f022 0201 	bic.w	r2, r2, #1
-    3414:	6002      	str	r2, [r0, #0]
-	line_count++;
-    3416:	681a      	ldr	r2, [r3, #0]
-    3418:	3201      	adds	r2, #1
-    341a:	601a      	str	r2, [r3, #0]
-	TIMER1_SR->fld.cc1if=0;
-    341c:	680a      	ldr	r2, [r1, #0]
-    341e:	f022 0202 	bic.w	r2, r2, #2
-    3422:	600a      	str	r2, [r1, #0]
-	switch(line_count){
-    3424:	681a      	ldr	r2, [r3, #0]
-    3426:	2a12      	cmp	r2, #18
-    3428:	d07f      	beq.n	352a <TIM1_CC_handler+0x122>
-    342a:	dd1c      	ble.n	3466 <TIM1_CC_handler+0x5e>
-    342c:	f5b2 7f96 	cmp.w	r2, #300	; 0x12c
-    3430:	d072      	beq.n	3518 <TIM1_CC_handler+0x110>
-    3432:	dd3f      	ble.n	34b4 <TIM1_CC_handler+0xac>
-    3434:	f240 1141 	movw	r1, #321	; 0x141
-    3438:	428a      	cmp	r2, r1
-    343a:	d028      	beq.n	348e <TIM1_CC_handler+0x86>
-    343c:	f5b2 7fa1 	cmp.w	r2, #322	; 0x142
-    3440:	d14a      	bne.n	34d8 <TIM1_CC_handler+0xd0>
-			line_count=-1;
-			even=-even;
-		}
-		break;
-	case (FIELD_END+1):
-		if (even){
-    3442:	4a3f      	ldr	r2, [pc, #252]	; (3540 <TIM1_CC_handler+0x138>)
-    3444:	6811      	ldr	r1, [r2, #0]
-    3446:	b169      	cbz	r1, 3464 <TIM1_CC_handler+0x5c>
- * synchronisation vidéo
- *************************/
+000033d8 <TIM1_CC_handler>:
 volatile static int video=0; // activation sortie pixels
 volatile static int even=0; // odd/even field
 volatile static int line_count=-1; // horizontal line counter 
-__attribute__((optimize("-O3"))) void TV_SYNC_handler(){
-    3448:	b410      	push	{r4}
-			even=-even;
-		}
-		break;
-	case (FIELD_END+1):
-		if (even){
-			*TIMER1_ARR/=2;
-    344a:	483e      	ldr	r0, [pc, #248]	; (3544 <TIM1_CC_handler+0x13c>)
-			line_count=-1;
-    344c:	f04f 34ff 	mov.w	r4, #4294967295	; 0xffffffff
-			even=-even;
-		}
-		break;
-	case (FIELD_END+1):
-		if (even){
-			*TIMER1_ARR/=2;
-    3450:	8801      	ldrh	r1, [r0, #0]
-    3452:	f3c1 014e 	ubfx	r1, r1, #1, #15
-    3456:	8001      	strh	r1, [r0, #0]
-			line_count=-1;
-    3458:	601c      	str	r4, [r3, #0]
-			even=-even;
-    345a:	6813      	ldr	r3, [r2, #0]
-    345c:	425b      	negs	r3, r3
-    345e:	6013      	str	r3, [r2, #0]
-			);*/
-			_enable_dma();
-		}
-		break;
-	}//switch (line_count)
-}
-    3460:	f85d 4b04 	ldr.w	r4, [sp], #4
-    3464:	4770      	bx	lr
-	uint16_t* line_adr;
-	
-    _disable_dma();
-	line_count++;
+ __attribute__((optimize("-O1")))  void TV_SYNC_handler(){
+
+	_disable_dma();
+    33d8:	4a58      	ldr	r2, [pc, #352]	; (353c <TIM1_CC_handler+0x164>)
+    33da:	6813      	ldr	r3, [r2, #0]
+    33dc:	f023 0301 	bic.w	r3, r3, #1
+    33e0:	6013      	str	r3, [r2, #0]
+	if (video && TIMER1_SR->fld.cc2if){ 
+    33e2:	4b57      	ldr	r3, [pc, #348]	; (3540 <TIM1_CC_handler+0x168>)
+    33e4:	681b      	ldr	r3, [r3, #0]
+    33e6:	b1e3      	cbz	r3, 3422 <TIM1_CC_handler+0x4a>
+    33e8:	4b56      	ldr	r3, [pc, #344]	; (3544 <TIM1_CC_handler+0x16c>)
+    33ea:	681b      	ldr	r3, [r3, #0]
+    33ec:	f013 0f04 	tst.w	r3, #4
+    33f0:	d017      	beq.n	3422 <TIM1_CC_handler+0x4a>
+		TIMER1_SR->fld.cc2if=0;
+    33f2:	f5a2 4254 	sub.w	r2, r2, #54272	; 0xd400
+    33f6:	3a48      	subs	r2, #72	; 0x48
+    33f8:	6813      	ldr	r3, [r2, #0]
+    33fa:	f023 0304 	bic.w	r3, r3, #4
+    33fe:	6013      	str	r3, [r2, #0]
+		DMA1[DMACH5].cmar=(uint32_t)(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
+    3400:	4b51      	ldr	r3, [pc, #324]	; (3548 <TIM1_CC_handler+0x170>)
+    3402:	681b      	ldr	r3, [r3, #0]
+    3404:	3b3c      	subs	r3, #60	; 0x3c
+    3406:	eb03 0383 	add.w	r3, r3, r3, lsl #2
+    340a:	4a50      	ldr	r2, [pc, #320]	; (354c <TIM1_CC_handler+0x174>)
+    340c:	eb02 03c3 	add.w	r3, r2, r3, lsl #3
+    3410:	4a4a      	ldr	r2, [pc, #296]	; (353c <TIM1_CC_handler+0x164>)
+    3412:	60d3      	str	r3, [r2, #12]
+		DMA1[DMACH5].cndtr=ROW_SIZE;
+    3414:	2314      	movs	r3, #20
+    3416:	6053      	str	r3, [r2, #4]
+		"nop\n\t"
+		"nop\n\t"
+		::"r" (TIMER1_CNT)
+		);
+*/
+		_enable_dma();
+    3418:	6813      	ldr	r3, [r2, #0]
+    341a:	f043 0301 	orr.w	r3, r3, #1
+    341e:	6013      	str	r3, [r2, #0]
+		return;
+    3420:	4770      	bx	lr
+	}
 	TIMER1_SR->fld.cc1if=0;
+    3422:	4a48      	ldr	r2, [pc, #288]	; (3544 <TIM1_CC_handler+0x16c>)
+    3424:	6813      	ldr	r3, [r2, #0]
+    3426:	f023 0302 	bic.w	r3, r3, #2
+    342a:	6013      	str	r3, [r2, #0]
+	line_count++;
+    342c:	4b46      	ldr	r3, [pc, #280]	; (3548 <TIM1_CC_handler+0x170>)
+    342e:	681a      	ldr	r2, [r3, #0]
+    3430:	3201      	adds	r2, #1
+    3432:	601a      	str	r2, [r3, #0]
 	switch(line_count){
-    3466:	2a06      	cmp	r2, #6
-    3468:	d05a      	beq.n	3520 <TIM1_CC_handler+0x118>
-    346a:	dd29      	ble.n	34c0 <TIM1_CC_handler+0xb8>
-    346c:	2a0c      	cmp	r2, #12
-    346e:	d019      	beq.n	34a4 <TIM1_CC_handler+0x9c>
-    3470:	2a11      	cmp	r2, #17
-    3472:	d131      	bne.n	34d8 <TIM1_CC_handler+0xd0>
+    3434:	681b      	ldr	r3, [r3, #0]
+    3436:	2b12      	cmp	r3, #18
+    3438:	d03e      	beq.n	34b8 <TIM1_CC_handler+0xe0>
+    343a:	dc09      	bgt.n	3450 <TIM1_CC_handler+0x78>
+    343c:	2b06      	cmp	r3, #6
+    343e:	d021      	beq.n	3484 <TIM1_CC_handler+0xac>
+    3440:	dc01      	bgt.n	3446 <TIM1_CC_handler+0x6e>
+    3442:	b1a3      	cbz	r3, 346e <TIM1_CC_handler+0x96>
+    3444:	4770      	bx	lr
+    3446:	2b0c      	cmp	r3, #12
+    3448:	d021      	beq.n	348e <TIM1_CC_handler+0xb6>
+    344a:	2b11      	cmp	r3, #17
+    344c:	d027      	beq.n	349e <TIM1_CC_handler+0xc6>
+    344e:	4770      	bx	lr
+    3450:	f5b3 7f96 	cmp.w	r3, #300	; 0x12c
+    3454:	d04b      	beq.n	34ee <TIM1_CC_handler+0x116>
+    3456:	dc02      	bgt.n	345e <TIM1_CC_handler+0x86>
+    3458:	2b3c      	cmp	r3, #60	; 0x3c
+    345a:	d03a      	beq.n	34d2 <TIM1_CC_handler+0xfa>
+    345c:	4770      	bx	lr
+    345e:	f240 1241 	movw	r2, #321	; 0x141
+    3462:	4293      	cmp	r3, r2
+    3464:	d04c      	beq.n	3500 <TIM1_CC_handler+0x128>
+    3466:	f5b3 7fa1 	cmp.w	r3, #322	; 0x142
+    346a:	d055      	beq.n	3518 <TIM1_CC_handler+0x140>
+    346c:	4770      	bx	lr
+	case 0: // pré-sync: 6 demi-lignes avec hsync/2
+		*TIMER1_ARR/=2;
+    346e:	4a38      	ldr	r2, [pc, #224]	; (3550 <TIM1_CC_handler+0x178>)
+    3470:	8813      	ldrh	r3, [r2, #0]
+    3472:	f3c3 034e 	ubfx	r3, r3, #1, #15
+    3476:	8013      	strh	r3, [r2, #0]
+		*TIMER1_CCR1/=2;
+    3478:	3208      	adds	r2, #8
+    347a:	8813      	ldrh	r3, [r2, #0]
+    347c:	f3c3 034e 	ubfx	r3, r3, #1, #15
+    3480:	8013      	strh	r3, [r2, #0]
+		break;
+    3482:	4770      	bx	lr
+	case 6: // vsync: 6 demi-lignes pulse larges
+	    *TIMER1_CCR1=((FCLK/HFREQ-1)-(FCLK*HSYNC-1))/2;
+    3484:	f240 7269 	movw	r2, #1897	; 0x769
+    3488:	4b32      	ldr	r3, [pc, #200]	; (3554 <TIM1_CC_handler+0x17c>)
+    348a:	801a      	strh	r2, [r3, #0]
+	    break;
+    348c:	4770      	bx	lr
 	case 12: // post_sync: 6 demi-lignes avec hsync/2
 		*TIMER1_ARR=(FCLK/HFREQ-1)/2;
+    348e:	f240 72ff 	movw	r2, #2047	; 0x7ff
+    3492:	4b2f      	ldr	r3, [pc, #188]	; (3550 <TIM1_CC_handler+0x178>)
+    3494:	801a      	strh	r2, [r3, #0]
 		*TIMER1_CCR1=(FCLK*HSYNC-1)/2;
+    3496:	2295      	movs	r2, #149	; 0x95
+    3498:	3308      	adds	r3, #8
+    349a:	801a      	strh	r2, [r3, #0]
 		break;
+    349c:	4770      	bx	lr
 	case 17: // fin sync champ paire
 		if (even){
-    3474:	4b32      	ldr	r3, [pc, #200]	; (3540 <TIM1_CC_handler+0x138>)
-    3476:	681b      	ldr	r3, [r3, #0]
-    3478:	2b00      	cmp	r3, #0
-    347a:	d0f3      	beq.n	3464 <TIM1_CC_handler+0x5c>
+    349e:	4b2e      	ldr	r3, [pc, #184]	; (3558 <TIM1_CC_handler+0x180>)
+    34a0:	681b      	ldr	r3, [r3, #0]
+    34a2:	2b00      	cmp	r3, #0
+    34a4:	d048      	beq.n	3538 <TIM1_CC_handler+0x160>
+			*TIMER1_ARR=(FCLK/HFREQ-1);
+    34a6:	f640 72ff 	movw	r2, #4095	; 0xfff
+    34aa:	4b29      	ldr	r3, [pc, #164]	; (3550 <TIM1_CC_handler+0x178>)
+    34ac:	801a      	strh	r2, [r3, #0]
 			*TIMER1_CCR1=(FCLK*HSYNC-1);
+    34ae:	f240 122b 	movw	r2, #299	; 0x12b
+    34b2:	3308      	adds	r3, #8
+    34b4:	801a      	strh	r2, [r3, #0]
+    34b6:	4770      	bx	lr
 		}
 		break;
 	case 18: // fin vsync
 		if (!even){
+    34b8:	4b27      	ldr	r3, [pc, #156]	; (3558 <TIM1_CC_handler+0x180>)
+    34ba:	681b      	ldr	r3, [r3, #0]
+    34bc:	2b00      	cmp	r3, #0
+    34be:	d13b      	bne.n	3538 <TIM1_CC_handler+0x160>
 			*TIMER1_ARR=(FCLK/HFREQ-1);
-    347c:	f640 70ff 	movw	r0, #4095	; 0xfff
+    34c0:	f640 72ff 	movw	r2, #4095	; 0xfff
+    34c4:	4b22      	ldr	r3, [pc, #136]	; (3550 <TIM1_CC_handler+0x178>)
+    34c6:	801a      	strh	r2, [r3, #0]
 			*TIMER1_CCR1=(FCLK*HSYNC-1);
-    3480:	f240 122b 	movw	r2, #299	; 0x12b
-			*TIMER1_CCR1=(FCLK*HSYNC-1);
+    34c8:	f240 122b 	movw	r2, #299	; 0x12b
+    34cc:	3308      	adds	r3, #8
+    34ce:	801a      	strh	r2, [r3, #0]
+    34d0:	4770      	bx	lr
 		}
 		break;
-	case 18: // fin vsync
-		if (!even){
-			*TIMER1_ARR=(FCLK/HFREQ-1);
-    3484:	492f      	ldr	r1, [pc, #188]	; (3544 <TIM1_CC_handler+0x13c>)
-			*TIMER1_CCR1=(FCLK*HSYNC-1);
-    3486:	4b30      	ldr	r3, [pc, #192]	; (3548 <TIM1_CC_handler+0x140>)
-			*TIMER1_CCR1=(FCLK*HSYNC-1);
-		}
+	case TOP_LINE:
+		_enable_pixel_int();
+    34d2:	4a1c      	ldr	r2, [pc, #112]	; (3544 <TIM1_CC_handler+0x16c>)
+    34d4:	6813      	ldr	r3, [r2, #0]
+    34d6:	f023 0304 	bic.w	r3, r3, #4
+    34da:	6013      	str	r3, [r2, #0]
+    34dc:	3a04      	subs	r2, #4
+    34de:	6813      	ldr	r3, [r2, #0]
+    34e0:	f043 0304 	orr.w	r3, r3, #4
+    34e4:	6013      	str	r3, [r2, #0]
+		video=1;
+    34e6:	2201      	movs	r2, #1
+    34e8:	4b15      	ldr	r3, [pc, #84]	; (3540 <TIM1_CC_handler+0x168>)
+    34ea:	601a      	str	r2, [r3, #0]
 		break;
-	case 18: // fin vsync
-		if (!even){
-			*TIMER1_ARR=(FCLK/HFREQ-1);
-    3488:	8008      	strh	r0, [r1, #0]
-			*TIMER1_CCR1=(FCLK*HSYNC-1);
-    348a:	801a      	strh	r2, [r3, #0]
-    348c:	4770      	bx	lr
-		break;
+    34ec:	4770      	bx	lr
 	case (TOP_LINE+VRES):
+		_disable_pixel_int();
+    34ee:	4a1b      	ldr	r2, [pc, #108]	; (355c <TIM1_CC_handler+0x184>)
+    34f0:	6813      	ldr	r3, [r2, #0]
+    34f2:	f023 0304 	bic.w	r3, r3, #4
+    34f6:	6013      	str	r3, [r2, #0]
 		video=0;
+    34f8:	2200      	movs	r2, #0
+    34fa:	4b11      	ldr	r3, [pc, #68]	; (3540 <TIM1_CC_handler+0x168>)
+    34fc:	601a      	str	r2, [r3, #0]
 		break;
+    34fe:	4770      	bx	lr
 	case FIELD_END:
 		if (!even){
-    348e:	4a2c      	ldr	r2, [pc, #176]	; (3540 <TIM1_CC_handler+0x138>)
-    3490:	6811      	ldr	r1, [r2, #0]
-    3492:	2900      	cmp	r1, #0
-    3494:	d1e6      	bne.n	3464 <TIM1_CC_handler+0x5c>
+    3500:	4b15      	ldr	r3, [pc, #84]	; (3558 <TIM1_CC_handler+0x180>)
+    3502:	681b      	ldr	r3, [r3, #0]
+    3504:	b9c3      	cbnz	r3, 3538 <TIM1_CC_handler+0x160>
 			line_count=-1;
-    3496:	f04f 31ff 	mov.w	r1, #4294967295	; 0xffffffff
-    349a:	6019      	str	r1, [r3, #0]
+    3506:	f04f 32ff 	mov.w	r2, #4294967295	; 0xffffffff
+    350a:	4b0f      	ldr	r3, [pc, #60]	; (3548 <TIM1_CC_handler+0x170>)
+    350c:	601a      	str	r2, [r3, #0]
 			even=-even;
-    349c:	6813      	ldr	r3, [r2, #0]
-    349e:	425b      	negs	r3, r3
-    34a0:	6013      	str	r3, [r2, #0]
-    34a2:	4770      	bx	lr
-		break;
-	case 6: // vsync: 6 demi-lignes pulse larges
-	    *TIMER1_CCR1=((FCLK/HFREQ-1)-(FCLK*HSYNC-1))/2;
-	    break;
-	case 12: // post_sync: 6 demi-lignes avec hsync/2
-		*TIMER1_ARR=(FCLK/HFREQ-1)/2;
-    34a4:	f240 70ff 	movw	r0, #2047	; 0x7ff
-    34a8:	4926      	ldr	r1, [pc, #152]	; (3544 <TIM1_CC_handler+0x13c>)
-		*TIMER1_CCR1=(FCLK*HSYNC-1)/2;
-    34aa:	4b27      	ldr	r3, [pc, #156]	; (3548 <TIM1_CC_handler+0x140>)
-    34ac:	2295      	movs	r2, #149	; 0x95
-		break;
-	case 6: // vsync: 6 demi-lignes pulse larges
-	    *TIMER1_CCR1=((FCLK/HFREQ-1)-(FCLK*HSYNC-1))/2;
-	    break;
-	case 12: // post_sync: 6 demi-lignes avec hsync/2
-		*TIMER1_ARR=(FCLK/HFREQ-1)/2;
-    34ae:	8008      	strh	r0, [r1, #0]
-		*TIMER1_CCR1=(FCLK*HSYNC-1)/2;
-    34b0:	801a      	strh	r2, [r3, #0]
-		break;
-    34b2:	4770      	bx	lr
-	uint16_t* line_adr;
-	
-    _disable_dma();
-	line_count++;
-	TIMER1_SR->fld.cc1if=0;
-	switch(line_count){
-    34b4:	2a3b      	cmp	r2, #59	; 0x3b
-    34b6:	d10f      	bne.n	34d8 <TIM1_CC_handler+0xd0>
-			*TIMER1_ARR=(FCLK/HFREQ-1);
-			*TIMER1_CCR1=(FCLK*HSYNC-1);
-		}
-		break;
-	case TOP_LINE-1:
-		video=1;
-    34b8:	4b24      	ldr	r3, [pc, #144]	; (354c <TIM1_CC_handler+0x144>)
-    34ba:	2201      	movs	r2, #1
-    34bc:	601a      	str	r2, [r3, #0]
-		break;
-    34be:	4770      	bx	lr
-	uint16_t* line_adr;
-	
-    _disable_dma();
-	line_count++;
-	TIMER1_SR->fld.cc1if=0;
-	switch(line_count){
-    34c0:	b952      	cbnz	r2, 34d8 <TIM1_CC_handler+0xd0>
-	case 0: // pré-sync: 6 demi-lignes avec hsync/2
-		*TIMER1_ARR/=2;
-    34c2:	4920      	ldr	r1, [pc, #128]	; (3544 <TIM1_CC_handler+0x13c>)
-		*TIMER1_CCR1/=2;
-    34c4:	4a20      	ldr	r2, [pc, #128]	; (3548 <TIM1_CC_handler+0x140>)
-    _disable_dma();
-	line_count++;
-	TIMER1_SR->fld.cc1if=0;
-	switch(line_count){
-	case 0: // pré-sync: 6 demi-lignes avec hsync/2
-		*TIMER1_ARR/=2;
-    34c6:	880b      	ldrh	r3, [r1, #0]
-    34c8:	f3c3 034e 	ubfx	r3, r3, #1, #15
-    34cc:	800b      	strh	r3, [r1, #0]
-		*TIMER1_CCR1/=2;
-    34ce:	8813      	ldrh	r3, [r2, #0]
-    34d0:	f3c3 034e 	ubfx	r3, r3, #1, #15
-    34d4:	8013      	strh	r3, [r2, #0]
-		break;
-    34d6:	4770      	bx	lr
-		SPI2->DR=0xaaaa;
-		while (SPI2->SR&SPI_SR_BSY);
-		SPI2->CR1=SPI_PIXELS;
-		SPI2->DR=0;
-*/	
-		if (video){
-    34d8:	4a1c      	ldr	r2, [pc, #112]	; (354c <TIM1_CC_handler+0x144>)
-    34da:	6812      	ldr	r2, [r2, #0]
-    34dc:	2a00      	cmp	r2, #0
-    34de:	d0c1      	beq.n	3464 <TIM1_CC_handler+0x5c>
-			//line_adr=(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
-			//_disable_dma();
-			DMA1[DMACH5].cmar=(uint32_t)(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
-    34e0:	681b      	ldr	r3, [r3, #0]
-    34e2:	4a1b      	ldr	r2, [pc, #108]	; (3550 <TIM1_CC_handler+0x148>)
-    34e4:	3b3c      	subs	r3, #60	; 0x3c
-    34e6:	4913      	ldr	r1, [pc, #76]	; (3534 <TIM1_CC_handler+0x12c>)
-    34e8:	eb03 0383 	add.w	r3, r3, r3, lsl #2
-    34ec:	eb02 03c3 	add.w	r3, r2, r3, lsl #3
-			DMA1[DMACH5].cndtr=ROW_SIZE;
-    34f0:	2014      	movs	r0, #20
-			cnt=VIDEO_DELAY;
-			while ((*TIMER1_CNT)<cnt){asm volatile("");}
-    34f2:	4a18      	ldr	r2, [pc, #96]	; (3554 <TIM1_CC_handler+0x14c>)
-		SPI2->DR=0;
-*/	
-		if (video){
-			//line_adr=(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
-			//_disable_dma();
-			DMA1[DMACH5].cmar=(uint32_t)(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
-    34f4:	60cb      	str	r3, [r1, #12]
-			DMA1[DMACH5].cndtr=ROW_SIZE;
-    34f6:	6048      	str	r0, [r1, #4]
-			cnt=VIDEO_DELAY;
-			while ((*TIMER1_CNT)<cnt){asm volatile("");}
-    34f8:	8813      	ldrh	r3, [r2, #0]
-    34fa:	b29b      	uxth	r3, r3
-    34fc:	f5b3 6f83 	cmp.w	r3, #1048	; 0x418
-    3500:	d804      	bhi.n	350c <TIM1_CC_handler+0x104>
-    3502:	8813      	ldrh	r3, [r2, #0]
-    3504:	b29b      	uxth	r3, r3
-    3506:	f5b3 6f83 	cmp.w	r3, #1048	; 0x418
-    350a:	d9fa      	bls.n	3502 <TIM1_CC_handler+0xfa>
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			::"r" (TIMER1_CNT)
-			);*/
-			_enable_dma();
-    350c:	4a09      	ldr	r2, [pc, #36]	; (3534 <TIM1_CC_handler+0x12c>)
-    350e:	6813      	ldr	r3, [r2, #0]
-    3510:	f043 0301 	orr.w	r3, r3, #1
+    350e:	4a12      	ldr	r2, [pc, #72]	; (3558 <TIM1_CC_handler+0x180>)
+    3510:	6813      	ldr	r3, [r2, #0]
+    3512:	425b      	negs	r3, r3
     3514:	6013      	str	r3, [r2, #0]
     3516:	4770      	bx	lr
-		break;
-	case TOP_LINE-1:
-		video=1;
-		break;
-	case (TOP_LINE+VRES):
-		video=0;
-    3518:	4b0c      	ldr	r3, [pc, #48]	; (354c <TIM1_CC_handler+0x144>)
-    351a:	2200      	movs	r2, #0
-    351c:	601a      	str	r2, [r3, #0]
-		break;
-    351e:	4770      	bx	lr
-	case 0: // pré-sync: 6 demi-lignes avec hsync/2
-		*TIMER1_ARR/=2;
-		*TIMER1_CCR1/=2;
-		break;
-	case 6: // vsync: 6 demi-lignes pulse larges
-	    *TIMER1_CCR1=((FCLK/HFREQ-1)-(FCLK*HSYNC-1))/2;
-    3520:	f240 7269 	movw	r2, #1897	; 0x769
-    3524:	4b08      	ldr	r3, [pc, #32]	; (3548 <TIM1_CC_handler+0x140>)
-    3526:	801a      	strh	r2, [r3, #0]
-	    break;
-    3528:	4770      	bx	lr
-			*TIMER1_ARR=(FCLK/HFREQ-1);
-			*TIMER1_CCR1=(FCLK*HSYNC-1);
 		}
 		break;
-	case 18: // fin vsync
-		if (!even){
-    352a:	4b05      	ldr	r3, [pc, #20]	; (3540 <TIM1_CC_handler+0x138>)
-    352c:	681b      	ldr	r3, [r3, #0]
-    352e:	2b00      	cmp	r3, #0
-    3530:	d198      	bne.n	3464 <TIM1_CC_handler+0x5c>
-    3532:	e7a3      	b.n	347c <TIM1_CC_handler+0x74>
-    3534:	40020058 	.word	0x40020058
-    3538:	20000008 	.word	0x20000008
-    353c:	40012c10 	.word	0x40012c10
-    3540:	200000f4 	.word	0x200000f4
-    3544:	40012c2c 	.word	0x40012c2c
-    3548:	40012c34 	.word	0x40012c34
-    354c:	200000f0 	.word	0x200000f0
-    3550:	20000148 	.word	0x20000148
-    3554:	40012c24 	.word	0x40012c24
+	case (FIELD_END+1):
+		if (even){
+    3518:	4b0f      	ldr	r3, [pc, #60]	; (3558 <TIM1_CC_handler+0x180>)
+    351a:	681b      	ldr	r3, [r3, #0]
+    351c:	b163      	cbz	r3, 3538 <TIM1_CC_handler+0x160>
+			*TIMER1_ARR/=2;
+    351e:	4a0c      	ldr	r2, [pc, #48]	; (3550 <TIM1_CC_handler+0x178>)
+    3520:	8813      	ldrh	r3, [r2, #0]
+    3522:	f3c3 034e 	ubfx	r3, r3, #1, #15
+    3526:	8013      	strh	r3, [r2, #0]
+			line_count=-1;
+    3528:	f04f 32ff 	mov.w	r2, #4294967295	; 0xffffffff
+    352c:	4b06      	ldr	r3, [pc, #24]	; (3548 <TIM1_CC_handler+0x170>)
+    352e:	601a      	str	r2, [r3, #0]
+			even=-even;
+    3530:	4a09      	ldr	r2, [pc, #36]	; (3558 <TIM1_CC_handler+0x180>)
+    3532:	6813      	ldr	r3, [r2, #0]
+    3534:	425b      	negs	r3, r3
+    3536:	6013      	str	r3, [r2, #0]
+    3538:	4770      	bx	lr
+    353a:	bf00      	nop
+    353c:	40020058 	.word	0x40020058
+    3540:	200000f0 	.word	0x200000f0
+    3544:	40012c10 	.word	0x40012c10
+    3548:	20000008 	.word	0x20000008
+    354c:	20000148 	.word	0x20000148
+    3550:	40012c2c 	.word	0x40012c2c
+    3554:	40012c34 	.word	0x40012c34
+    3558:	200000f4 	.word	0x200000f4
+    355c:	40012c0c 	.word	0x40012c0c
 
-00003558 <DMA1CH5_handler>:
-		}
-		break;
+00003560 <DMA1CH5_handler>:
+	    break;
 	}//switch (line_count)
 }
 
-void DMA1CH5_handler(){
-    3558:	b480      	push	{r7}
-    355a:	af00      	add	r7, sp, #0
-	DMA1_FLAGS->IFCR|=DMA_ISR_CGIF5;
-    355c:	4a09      	ldr	r2, [pc, #36]	; (3584 <DMA1CH5_handler+0x2c>)
-    355e:	4b09      	ldr	r3, [pc, #36]	; (3584 <DMA1CH5_handler+0x2c>)
-    3560:	685b      	ldr	r3, [r3, #4]
-    3562:	f443 3380 	orr.w	r3, r3, #65536	; 0x10000
-    3566:	6053      	str	r3, [r2, #4]
-	while (!(SPI2->SR&SPI_SR_TXE));
-    3568:	bf00      	nop
-    356a:	4b07      	ldr	r3, [pc, #28]	; (3588 <DMA1CH5_handler+0x30>)
-    356c:	689b      	ldr	r3, [r3, #8]
-    356e:	f003 0302 	and.w	r3, r3, #2
-    3572:	2b00      	cmp	r3, #0
-    3574:	d0f9      	beq.n	356a <DMA1CH5_handler+0x12>
-	SPI2->DR=0;
-    3576:	4b04      	ldr	r3, [pc, #16]	; (3588 <DMA1CH5_handler+0x30>)
-    3578:	2200      	movs	r2, #0
-    357a:	60da      	str	r2, [r3, #12]
-}
-    357c:	46bd      	mov	sp, r7
-    357e:	f85d 7b04 	ldr.w	r7, [sp], #4
-    3582:	4770      	bx	lr
-    3584:	40020000 	.word	0x40020000
-    3588:	40003800 	.word	0x40003800
 
-0000358c <usart_config_port>:
+void DMA1CH5_handler(){
+    3560:	b480      	push	{r7}
+    3562:	af00      	add	r7, sp, #0
+	DMA1_FLAGS->IFCR|=DMA_ISR_CGIF5;
+    3564:	4a09      	ldr	r2, [pc, #36]	; (358c <DMA1CH5_handler+0x2c>)
+    3566:	4b09      	ldr	r3, [pc, #36]	; (358c <DMA1CH5_handler+0x2c>)
+    3568:	685b      	ldr	r3, [r3, #4]
+    356a:	f443 3380 	orr.w	r3, r3, #65536	; 0x10000
+    356e:	6053      	str	r3, [r2, #4]
+	while (!(SPI2->SR&SPI_SR_TXE));
+    3570:	bf00      	nop
+    3572:	4b07      	ldr	r3, [pc, #28]	; (3590 <DMA1CH5_handler+0x30>)
+    3574:	689b      	ldr	r3, [r3, #8]
+    3576:	f003 0302 	and.w	r3, r3, #2
+    357a:	2b00      	cmp	r3, #0
+    357c:	d0f9      	beq.n	3572 <DMA1CH5_handler+0x12>
+	SPI2->DR=0;
+    357e:	4b04      	ldr	r3, [pc, #16]	; (3590 <DMA1CH5_handler+0x30>)
+    3580:	2200      	movs	r2, #0
+    3582:	60da      	str	r2, [r3, #12]
+}
+    3584:	46bd      	mov	sp, r7
+    3586:	f85d 7b04 	ldr.w	r7, [sp], #4
+    358a:	4770      	bx	lr
+    358c:	40020000 	.word	0x40020000
+    3590:	40003800 	.word	0x40003800
+
+00003594 <usart_config_port>:
 
 #define _usart_select(n)  USART##n_
 #define _usart_sfr_sel(n,s) USART##n_##s 
 
 // configuration dse broches
 void usart_config_port(usart_t* channel, gpio_t *port, unsigned flow_ctrl){
-    358c:	b480      	push	{r7}
-    358e:	b085      	sub	sp, #20
-    3590:	af00      	add	r7, sp, #0
-    3592:	60f8      	str	r0, [r7, #12]
-    3594:	60b9      	str	r1, [r7, #8]
-    3596:	607a      	str	r2, [r7, #4]
+    3594:	b480      	push	{r7}
+    3596:	b085      	sub	sp, #20
+    3598:	af00      	add	r7, sp, #0
+    359a:	60f8      	str	r0, [r7, #12]
+    359c:	60b9      	str	r1, [r7, #8]
+    359e:	607a      	str	r2, [r7, #4]
 	switch((uint32_t)channel){ // activation du périphérique USART et du PORT
-    3598:	68fb      	ldr	r3, [r7, #12]
-    359a:	4a45      	ldr	r2, [pc, #276]	; (36b0 <usart_config_port+0x124>)
-    359c:	4293      	cmp	r3, r2
-    359e:	d058      	beq.n	3652 <usart_config_port+0xc6>
-    35a0:	4a44      	ldr	r2, [pc, #272]	; (36b4 <usart_config_port+0x128>)
-    35a2:	4293      	cmp	r3, r2
-    35a4:	d003      	beq.n	35ae <usart_config_port+0x22>
-    35a6:	4a44      	ldr	r2, [pc, #272]	; (36b8 <usart_config_port+0x12c>)
-    35a8:	4293      	cmp	r3, r2
-    35aa:	d029      	beq.n	3600 <usart_config_port+0x74>
-    35ac:	e07a      	b.n	36a4 <usart_config_port+0x118>
+    35a0:	68fb      	ldr	r3, [r7, #12]
+    35a2:	4a45      	ldr	r2, [pc, #276]	; (36b8 <usart_config_port+0x124>)
+    35a4:	4293      	cmp	r3, r2
+    35a6:	d058      	beq.n	365a <usart_config_port+0xc6>
+    35a8:	4a44      	ldr	r2, [pc, #272]	; (36bc <usart_config_port+0x128>)
+    35aa:	4293      	cmp	r3, r2
+    35ac:	d003      	beq.n	35b6 <usart_config_port+0x22>
+    35ae:	4a44      	ldr	r2, [pc, #272]	; (36c0 <usart_config_port+0x12c>)
+    35b0:	4293      	cmp	r3, r2
+    35b2:	d029      	beq.n	3608 <usart_config_port+0x74>
+    35b4:	e07a      	b.n	36ac <usart_config_port+0x118>
 	case (uint32_t)USART1:
 		RCC->APB2ENR|=RCC_APB2ENR_USART1EN|RCC_APB2ENR_IOPAEN;
-    35ae:	4a43      	ldr	r2, [pc, #268]	; (36bc <usart_config_port+0x130>)
-    35b0:	4b42      	ldr	r3, [pc, #264]	; (36bc <usart_config_port+0x130>)
-    35b2:	699b      	ldr	r3, [r3, #24]
-    35b4:	f443 4380 	orr.w	r3, r3, #16384	; 0x4000
-    35b8:	f043 0304 	orr.w	r3, r3, #4
-    35bc:	6193      	str	r3, [r2, #24]
+    35b6:	4a43      	ldr	r2, [pc, #268]	; (36c4 <usart_config_port+0x130>)
+    35b8:	4b42      	ldr	r3, [pc, #264]	; (36c4 <usart_config_port+0x130>)
+    35ba:	699b      	ldr	r3, [r3, #24]
+    35bc:	f443 4380 	orr.w	r3, r3, #16384	; 0x4000
+    35c0:	f043 0304 	orr.w	r3, r3, #4
+    35c4:	6193      	str	r3, [r2, #24]
 		// PA9 -> TX   output (push-pull)
 		// PA10 -> RX  input (floating)
 		// PA11 -> CTS input (floating)
 		// PA12 -> RTS output (push-pull)
 		if (flow_ctrl==FLOW_HARD){
-    35be:	687b      	ldr	r3, [r7, #4]
-    35c0:	2b01      	cmp	r3, #1
-    35c2:	d110      	bne.n	35e6 <usart_config_port+0x5a>
+    35c6:	687b      	ldr	r3, [r7, #4]
+    35c8:	2b01      	cmp	r3, #1
+    35ca:	d110      	bne.n	35ee <usart_config_port+0x5a>
 			port->CR[1]&=~((15<<((USART1_TX_PIN-8)*4))|(15<<((USART1_RTS_PIN-8)*4)));
-    35c4:	68bb      	ldr	r3, [r7, #8]
-    35c6:	685b      	ldr	r3, [r3, #4]
-    35c8:	f423 2370 	bic.w	r3, r3, #983040	; 0xf0000
-    35cc:	f023 03f0 	bic.w	r3, r3, #240	; 0xf0
-    35d0:	68ba      	ldr	r2, [r7, #8]
-    35d2:	6053      	str	r3, [r2, #4]
+    35cc:	68bb      	ldr	r3, [r7, #8]
+    35ce:	685b      	ldr	r3, [r3, #4]
+    35d0:	f423 2370 	bic.w	r3, r3, #983040	; 0xf0000
+    35d4:	f023 03f0 	bic.w	r3, r3, #240	; 0xf0
+    35d8:	68ba      	ldr	r2, [r7, #8]
+    35da:	6053      	str	r3, [r2, #4]
 			port->CR[1]|=(0xA<<((USART1_TX_PIN-8)*4))|(0xA<<((USART1_RTS_PIN-8)*4));
-    35d4:	68bb      	ldr	r3, [r7, #8]
-    35d6:	685b      	ldr	r3, [r3, #4]
-    35d8:	f443 2320 	orr.w	r3, r3, #655360	; 0xa0000
-    35dc:	f043 03a0 	orr.w	r3, r3, #160	; 0xa0
-    35e0:	68ba      	ldr	r2, [r7, #8]
-    35e2:	6053      	str	r3, [r2, #4]
+    35dc:	68bb      	ldr	r3, [r7, #8]
+    35de:	685b      	ldr	r3, [r3, #4]
+    35e0:	f443 2320 	orr.w	r3, r3, #655360	; 0xa0000
+    35e4:	f043 03a0 	orr.w	r3, r3, #160	; 0xa0
+    35e8:	68ba      	ldr	r2, [r7, #8]
+    35ea:	6053      	str	r3, [r2, #4]
 		}else{
 			port->CR[1]&=~(15<<((USART1_TX_PIN-8)*4));
 			port->CR[1]|=0xA<<((USART1_TX_PIN-8)*4);
 		}
 		break;
-    35e4:	e05e      	b.n	36a4 <usart_config_port+0x118>
+    35ec:	e05e      	b.n	36ac <usart_config_port+0x118>
 		// PA12 -> RTS output (push-pull)
 		if (flow_ctrl==FLOW_HARD){
 			port->CR[1]&=~((15<<((USART1_TX_PIN-8)*4))|(15<<((USART1_RTS_PIN-8)*4)));
 			port->CR[1]|=(0xA<<((USART1_TX_PIN-8)*4))|(0xA<<((USART1_RTS_PIN-8)*4));
 		}else{
 			port->CR[1]&=~(15<<((USART1_TX_PIN-8)*4));
-    35e6:	68bb      	ldr	r3, [r7, #8]
-    35e8:	685b      	ldr	r3, [r3, #4]
-    35ea:	f023 02f0 	bic.w	r2, r3, #240	; 0xf0
     35ee:	68bb      	ldr	r3, [r7, #8]
-    35f0:	605a      	str	r2, [r3, #4]
+    35f0:	685b      	ldr	r3, [r3, #4]
+    35f2:	f023 02f0 	bic.w	r2, r3, #240	; 0xf0
+    35f6:	68bb      	ldr	r3, [r7, #8]
+    35f8:	605a      	str	r2, [r3, #4]
 			port->CR[1]|=0xA<<((USART1_TX_PIN-8)*4);
-    35f2:	68bb      	ldr	r3, [r7, #8]
-    35f4:	685b      	ldr	r3, [r3, #4]
-    35f6:	f043 02a0 	orr.w	r2, r3, #160	; 0xa0
     35fa:	68bb      	ldr	r3, [r7, #8]
-    35fc:	605a      	str	r2, [r3, #4]
+    35fc:	685b      	ldr	r3, [r3, #4]
+    35fe:	f043 02a0 	orr.w	r2, r3, #160	; 0xa0
+    3602:	68bb      	ldr	r3, [r7, #8]
+    3604:	605a      	str	r2, [r3, #4]
 		}
 		break;
-    35fe:	e051      	b.n	36a4 <usart_config_port+0x118>
+    3606:	e051      	b.n	36ac <usart_config_port+0x118>
 	case (uint32_t)USART2:
 		RCC->APB1ENR|=RCC_APB1ENR_USART2EN;
-    3600:	4a2e      	ldr	r2, [pc, #184]	; (36bc <usart_config_port+0x130>)
-    3602:	4b2e      	ldr	r3, [pc, #184]	; (36bc <usart_config_port+0x130>)
-    3604:	69db      	ldr	r3, [r3, #28]
-    3606:	f443 3300 	orr.w	r3, r3, #131072	; 0x20000
-    360a:	61d3      	str	r3, [r2, #28]
+    3608:	4a2e      	ldr	r2, [pc, #184]	; (36c4 <usart_config_port+0x130>)
+    360a:	4b2e      	ldr	r3, [pc, #184]	; (36c4 <usart_config_port+0x130>)
+    360c:	69db      	ldr	r3, [r3, #28]
+    360e:	f443 3300 	orr.w	r3, r3, #131072	; 0x20000
+    3612:	61d3      	str	r3, [r2, #28]
 		RCC->APB2ENR|=RCC_APB2ENR_IOPAEN;
-    360c:	4a2b      	ldr	r2, [pc, #172]	; (36bc <usart_config_port+0x130>)
-    360e:	4b2b      	ldr	r3, [pc, #172]	; (36bc <usart_config_port+0x130>)
-    3610:	699b      	ldr	r3, [r3, #24]
-    3612:	f043 0304 	orr.w	r3, r3, #4
-    3616:	6193      	str	r3, [r2, #24]
+    3614:	4a2b      	ldr	r2, [pc, #172]	; (36c4 <usart_config_port+0x130>)
+    3616:	4b2b      	ldr	r3, [pc, #172]	; (36c4 <usart_config_port+0x130>)
+    3618:	699b      	ldr	r3, [r3, #24]
+    361a:	f043 0304 	orr.w	r3, r3, #4
+    361e:	6193      	str	r3, [r2, #24]
 		// PA0 -> CTS input   (floating)
 		// PA1 -> RTS output  (push-pull)
 		// PA2 -> TX  output (push-pull)
 		// PA3 -> RX input (floating)
 		if (flow_ctrl==FLOW_HARD){
-    3618:	687b      	ldr	r3, [r7, #4]
-    361a:	2b01      	cmp	r3, #1
-    361c:	d10c      	bne.n	3638 <usart_config_port+0xac>
+    3620:	687b      	ldr	r3, [r7, #4]
+    3622:	2b01      	cmp	r3, #1
+    3624:	d10c      	bne.n	3640 <usart_config_port+0xac>
 			port->CR[0]&=~((15<<(USART2_TX_PIN*4))|(15<<(USART2_RTS_PIN*4)));
-    361e:	68bb      	ldr	r3, [r7, #8]
-    3620:	681b      	ldr	r3, [r3, #0]
-    3622:	f423 627f 	bic.w	r2, r3, #4080	; 0xff0
     3626:	68bb      	ldr	r3, [r7, #8]
-    3628:	601a      	str	r2, [r3, #0]
+    3628:	681b      	ldr	r3, [r3, #0]
+    362a:	f423 627f 	bic.w	r2, r3, #4080	; 0xff0
+    362e:	68bb      	ldr	r3, [r7, #8]
+    3630:	601a      	str	r2, [r3, #0]
 			port->CR[0]|=(0xA<<(USART2_TX_PIN*4))|(0xA<<(USART2_RTS_PIN*4));
-    362a:	68bb      	ldr	r3, [r7, #8]
-    362c:	681b      	ldr	r3, [r3, #0]
-    362e:	f443 622a 	orr.w	r2, r3, #2720	; 0xaa0
     3632:	68bb      	ldr	r3, [r7, #8]
-    3634:	601a      	str	r2, [r3, #0]
+    3634:	681b      	ldr	r3, [r3, #0]
+    3636:	f443 622a 	orr.w	r2, r3, #2720	; 0xaa0
+    363a:	68bb      	ldr	r3, [r7, #8]
+    363c:	601a      	str	r2, [r3, #0]
 		}else{
 			port->CR[0]&=~((15<<(USART2_TX_PIN*4)));
 			port->CR[0]|=(0xA<<(USART2_TX_PIN*4));
 		}
 		break;
-    3636:	e035      	b.n	36a4 <usart_config_port+0x118>
+    363e:	e035      	b.n	36ac <usart_config_port+0x118>
 		// PA3 -> RX input (floating)
 		if (flow_ctrl==FLOW_HARD){
 			port->CR[0]&=~((15<<(USART2_TX_PIN*4))|(15<<(USART2_RTS_PIN*4)));
 			port->CR[0]|=(0xA<<(USART2_TX_PIN*4))|(0xA<<(USART2_RTS_PIN*4));
 		}else{
 			port->CR[0]&=~((15<<(USART2_TX_PIN*4)));
-    3638:	68bb      	ldr	r3, [r7, #8]
-    363a:	681b      	ldr	r3, [r3, #0]
-    363c:	f423 6270 	bic.w	r2, r3, #3840	; 0xf00
     3640:	68bb      	ldr	r3, [r7, #8]
-    3642:	601a      	str	r2, [r3, #0]
+    3642:	681b      	ldr	r3, [r3, #0]
+    3644:	f423 6270 	bic.w	r2, r3, #3840	; 0xf00
+    3648:	68bb      	ldr	r3, [r7, #8]
+    364a:	601a      	str	r2, [r3, #0]
 			port->CR[0]|=(0xA<<(USART2_TX_PIN*4));
-    3644:	68bb      	ldr	r3, [r7, #8]
-    3646:	681b      	ldr	r3, [r3, #0]
-    3648:	f443 6220 	orr.w	r2, r3, #2560	; 0xa00
     364c:	68bb      	ldr	r3, [r7, #8]
-    364e:	601a      	str	r2, [r3, #0]
+    364e:	681b      	ldr	r3, [r3, #0]
+    3650:	f443 6220 	orr.w	r2, r3, #2560	; 0xa00
+    3654:	68bb      	ldr	r3, [r7, #8]
+    3656:	601a      	str	r2, [r3, #0]
 		}
 		break;
-    3650:	e028      	b.n	36a4 <usart_config_port+0x118>
+    3658:	e028      	b.n	36ac <usart_config_port+0x118>
 	case (uint32_t)USART3:
 		RCC->APB1ENR|=RCC_APB1ENR_USART3EN;
-    3652:	4a1a      	ldr	r2, [pc, #104]	; (36bc <usart_config_port+0x130>)
-    3654:	4b19      	ldr	r3, [pc, #100]	; (36bc <usart_config_port+0x130>)
-    3656:	69db      	ldr	r3, [r3, #28]
-    3658:	f443 2380 	orr.w	r3, r3, #262144	; 0x40000
-    365c:	61d3      	str	r3, [r2, #28]
+    365a:	4a1a      	ldr	r2, [pc, #104]	; (36c4 <usart_config_port+0x130>)
+    365c:	4b19      	ldr	r3, [pc, #100]	; (36c4 <usart_config_port+0x130>)
+    365e:	69db      	ldr	r3, [r3, #28]
+    3660:	f443 2380 	orr.w	r3, r3, #262144	; 0x40000
+    3664:	61d3      	str	r3, [r2, #28]
 		RCC->APB2ENR|=RCC_APB2ENR_IOPBEN;
-    365e:	4a17      	ldr	r2, [pc, #92]	; (36bc <usart_config_port+0x130>)
-    3660:	4b16      	ldr	r3, [pc, #88]	; (36bc <usart_config_port+0x130>)
-    3662:	699b      	ldr	r3, [r3, #24]
-    3664:	f043 0308 	orr.w	r3, r3, #8
-    3668:	6193      	str	r3, [r2, #24]
+    3666:	4a17      	ldr	r2, [pc, #92]	; (36c4 <usart_config_port+0x130>)
+    3668:	4b16      	ldr	r3, [pc, #88]	; (36c4 <usart_config_port+0x130>)
+    366a:	699b      	ldr	r3, [r3, #24]
+    366c:	f043 0308 	orr.w	r3, r3, #8
+    3670:	6193      	str	r3, [r2, #24]
 		//PB10 -> TX output (push-pull)
 		//PB11 -> RX input (floating)
 		//PB13 -> CTS input (floating)
 		//PB14 -> RTS output (push-pull)
 		if (flow_ctrl==FLOW_HARD){
-    366a:	687b      	ldr	r3, [r7, #4]
-    366c:	2b01      	cmp	r3, #1
-    366e:	d10c      	bne.n	368a <usart_config_port+0xfe>
+    3672:	687b      	ldr	r3, [r7, #4]
+    3674:	2b01      	cmp	r3, #1
+    3676:	d10c      	bne.n	3692 <usart_config_port+0xfe>
 			port->CR[1]&=~((15<<((USART3_TX_PIN-8)*4))|(15<<((USART3_RTS_PIN-8)*4)));
-    3670:	68bb      	ldr	r3, [r7, #8]
-    3672:	685b      	ldr	r3, [r3, #4]
-    3674:	f023 220f 	bic.w	r2, r3, #251662080	; 0xf000f00
     3678:	68bb      	ldr	r3, [r7, #8]
-    367a:	605a      	str	r2, [r3, #4]
+    367a:	685b      	ldr	r3, [r3, #4]
+    367c:	f023 220f 	bic.w	r2, r3, #251662080	; 0xf000f00
+    3680:	68bb      	ldr	r3, [r7, #8]
+    3682:	605a      	str	r2, [r3, #4]
 			port->CR[1]|=(0xA<<((USART3_TX_PIN-8)*4))|(0xA<<((USART3_RTS_PIN-8)*4));
-    367c:	68bb      	ldr	r3, [r7, #8]
-    367e:	685b      	ldr	r3, [r3, #4]
-    3680:	f043 220a 	orr.w	r2, r3, #167774720	; 0xa000a00
     3684:	68bb      	ldr	r3, [r7, #8]
-    3686:	605a      	str	r2, [r3, #4]
-    3688:	e00b      	b.n	36a2 <usart_config_port+0x116>
+    3686:	685b      	ldr	r3, [r3, #4]
+    3688:	f043 220a 	orr.w	r2, r3, #167774720	; 0xa000a00
+    368c:	68bb      	ldr	r3, [r7, #8]
+    368e:	605a      	str	r2, [r3, #4]
+    3690:	e00b      	b.n	36aa <usart_config_port+0x116>
 		}else{
 			port->CR[1]&=~(15<<((USART3_TX_PIN-8)*4));
-    368a:	68bb      	ldr	r3, [r7, #8]
-    368c:	685b      	ldr	r3, [r3, #4]
-    368e:	f423 6270 	bic.w	r2, r3, #3840	; 0xf00
     3692:	68bb      	ldr	r3, [r7, #8]
-    3694:	605a      	str	r2, [r3, #4]
+    3694:	685b      	ldr	r3, [r3, #4]
+    3696:	f423 6270 	bic.w	r2, r3, #3840	; 0xf00
+    369a:	68bb      	ldr	r3, [r7, #8]
+    369c:	605a      	str	r2, [r3, #4]
 			port->CR[1]|=0xA<<((USART3_TX_PIN-8)*4);
-    3696:	68bb      	ldr	r3, [r7, #8]
-    3698:	685b      	ldr	r3, [r3, #4]
-    369a:	f443 6220 	orr.w	r2, r3, #2560	; 0xa00
     369e:	68bb      	ldr	r3, [r7, #8]
-    36a0:	605a      	str	r2, [r3, #4]
+    36a0:	685b      	ldr	r3, [r3, #4]
+    36a2:	f443 6220 	orr.w	r2, r3, #2560	; 0xa00
+    36a6:	68bb      	ldr	r3, [r7, #8]
+    36a8:	605a      	str	r2, [r3, #4]
 		}
 		break;
-    36a2:	bf00      	nop
+    36aa:	bf00      	nop
 	}
 }
-    36a4:	3714      	adds	r7, #20
-    36a6:	46bd      	mov	sp, r7
-    36a8:	f85d 7b04 	ldr.w	r7, [sp], #4
-    36ac:	4770      	bx	lr
-    36ae:	bf00      	nop
-    36b0:	40004800 	.word	0x40004800
-    36b4:	40013800 	.word	0x40013800
-    36b8:	40004400 	.word	0x40004400
-    36bc:	40021000 	.word	0x40021000
+    36ac:	3714      	adds	r7, #20
+    36ae:	46bd      	mov	sp, r7
+    36b0:	f85d 7b04 	ldr.w	r7, [sp], #4
+    36b4:	4770      	bx	lr
+    36b6:	bf00      	nop
+    36b8:	40004800 	.word	0x40004800
+    36bc:	40013800 	.word	0x40013800
+    36c0:	40004400 	.word	0x40004400
+    36c4:	40021000 	.word	0x40021000
 
-000036c0 <usart_set_baud>:
+000036c8 <usart_set_baud>:
 
 // vitesse de transmission
 void usart_set_baud(usart_t* channel, unsigned baud){
-    36c0:	b480      	push	{r7}
-    36c2:	b085      	sub	sp, #20
-    36c4:	af00      	add	r7, sp, #0
-    36c6:	6078      	str	r0, [r7, #4]
-    36c8:	6039      	str	r1, [r7, #0]
+    36c8:	b480      	push	{r7}
+    36ca:	b085      	sub	sp, #20
+    36cc:	af00      	add	r7, sp, #0
+    36ce:	6078      	str	r0, [r7, #4]
+    36d0:	6039      	str	r1, [r7, #0]
 	uint32_t rate;
     if ((uint32_t)channel==(uint32_t)USART1){
-    36ca:	687b      	ldr	r3, [r7, #4]
-    36cc:	4a14      	ldr	r2, [pc, #80]	; (3720 <usart_set_baud+0x60>)
-    36ce:	4293      	cmp	r3, r2
-    36d0:	d10f      	bne.n	36f2 <usart_set_baud+0x32>
+    36d2:	687b      	ldr	r3, [r7, #4]
+    36d4:	4a14      	ldr	r2, [pc, #80]	; (3728 <usart_set_baud+0x60>)
+    36d6:	4293      	cmp	r3, r2
+    36d8:	d10f      	bne.n	36fa <usart_set_baud+0x32>
 		rate=(FAPB2/baud/16)<<4;
-    36d2:	4a14      	ldr	r2, [pc, #80]	; (3724 <usart_set_baud+0x64>)
-    36d4:	683b      	ldr	r3, [r7, #0]
-    36d6:	fbb2 f3f3 	udiv	r3, r2, r3
-    36da:	011b      	lsls	r3, r3, #4
-    36dc:	60fb      	str	r3, [r7, #12]
+    36da:	4a14      	ldr	r2, [pc, #80]	; (372c <usart_set_baud+0x64>)
+    36dc:	683b      	ldr	r3, [r7, #0]
+    36de:	fbb2 f3f3 	udiv	r3, r2, r3
+    36e2:	011b      	lsls	r3, r3, #4
+    36e4:	60fb      	str	r3, [r7, #12]
 		rate|=(FAPB2/baud)%16;
-    36de:	4a12      	ldr	r2, [pc, #72]	; (3728 <usart_set_baud+0x68>)
-    36e0:	683b      	ldr	r3, [r7, #0]
-    36e2:	fbb2 f3f3 	udiv	r3, r2, r3
-    36e6:	f003 030f 	and.w	r3, r3, #15
-    36ea:	68fa      	ldr	r2, [r7, #12]
-    36ec:	4313      	orrs	r3, r2
-    36ee:	60fb      	str	r3, [r7, #12]
-    36f0:	e00e      	b.n	3710 <usart_set_baud+0x50>
+    36e6:	4a12      	ldr	r2, [pc, #72]	; (3730 <usart_set_baud+0x68>)
+    36e8:	683b      	ldr	r3, [r7, #0]
+    36ea:	fbb2 f3f3 	udiv	r3, r2, r3
+    36ee:	f003 030f 	and.w	r3, r3, #15
+    36f2:	68fa      	ldr	r2, [r7, #12]
+    36f4:	4313      	orrs	r3, r2
+    36f6:	60fb      	str	r3, [r7, #12]
+    36f8:	e00e      	b.n	3718 <usart_set_baud+0x50>
 	}else{
 		rate=(FAPB1/baud/16)<<4;
-    36f2:	4a0e      	ldr	r2, [pc, #56]	; (372c <usart_set_baud+0x6c>)
-    36f4:	683b      	ldr	r3, [r7, #0]
-    36f6:	fbb2 f3f3 	udiv	r3, r2, r3
-    36fa:	011b      	lsls	r3, r3, #4
-    36fc:	60fb      	str	r3, [r7, #12]
+    36fa:	4a0e      	ldr	r2, [pc, #56]	; (3734 <usart_set_baud+0x6c>)
+    36fc:	683b      	ldr	r3, [r7, #0]
+    36fe:	fbb2 f3f3 	udiv	r3, r2, r3
+    3702:	011b      	lsls	r3, r3, #4
+    3704:	60fb      	str	r3, [r7, #12]
 		rate|=(FAPB1/baud)%16;
-    36fe:	4a0c      	ldr	r2, [pc, #48]	; (3730 <usart_set_baud+0x70>)
-    3700:	683b      	ldr	r3, [r7, #0]
-    3702:	fbb2 f3f3 	udiv	r3, r2, r3
-    3706:	f003 030f 	and.w	r3, r3, #15
-    370a:	68fa      	ldr	r2, [r7, #12]
-    370c:	4313      	orrs	r3, r2
-    370e:	60fb      	str	r3, [r7, #12]
+    3706:	4a0c      	ldr	r2, [pc, #48]	; (3738 <usart_set_baud+0x70>)
+    3708:	683b      	ldr	r3, [r7, #0]
+    370a:	fbb2 f3f3 	udiv	r3, r2, r3
+    370e:	f003 030f 	and.w	r3, r3, #15
+    3712:	68fa      	ldr	r2, [r7, #12]
+    3714:	4313      	orrs	r3, r2
+    3716:	60fb      	str	r3, [r7, #12]
 	}
 	channel->BRR=rate;
-    3710:	687b      	ldr	r3, [r7, #4]
-    3712:	68fa      	ldr	r2, [r7, #12]
-    3714:	609a      	str	r2, [r3, #8]
+    3718:	687b      	ldr	r3, [r7, #4]
+    371a:	68fa      	ldr	r2, [r7, #12]
+    371c:	609a      	str	r2, [r3, #8]
 }
-    3716:	3714      	adds	r7, #20
-    3718:	46bd      	mov	sp, r7
-    371a:	f85d 7b04 	ldr.w	r7, [sp], #4
-    371e:	4770      	bx	lr
-    3720:	40013800 	.word	0x40013800
-    3724:	003d0900 	.word	0x003d0900
-    3728:	03d09000 	.word	0x03d09000
-    372c:	001e8480 	.word	0x001e8480
-    3730:	01e84800 	.word	0x01e84800
+    371e:	3714      	adds	r7, #20
+    3720:	46bd      	mov	sp, r7
+    3722:	f85d 7b04 	ldr.w	r7, [sp], #4
+    3726:	4770      	bx	lr
+    3728:	40013800 	.word	0x40013800
+    372c:	003d0900 	.word	0x003d0900
+    3730:	03d09000 	.word	0x03d09000
+    3734:	001e8480 	.word	0x001e8480
+    3738:	01e84800 	.word	0x01e84800
 
-00003734 <usart_comm_dir>:
+0000373c <usart_comm_dir>:
 
 // direction communication 
 void usart_comm_dir(usart_t* channel, unsigned direction){
-    3734:	b480      	push	{r7}
-    3736:	b083      	sub	sp, #12
-    3738:	af00      	add	r7, sp, #0
-    373a:	6078      	str	r0, [r7, #4]
-    373c:	6039      	str	r1, [r7, #0]
+    373c:	b480      	push	{r7}
+    373e:	b083      	sub	sp, #12
+    3740:	af00      	add	r7, sp, #0
+    3742:	6078      	str	r0, [r7, #4]
+    3744:	6039      	str	r1, [r7, #0]
 	channel->CR1&=USART_CR1_DIR_MASK;
-    373e:	687b      	ldr	r3, [r7, #4]
-    3740:	68db      	ldr	r3, [r3, #12]
-    3742:	f023 020c 	bic.w	r2, r3, #12
     3746:	687b      	ldr	r3, [r7, #4]
-    3748:	60da      	str	r2, [r3, #12]
+    3748:	68db      	ldr	r3, [r3, #12]
+    374a:	f023 020c 	bic.w	r2, r3, #12
+    374e:	687b      	ldr	r3, [r7, #4]
+    3750:	60da      	str	r2, [r3, #12]
 	channel->CR1|=direction<<USART_CR1_DIR_POS;
-    374a:	687b      	ldr	r3, [r7, #4]
-    374c:	68da      	ldr	r2, [r3, #12]
-    374e:	683b      	ldr	r3, [r7, #0]
-    3750:	009b      	lsls	r3, r3, #2
-    3752:	431a      	orrs	r2, r3
-    3754:	687b      	ldr	r3, [r7, #4]
-    3756:	60da      	str	r2, [r3, #12]
+    3752:	687b      	ldr	r3, [r7, #4]
+    3754:	68da      	ldr	r2, [r3, #12]
+    3756:	683b      	ldr	r3, [r7, #0]
+    3758:	009b      	lsls	r3, r3, #2
+    375a:	431a      	orrs	r2, r3
+    375c:	687b      	ldr	r3, [r7, #4]
+    375e:	60da      	str	r2, [r3, #12]
 }
-    3758:	370c      	adds	r7, #12
-    375a:	46bd      	mov	sp, r7
-    375c:	f85d 7b04 	ldr.w	r7, [sp], #4
-    3760:	4770      	bx	lr
-    3762:	bf00      	nop
+    3760:	370c      	adds	r7, #12
+    3762:	46bd      	mov	sp, r7
+    3764:	f85d 7b04 	ldr.w	r7, [sp], #4
+    3768:	4770      	bx	lr
+    376a:	bf00      	nop
 
-00003764 <usart_open_channel>:
+0000376c <usart_open_channel>:
 
 
 // configure l'USART pour communication selon protocole RS-232
 void usart_open_channel(usart_t* channel, unsigned baud, unsigned parity, unsigned dir, unsigned flow_ctrl){
-    3764:	b580      	push	{r7, lr}
-    3766:	b084      	sub	sp, #16
-    3768:	af00      	add	r7, sp, #0
-    376a:	60f8      	str	r0, [r7, #12]
-    376c:	60b9      	str	r1, [r7, #8]
-    376e:	607a      	str	r2, [r7, #4]
-    3770:	603b      	str	r3, [r7, #0]
+    376c:	b580      	push	{r7, lr}
+    376e:	b084      	sub	sp, #16
+    3770:	af00      	add	r7, sp, #0
+    3772:	60f8      	str	r0, [r7, #12]
+    3774:	60b9      	str	r1, [r7, #8]
+    3776:	607a      	str	r2, [r7, #4]
+    3778:	603b      	str	r3, [r7, #0]
 	switch((uint32_t)channel){ // activation du périphérique USART et du PORT
-    3772:	68fb      	ldr	r3, [r7, #12]
-    3774:	4a32      	ldr	r2, [pc, #200]	; (3840 <usart_open_channel+0xdc>)
-    3776:	4293      	cmp	r3, r2
-    3778:	d020      	beq.n	37bc <usart_open_channel+0x58>
-    377a:	4a32      	ldr	r2, [pc, #200]	; (3844 <usart_open_channel+0xe0>)
-    377c:	4293      	cmp	r3, r2
-    377e:	d003      	beq.n	3788 <usart_open_channel+0x24>
-    3780:	4a31      	ldr	r2, [pc, #196]	; (3848 <usart_open_channel+0xe4>)
-    3782:	4293      	cmp	r3, r2
-    3784:	d00d      	beq.n	37a2 <usart_open_channel+0x3e>
-    3786:	e026      	b.n	37d6 <usart_open_channel+0x72>
+    377a:	68fb      	ldr	r3, [r7, #12]
+    377c:	4a32      	ldr	r2, [pc, #200]	; (3848 <usart_open_channel+0xdc>)
+    377e:	4293      	cmp	r3, r2
+    3780:	d020      	beq.n	37c4 <usart_open_channel+0x58>
+    3782:	4a32      	ldr	r2, [pc, #200]	; (384c <usart_open_channel+0xe0>)
+    3784:	4293      	cmp	r3, r2
+    3786:	d003      	beq.n	3790 <usart_open_channel+0x24>
+    3788:	4a31      	ldr	r2, [pc, #196]	; (3850 <usart_open_channel+0xe4>)
+    378a:	4293      	cmp	r3, r2
+    378c:	d00d      	beq.n	37aa <usart_open_channel+0x3e>
+    378e:	e026      	b.n	37de <usart_open_channel+0x72>
 	case (uint32_t)USART1:
 		usart_config_port(channel,USART1_PORT,flow_ctrl);
-    3788:	68f8      	ldr	r0, [r7, #12]
-    378a:	4930      	ldr	r1, [pc, #192]	; (384c <usart_open_channel+0xe8>)
-    378c:	69ba      	ldr	r2, [r7, #24]
-    378e:	f7ff fefd 	bl	358c <usart_config_port>
+    3790:	68f8      	ldr	r0, [r7, #12]
+    3792:	4930      	ldr	r1, [pc, #192]	; (3854 <usart_open_channel+0xe8>)
+    3794:	69ba      	ldr	r2, [r7, #24]
+    3796:	f7ff fefd 	bl	3594 <usart_config_port>
 		set_int_priority(IRQ_USART1,7);
-    3792:	2025      	movs	r0, #37	; 0x25
-    3794:	2107      	movs	r1, #7
-    3796:	f7ff f8ed 	bl	2974 <set_int_priority>
-		enable_interrupt(IRQ_USART1);
     379a:	2025      	movs	r0, #37	; 0x25
-    379c:	f7ff f82e 	bl	27fc <enable_interrupt>
+    379c:	2107      	movs	r1, #7
+    379e:	f7ff f8e9 	bl	2974 <set_int_priority>
+		enable_interrupt(IRQ_USART1);
+    37a2:	2025      	movs	r0, #37	; 0x25
+    37a4:	f7ff f82a 	bl	27fc <enable_interrupt>
 		break;
-    37a0:	e019      	b.n	37d6 <usart_open_channel+0x72>
+    37a8:	e019      	b.n	37de <usart_open_channel+0x72>
 	case (uint32_t)USART2:
 		usart_config_port(channel,USART2_PORT,flow_ctrl);
-    37a2:	68f8      	ldr	r0, [r7, #12]
-    37a4:	4929      	ldr	r1, [pc, #164]	; (384c <usart_open_channel+0xe8>)
-    37a6:	69ba      	ldr	r2, [r7, #24]
-    37a8:	f7ff fef0 	bl	358c <usart_config_port>
+    37aa:	68f8      	ldr	r0, [r7, #12]
+    37ac:	4929      	ldr	r1, [pc, #164]	; (3854 <usart_open_channel+0xe8>)
+    37ae:	69ba      	ldr	r2, [r7, #24]
+    37b0:	f7ff fef0 	bl	3594 <usart_config_port>
 		set_int_priority(IRQ_USART2,7);
-    37ac:	2026      	movs	r0, #38	; 0x26
-    37ae:	2107      	movs	r1, #7
-    37b0:	f7ff f8e0 	bl	2974 <set_int_priority>
-		enable_interrupt(IRQ_USART2);
     37b4:	2026      	movs	r0, #38	; 0x26
-    37b6:	f7ff f821 	bl	27fc <enable_interrupt>
+    37b6:	2107      	movs	r1, #7
+    37b8:	f7ff f8dc 	bl	2974 <set_int_priority>
+		enable_interrupt(IRQ_USART2);
+    37bc:	2026      	movs	r0, #38	; 0x26
+    37be:	f7ff f81d 	bl	27fc <enable_interrupt>
 		break;
-    37ba:	e00c      	b.n	37d6 <usart_open_channel+0x72>
+    37c2:	e00c      	b.n	37de <usart_open_channel+0x72>
 	case (uint32_t)USART3:
 		usart_config_port(channel,USART3_PORT,flow_ctrl);
-    37bc:	68f8      	ldr	r0, [r7, #12]
-    37be:	4924      	ldr	r1, [pc, #144]	; (3850 <usart_open_channel+0xec>)
-    37c0:	69ba      	ldr	r2, [r7, #24]
-    37c2:	f7ff fee3 	bl	358c <usart_config_port>
+    37c4:	68f8      	ldr	r0, [r7, #12]
+    37c6:	4924      	ldr	r1, [pc, #144]	; (3858 <usart_open_channel+0xec>)
+    37c8:	69ba      	ldr	r2, [r7, #24]
+    37ca:	f7ff fee3 	bl	3594 <usart_config_port>
 		set_int_priority(IRQ_USART3,7);
-    37c6:	2027      	movs	r0, #39	; 0x27
-    37c8:	2107      	movs	r1, #7
-    37ca:	f7ff f8d3 	bl	2974 <set_int_priority>
-		enable_interrupt(IRQ_USART3);
     37ce:	2027      	movs	r0, #39	; 0x27
-    37d0:	f7ff f814 	bl	27fc <enable_interrupt>
+    37d0:	2107      	movs	r1, #7
+    37d2:	f7ff f8cf 	bl	2974 <set_int_priority>
+		enable_interrupt(IRQ_USART3);
+    37d6:	2027      	movs	r0, #39	; 0x27
+    37d8:	f7ff f810 	bl	27fc <enable_interrupt>
 		break;
-    37d4:	bf00      	nop
+    37dc:	bf00      	nop
 	}
 	if (flow_ctrl==FLOW_HARD){
-    37d6:	69bb      	ldr	r3, [r7, #24]
-    37d8:	2b01      	cmp	r3, #1
-    37da:	d103      	bne.n	37e4 <usart_open_channel+0x80>
+    37de:	69bb      	ldr	r3, [r7, #24]
+    37e0:	2b01      	cmp	r3, #1
+    37e2:	d103      	bne.n	37ec <usart_open_channel+0x80>
 		channel->CR3=USART_CR3_CTSE|USART_CR3_RTSE;
-    37dc:	68fb      	ldr	r3, [r7, #12]
-    37de:	f44f 7240 	mov.w	r2, #768	; 0x300
-    37e2:	615a      	str	r2, [r3, #20]
+    37e4:	68fb      	ldr	r3, [r7, #12]
+    37e6:	f44f 7240 	mov.w	r2, #768	; 0x300
+    37ea:	615a      	str	r2, [r3, #20]
 	}
 	usart_comm_dir(channel,dir);
-    37e4:	68f8      	ldr	r0, [r7, #12]
-    37e6:	6839      	ldr	r1, [r7, #0]
-    37e8:	f7ff ffa4 	bl	3734 <usart_comm_dir>
+    37ec:	68f8      	ldr	r0, [r7, #12]
+    37ee:	6839      	ldr	r1, [r7, #0]
+    37f0:	f7ff ffa4 	bl	373c <usart_comm_dir>
 	switch (parity){
-    37ec:	687b      	ldr	r3, [r7, #4]
-    37ee:	2b01      	cmp	r3, #1
-    37f0:	d00b      	beq.n	380a <usart_open_channel+0xa6>
-    37f2:	2b01      	cmp	r3, #1
-    37f4:	d302      	bcc.n	37fc <usart_open_channel+0x98>
-    37f6:	2b02      	cmp	r3, #2
-    37f8:	d00e      	beq.n	3818 <usart_open_channel+0xb4>
-    37fa:	e014      	b.n	3826 <usart_open_channel+0xc2>
+    37f4:	687b      	ldr	r3, [r7, #4]
+    37f6:	2b01      	cmp	r3, #1
+    37f8:	d00b      	beq.n	3812 <usart_open_channel+0xa6>
+    37fa:	2b01      	cmp	r3, #1
+    37fc:	d302      	bcc.n	3804 <usart_open_channel+0x98>
+    37fe:	2b02      	cmp	r3, #2
+    3800:	d00e      	beq.n	3820 <usart_open_channel+0xb4>
+    3802:	e014      	b.n	382e <usart_open_channel+0xc2>
 	case PARITY_NONE:
 		channel->CR1|=USART_CR1_RXNEIE;
-    37fc:	68fb      	ldr	r3, [r7, #12]
-    37fe:	68db      	ldr	r3, [r3, #12]
-    3800:	f043 0220 	orr.w	r2, r3, #32
     3804:	68fb      	ldr	r3, [r7, #12]
-    3806:	60da      	str	r2, [r3, #12]
+    3806:	68db      	ldr	r3, [r3, #12]
+    3808:	f043 0220 	orr.w	r2, r3, #32
+    380c:	68fb      	ldr	r3, [r7, #12]
+    380e:	60da      	str	r2, [r3, #12]
 		break;
-    3808:	e00d      	b.n	3826 <usart_open_channel+0xc2>
+    3810:	e00d      	b.n	382e <usart_open_channel+0xc2>
 	case PARITY_ODD:
 		channel->CR1|=USART_CR1_PEIE|USART_CR1_PCE|USART_CR1_PS|USART_CR1_RXNEIE;
-    380a:	68fb      	ldr	r3, [r7, #12]
-    380c:	68db      	ldr	r3, [r3, #12]
-    380e:	f443 62e4 	orr.w	r2, r3, #1824	; 0x720
     3812:	68fb      	ldr	r3, [r7, #12]
-    3814:	60da      	str	r2, [r3, #12]
+    3814:	68db      	ldr	r3, [r3, #12]
+    3816:	f443 62e4 	orr.w	r2, r3, #1824	; 0x720
+    381a:	68fb      	ldr	r3, [r7, #12]
+    381c:	60da      	str	r2, [r3, #12]
 		break;
-    3816:	e006      	b.n	3826 <usart_open_channel+0xc2>
+    381e:	e006      	b.n	382e <usart_open_channel+0xc2>
 	case PARITY_EVEN:
 		channel->CR1|=USART_CR1_PEIE|USART_CR1_PCE|USART_CR1_RXNEIE;
-    3818:	68fb      	ldr	r3, [r7, #12]
-    381a:	68db      	ldr	r3, [r3, #12]
-    381c:	f443 62a4 	orr.w	r2, r3, #1312	; 0x520
     3820:	68fb      	ldr	r3, [r7, #12]
-    3822:	60da      	str	r2, [r3, #12]
+    3822:	68db      	ldr	r3, [r3, #12]
+    3824:	f443 62a4 	orr.w	r2, r3, #1312	; 0x520
+    3828:	68fb      	ldr	r3, [r7, #12]
+    382a:	60da      	str	r2, [r3, #12]
 		break;
-    3824:	bf00      	nop
+    382c:	bf00      	nop
     }
 	usart_set_baud(channel,baud);
-    3826:	68f8      	ldr	r0, [r7, #12]
-    3828:	68b9      	ldr	r1, [r7, #8]
-    382a:	f7ff ff49 	bl	36c0 <usart_set_baud>
+    382e:	68f8      	ldr	r0, [r7, #12]
+    3830:	68b9      	ldr	r1, [r7, #8]
+    3832:	f7ff ff49 	bl	36c8 <usart_set_baud>
     channel->CR1|=USART_CR1_UE;
-    382e:	68fb      	ldr	r3, [r7, #12]
-    3830:	68db      	ldr	r3, [r3, #12]
-    3832:	f443 5200 	orr.w	r2, r3, #8192	; 0x2000
     3836:	68fb      	ldr	r3, [r7, #12]
-    3838:	60da      	str	r2, [r3, #12]
+    3838:	68db      	ldr	r3, [r3, #12]
+    383a:	f443 5200 	orr.w	r2, r3, #8192	; 0x2000
+    383e:	68fb      	ldr	r3, [r7, #12]
+    3840:	60da      	str	r2, [r3, #12]
 }
-    383a:	3710      	adds	r7, #16
-    383c:	46bd      	mov	sp, r7
-    383e:	bd80      	pop	{r7, pc}
-    3840:	40004800 	.word	0x40004800
-    3844:	40013800 	.word	0x40013800
-    3848:	40004400 	.word	0x40004400
-    384c:	40010800 	.word	0x40010800
-    3850:	40010c00 	.word	0x40010c00
+    3842:	3710      	adds	r7, #16
+    3844:	46bd      	mov	sp, r7
+    3846:	bd80      	pop	{r7, pc}
+    3848:	40004800 	.word	0x40004800
+    384c:	40013800 	.word	0x40013800
+    3850:	40004400 	.word	0x40004400
+    3854:	40010800 	.word	0x40010800
+    3858:	40010c00 	.word	0x40010c00
 
-00003854 <usart_stat>:
+0000385c <usart_stat>:
 
 // status de la console récepction
 // retourne 0 si pas de caractère disponible
 // retourne -1 si caractère disponible
 int usart_stat(usart_t* channel){
-    3854:	b480      	push	{r7}
-    3856:	b083      	sub	sp, #12
-    3858:	af00      	add	r7, sp, #0
-    385a:	6078      	str	r0, [r7, #4]
+    385c:	b480      	push	{r7}
+    385e:	b083      	sub	sp, #12
+    3860:	af00      	add	r7, sp, #0
+    3862:	6078      	str	r0, [r7, #4]
 	return channel->SR&USART_SR_RXNE;
-    385c:	687b      	ldr	r3, [r7, #4]
-    385e:	681b      	ldr	r3, [r3, #0]
-    3860:	f003 0320 	and.w	r3, r3, #32
+    3864:	687b      	ldr	r3, [r7, #4]
+    3866:	681b      	ldr	r3, [r3, #0]
+    3868:	f003 0320 	and.w	r3, r3, #32
 }
-    3864:	4618      	mov	r0, r3
-    3866:	370c      	adds	r7, #12
-    3868:	46bd      	mov	sp, r7
-    386a:	f85d 7b04 	ldr.w	r7, [sp], #4
-    386e:	4770      	bx	lr
+    386c:	4618      	mov	r0, r3
+    386e:	370c      	adds	r7, #12
+    3870:	46bd      	mov	sp, r7
+    3872:	f85d 7b04 	ldr.w	r7, [sp], #4
+    3876:	4770      	bx	lr
 
-00003870 <usart_getc>:
+00003878 <usart_getc>:
 
 // reçoit un caractère de la console
 char usart_getc(usart_t* channel){
-    3870:	b480      	push	{r7}
-    3872:	b083      	sub	sp, #12
-    3874:	af00      	add	r7, sp, #0
-    3876:	6078      	str	r0, [r7, #4]
+    3878:	b480      	push	{r7}
+    387a:	b083      	sub	sp, #12
+    387c:	af00      	add	r7, sp, #0
+    387e:	6078      	str	r0, [r7, #4]
 	return channel->DR;
-    3878:	687b      	ldr	r3, [r7, #4]
-    387a:	685b      	ldr	r3, [r3, #4]
-    387c:	b2db      	uxtb	r3, r3
+    3880:	687b      	ldr	r3, [r7, #4]
+    3882:	685b      	ldr	r3, [r3, #4]
+    3884:	b2db      	uxtb	r3, r3
 }
-    387e:	4618      	mov	r0, r3
-    3880:	370c      	adds	r7, #12
-    3882:	46bd      	mov	sp, r7
-    3884:	f85d 7b04 	ldr.w	r7, [sp], #4
-    3888:	4770      	bx	lr
-    388a:	bf00      	nop
+    3886:	4618      	mov	r0, r3
+    3888:	370c      	adds	r7, #12
+    388a:	46bd      	mov	sp, r7
+    388c:	f85d 7b04 	ldr.w	r7, [sp], #4
+    3890:	4770      	bx	lr
+    3892:	bf00      	nop
 
-0000388c <usart_putc>:
+00003894 <usart_putc>:
 
 // transmet un caractère à la console
 void usart_putc(usart_t* channel, char c){
-    388c:	b480      	push	{r7}
-    388e:	b083      	sub	sp, #12
-    3890:	af00      	add	r7, sp, #0
-    3892:	6078      	str	r0, [r7, #4]
-    3894:	460b      	mov	r3, r1
-    3896:	70fb      	strb	r3, [r7, #3]
+    3894:	b480      	push	{r7}
+    3896:	b083      	sub	sp, #12
+    3898:	af00      	add	r7, sp, #0
+    389a:	6078      	str	r0, [r7, #4]
+    389c:	460b      	mov	r3, r1
+    389e:	70fb      	strb	r3, [r7, #3]
 	//attend que dr soit vide
 	while (!(channel->SR&USART_SR_TXE));
-    3898:	bf00      	nop
-    389a:	687b      	ldr	r3, [r7, #4]
-    389c:	681b      	ldr	r3, [r3, #0]
-    389e:	f003 0380 	and.w	r3, r3, #128	; 0x80
-    38a2:	2b00      	cmp	r3, #0
-    38a4:	d0f9      	beq.n	389a <usart_putc+0xe>
+    38a0:	bf00      	nop
+    38a2:	687b      	ldr	r3, [r7, #4]
+    38a4:	681b      	ldr	r3, [r3, #0]
+    38a6:	f003 0380 	and.w	r3, r3, #128	; 0x80
+    38aa:	2b00      	cmp	r3, #0
+    38ac:	d0f9      	beq.n	38a2 <usart_putc+0xe>
 	channel->DR=c;
-    38a6:	78fa      	ldrb	r2, [r7, #3]
-    38a8:	687b      	ldr	r3, [r7, #4]
-    38aa:	605a      	str	r2, [r3, #4]
+    38ae:	78fa      	ldrb	r2, [r7, #3]
+    38b0:	687b      	ldr	r3, [r7, #4]
+    38b2:	605a      	str	r2, [r3, #4]
 }
-    38ac:	370c      	adds	r7, #12
-    38ae:	46bd      	mov	sp, r7
-    38b0:	f85d 7b04 	ldr.w	r7, [sp], #4
-    38b4:	4770      	bx	lr
-    38b6:	bf00      	nop
+    38b4:	370c      	adds	r7, #12
+    38b6:	46bd      	mov	sp, r7
+    38b8:	f85d 7b04 	ldr.w	r7, [sp], #4
+    38bc:	4770      	bx	lr
+    38be:	bf00      	nop
 
-000038b8 <usart_cts>:
+000038c0 <usart_cts>:
 
 
 int usart_cts(usart_t* channel){
-    38b8:	b480      	push	{r7}
-    38ba:	b085      	sub	sp, #20
-    38bc:	af00      	add	r7, sp, #0
-    38be:	6078      	str	r0, [r7, #4]
+    38c0:	b480      	push	{r7}
+    38c2:	b085      	sub	sp, #20
+    38c4:	af00      	add	r7, sp, #0
+    38c6:	6078      	str	r0, [r7, #4]
 	int cts;
 	switch ((uint32_t)channel){
-    38c0:	687b      	ldr	r3, [r7, #4]
-    38c2:	4a11      	ldr	r2, [pc, #68]	; (3908 <usart_cts+0x50>)
-    38c4:	4293      	cmp	r3, r2
-    38c6:	d012      	beq.n	38ee <usart_cts+0x36>
-    38c8:	4a10      	ldr	r2, [pc, #64]	; (390c <usart_cts+0x54>)
-    38ca:	4293      	cmp	r3, r2
-    38cc:	d003      	beq.n	38d6 <usart_cts+0x1e>
-    38ce:	4a10      	ldr	r2, [pc, #64]	; (3910 <usart_cts+0x58>)
-    38d0:	4293      	cmp	r3, r2
-    38d2:	d006      	beq.n	38e2 <usart_cts+0x2a>
-    38d4:	e011      	b.n	38fa <usart_cts+0x42>
+    38c8:	687b      	ldr	r3, [r7, #4]
+    38ca:	4a11      	ldr	r2, [pc, #68]	; (3910 <usart_cts+0x50>)
+    38cc:	4293      	cmp	r3, r2
+    38ce:	d012      	beq.n	38f6 <usart_cts+0x36>
+    38d0:	4a10      	ldr	r2, [pc, #64]	; (3914 <usart_cts+0x54>)
+    38d2:	4293      	cmp	r3, r2
+    38d4:	d003      	beq.n	38de <usart_cts+0x1e>
+    38d6:	4a10      	ldr	r2, [pc, #64]	; (3918 <usart_cts+0x58>)
+    38d8:	4293      	cmp	r3, r2
+    38da:	d006      	beq.n	38ea <usart_cts+0x2a>
+    38dc:	e011      	b.n	3902 <usart_cts+0x42>
 		case (uint32_t)USART1:
 			cts=USART1_PORT->IDR&USART1_CTS_BIT;
-    38d6:	4b0f      	ldr	r3, [pc, #60]	; (3914 <usart_cts+0x5c>)
-    38d8:	689b      	ldr	r3, [r3, #8]
-    38da:	f403 6300 	and.w	r3, r3, #2048	; 0x800
-    38de:	60fb      	str	r3, [r7, #12]
+    38de:	4b0f      	ldr	r3, [pc, #60]	; (391c <usart_cts+0x5c>)
+    38e0:	689b      	ldr	r3, [r3, #8]
+    38e2:	f403 6300 	and.w	r3, r3, #2048	; 0x800
+    38e6:	60fb      	str	r3, [r7, #12]
 			break;
-    38e0:	e00b      	b.n	38fa <usart_cts+0x42>
+    38e8:	e00b      	b.n	3902 <usart_cts+0x42>
 		case (uint32_t)USART2:
 			cts=USART2_PORT->IDR&USART2_CTS_BIT;
-    38e2:	4b0c      	ldr	r3, [pc, #48]	; (3914 <usart_cts+0x5c>)
-    38e4:	689b      	ldr	r3, [r3, #8]
-    38e6:	f003 0301 	and.w	r3, r3, #1
-    38ea:	60fb      	str	r3, [r7, #12]
+    38ea:	4b0c      	ldr	r3, [pc, #48]	; (391c <usart_cts+0x5c>)
+    38ec:	689b      	ldr	r3, [r3, #8]
+    38ee:	f003 0301 	and.w	r3, r3, #1
+    38f2:	60fb      	str	r3, [r7, #12]
 			break;
-    38ec:	e005      	b.n	38fa <usart_cts+0x42>
+    38f4:	e005      	b.n	3902 <usart_cts+0x42>
 		case (uint32_t)USART3:
 			cts=USART3_PORT->IDR&USART3_CTS_BIT;
-    38ee:	4b0a      	ldr	r3, [pc, #40]	; (3918 <usart_cts+0x60>)
-    38f0:	689b      	ldr	r3, [r3, #8]
-    38f2:	f403 5300 	and.w	r3, r3, #8192	; 0x2000
-    38f6:	60fb      	str	r3, [r7, #12]
+    38f6:	4b0a      	ldr	r3, [pc, #40]	; (3920 <usart_cts+0x60>)
+    38f8:	689b      	ldr	r3, [r3, #8]
+    38fa:	f403 5300 	and.w	r3, r3, #8192	; 0x2000
+    38fe:	60fb      	str	r3, [r7, #12]
 			break;
-    38f8:	bf00      	nop
+    3900:	bf00      	nop
 	}
 	return cts;
-    38fa:	68fb      	ldr	r3, [r7, #12]
+    3902:	68fb      	ldr	r3, [r7, #12]
 }
-    38fc:	4618      	mov	r0, r3
-    38fe:	3714      	adds	r7, #20
-    3900:	46bd      	mov	sp, r7
-    3902:	f85d 7b04 	ldr.w	r7, [sp], #4
-    3906:	4770      	bx	lr
-    3908:	40004800 	.word	0x40004800
-    390c:	40013800 	.word	0x40013800
-    3910:	40004400 	.word	0x40004400
-    3914:	40010800 	.word	0x40010800
-    3918:	40010c00 	.word	0x40010c00
+    3904:	4618      	mov	r0, r3
+    3906:	3714      	adds	r7, #20
+    3908:	46bd      	mov	sp, r7
+    390a:	f85d 7b04 	ldr.w	r7, [sp], #4
+    390e:	4770      	bx	lr
+    3910:	40004800 	.word	0x40004800
+    3914:	40013800 	.word	0x40013800
+    3918:	40004400 	.word	0x40004400
+    391c:	40010800 	.word	0x40010800
+    3920:	40010c00 	.word	0x40010c00
 
-0000391c <vt_init>:
+00003924 <vt_init>:
 
 #include "../include/blue_pill.h"
 #include "vt100.h"
 #include "console.h"
 
 void vt_init(){
-    391c:	b580      	push	{r7, lr}
-    391e:	b082      	sub	sp, #8
-    3920:	af02      	add	r7, sp, #8
+    3924:	b580      	push	{r7, lr}
+    3926:	b082      	sub	sp, #8
+    3928:	af02      	add	r7, sp, #8
 	usart_open_channel(VT_USART,115200,PARITY_NONE,USART_DIR_BIDI,FLOW_HARD);
-    3922:	2301      	movs	r3, #1
-    3924:	9300      	str	r3, [sp, #0]
-    3926:	4804      	ldr	r0, [pc, #16]	; (3938 <vt_init+0x1c>)
-    3928:	f44f 31e1 	mov.w	r1, #115200	; 0x1c200
-    392c:	2200      	movs	r2, #0
-    392e:	2303      	movs	r3, #3
-    3930:	f7ff ff18 	bl	3764 <usart_open_channel>
+    392a:	2301      	movs	r3, #1
+    392c:	9300      	str	r3, [sp, #0]
+    392e:	4804      	ldr	r0, [pc, #16]	; (3940 <vt_init+0x1c>)
+    3930:	f44f 31e1 	mov.w	r1, #115200	; 0x1c200
+    3934:	2200      	movs	r2, #0
+    3936:	2303      	movs	r3, #3
+    3938:	f7ff ff18 	bl	376c <usart_open_channel>
 }
-    3934:	46bd      	mov	sp, r7
-    3936:	bd80      	pop	{r7, pc}
-    3938:	40004400 	.word	0x40004400
+    393c:	46bd      	mov	sp, r7
+    393e:	bd80      	pop	{r7, pc}
+    3940:	40004400 	.word	0x40004400
 
-0000393c <vt_putc>:
+00003944 <vt_putc>:
 
 void vt_putc(char c){
-    393c:	b580      	push	{r7, lr}
-    393e:	b082      	sub	sp, #8
-    3940:	af00      	add	r7, sp, #0
-    3942:	4603      	mov	r3, r0
-    3944:	71fb      	strb	r3, [r7, #7]
+    3944:	b580      	push	{r7, lr}
+    3946:	b082      	sub	sp, #8
+    3948:	af00      	add	r7, sp, #0
+    394a:	4603      	mov	r3, r0
+    394c:	71fb      	strb	r3, [r7, #7]
 	usart_putc(VT_USART,c);
-    3946:	79fb      	ldrb	r3, [r7, #7]
-    3948:	4803      	ldr	r0, [pc, #12]	; (3958 <vt_putc+0x1c>)
-    394a:	4619      	mov	r1, r3
-    394c:	f7ff ff9e 	bl	388c <usart_putc>
+    394e:	79fb      	ldrb	r3, [r7, #7]
+    3950:	4803      	ldr	r0, [pc, #12]	; (3960 <vt_putc+0x1c>)
+    3952:	4619      	mov	r1, r3
+    3954:	f7ff ff9e 	bl	3894 <usart_putc>
 }
-    3950:	3708      	adds	r7, #8
-    3952:	46bd      	mov	sp, r7
-    3954:	bd80      	pop	{r7, pc}
-    3956:	bf00      	nop
-    3958:	40004400 	.word	0x40004400
+    3958:	3708      	adds	r7, #8
+    395a:	46bd      	mov	sp, r7
+    395c:	bd80      	pop	{r7, pc}
+    395e:	bf00      	nop
+    3960:	40004400 	.word	0x40004400
 
-0000395c <vt_del_back>:
+00003964 <vt_del_back>:
 
 void vt_del_back(){
-    395c:	b580      	push	{r7, lr}
-    395e:	af00      	add	r7, sp, #0
+    3964:	b580      	push	{r7, lr}
+    3966:	af00      	add	r7, sp, #0
 	usart_putc(VT_USART,BS);
-    3960:	4806      	ldr	r0, [pc, #24]	; (397c <vt_del_back+0x20>)
-    3962:	2108      	movs	r1, #8
-    3964:	f7ff ff92 	bl	388c <usart_putc>
+    3968:	4806      	ldr	r0, [pc, #24]	; (3984 <vt_del_back+0x20>)
+    396a:	2108      	movs	r1, #8
+    396c:	f7ff ff92 	bl	3894 <usart_putc>
 	usart_putc(VT_USART,SPACE);
-    3968:	4804      	ldr	r0, [pc, #16]	; (397c <vt_del_back+0x20>)
-    396a:	2120      	movs	r1, #32
-    396c:	f7ff ff8e 	bl	388c <usart_putc>
+    3970:	4804      	ldr	r0, [pc, #16]	; (3984 <vt_del_back+0x20>)
+    3972:	2120      	movs	r1, #32
+    3974:	f7ff ff8e 	bl	3894 <usart_putc>
 	usart_putc(VT_USART,BS);
-    3970:	4802      	ldr	r0, [pc, #8]	; (397c <vt_del_back+0x20>)
-    3972:	2108      	movs	r1, #8
-    3974:	f7ff ff8a 	bl	388c <usart_putc>
+    3978:	4802      	ldr	r0, [pc, #8]	; (3984 <vt_del_back+0x20>)
+    397a:	2108      	movs	r1, #8
+    397c:	f7ff ff8a 	bl	3894 <usart_putc>
 }
-    3978:	bd80      	pop	{r7, pc}
-    397a:	bf00      	nop
-    397c:	40004400 	.word	0x40004400
+    3980:	bd80      	pop	{r7, pc}
+    3982:	bf00      	nop
+    3984:	40004400 	.word	0x40004400
 
-00003980 <vt_esc_seq>:
+00003988 <vt_esc_seq>:
 
 static void vt_esc_seq(){
-    3980:	b580      	push	{r7, lr}
-    3982:	af00      	add	r7, sp, #0
+    3988:	b580      	push	{r7, lr}
+    398a:	af00      	add	r7, sp, #0
 	usart_putc(VT_USART,ESC);
-    3984:	4804      	ldr	r0, [pc, #16]	; (3998 <vt_esc_seq+0x18>)
-    3986:	211b      	movs	r1, #27
-    3988:	f7ff ff80 	bl	388c <usart_putc>
+    398c:	4804      	ldr	r0, [pc, #16]	; (39a0 <vt_esc_seq+0x18>)
+    398e:	211b      	movs	r1, #27
+    3990:	f7ff ff80 	bl	3894 <usart_putc>
 	usart_putc(VT_USART,'[');
-    398c:	4802      	ldr	r0, [pc, #8]	; (3998 <vt_esc_seq+0x18>)
-    398e:	215b      	movs	r1, #91	; 0x5b
-    3990:	f7ff ff7c 	bl	388c <usart_putc>
+    3994:	4802      	ldr	r0, [pc, #8]	; (39a0 <vt_esc_seq+0x18>)
+    3996:	215b      	movs	r1, #91	; 0x5b
+    3998:	f7ff ff7c 	bl	3894 <usart_putc>
 }
-    3994:	bd80      	pop	{r7, pc}
-    3996:	bf00      	nop
-    3998:	40004400 	.word	0x40004400
+    399c:	bd80      	pop	{r7, pc}
+    399e:	bf00      	nop
+    39a0:	40004400 	.word	0x40004400
 
-0000399c <vt_cls>:
+000039a4 <vt_cls>:
 
 
 // vide l'écran de la console
 void vt_cls(){
-    399c:	b580      	push	{r7, lr}
-    399e:	af00      	add	r7, sp, #0
+    39a4:	b580      	push	{r7, lr}
+    39a6:	af00      	add	r7, sp, #0
 	vt_esc_seq();
-    39a0:	f7ff ffee 	bl	3980 <vt_esc_seq>
+    39a8:	f7ff ffee 	bl	3988 <vt_esc_seq>
 	usart_putc(VT_USART,'2');
-    39a4:	4804      	ldr	r0, [pc, #16]	; (39b8 <vt_cls+0x1c>)
-    39a6:	2132      	movs	r1, #50	; 0x32
-    39a8:	f7ff ff70 	bl	388c <usart_putc>
+    39ac:	4804      	ldr	r0, [pc, #16]	; (39c0 <vt_cls+0x1c>)
+    39ae:	2132      	movs	r1, #50	; 0x32
+    39b0:	f7ff ff70 	bl	3894 <usart_putc>
 	usart_putc(VT_USART,'J');
-    39ac:	4802      	ldr	r0, [pc, #8]	; (39b8 <vt_cls+0x1c>)
-    39ae:	214a      	movs	r1, #74	; 0x4a
-    39b0:	f7ff ff6c 	bl	388c <usart_putc>
+    39b4:	4802      	ldr	r0, [pc, #8]	; (39c0 <vt_cls+0x1c>)
+    39b6:	214a      	movs	r1, #74	; 0x4a
+    39b8:	f7ff ff6c 	bl	3894 <usart_putc>
 }
-    39b4:	bd80      	pop	{r7, pc}
-    39b6:	bf00      	nop
-    39b8:	40004400 	.word	0x40004400
+    39bc:	bd80      	pop	{r7, pc}
+    39be:	bf00      	nop
+    39c0:	40004400 	.word	0x40004400
 
-000039bc <vt_clear_line>:
+000039c4 <vt_clear_line>:
 
 // vide la ligne du curseur
 // n -> nombre de caractère à effacer.
 void vt_clear_line(unsigned n){
-    39bc:	b580      	push	{r7, lr}
-    39be:	b082      	sub	sp, #8
-    39c0:	af00      	add	r7, sp, #0
-    39c2:	6078      	str	r0, [r7, #4]
+    39c4:	b580      	push	{r7, lr}
+    39c6:	b082      	sub	sp, #8
+    39c8:	af00      	add	r7, sp, #0
+    39ca:	6078      	str	r0, [r7, #4]
 	vt_esc_seq();
-    39c4:	f7ff ffdc 	bl	3980 <vt_esc_seq>
+    39cc:	f7ff ffdc 	bl	3988 <vt_esc_seq>
 	usart_putc(VT_USART,'2');
-    39c8:	480a      	ldr	r0, [pc, #40]	; (39f4 <vt_clear_line+0x38>)
-    39ca:	2132      	movs	r1, #50	; 0x32
-    39cc:	f7ff ff5e 	bl	388c <usart_putc>
+    39d0:	480a      	ldr	r0, [pc, #40]	; (39fc <vt_clear_line+0x38>)
+    39d2:	2132      	movs	r1, #50	; 0x32
+    39d4:	f7ff ff5e 	bl	3894 <usart_putc>
 	usart_putc(VT_USART,'K');
-    39d0:	4808      	ldr	r0, [pc, #32]	; (39f4 <vt_clear_line+0x38>)
-    39d2:	214b      	movs	r1, #75	; 0x4b
-    39d4:	f7ff ff5a 	bl	388c <usart_putc>
+    39d8:	4808      	ldr	r0, [pc, #32]	; (39fc <vt_clear_line+0x38>)
+    39da:	214b      	movs	r1, #75	; 0x4b
+    39dc:	f7ff ff5a 	bl	3894 <usart_putc>
 	while (n){usart_putc(VT_USART,BS);n--;}
-    39d8:	e006      	b.n	39e8 <vt_clear_line+0x2c>
-    39da:	4806      	ldr	r0, [pc, #24]	; (39f4 <vt_clear_line+0x38>)
-    39dc:	2108      	movs	r1, #8
-    39de:	f7ff ff55 	bl	388c <usart_putc>
-    39e2:	687b      	ldr	r3, [r7, #4]
-    39e4:	3b01      	subs	r3, #1
-    39e6:	607b      	str	r3, [r7, #4]
-    39e8:	687b      	ldr	r3, [r7, #4]
-    39ea:	2b00      	cmp	r3, #0
-    39ec:	d1f5      	bne.n	39da <vt_clear_line+0x1e>
+    39e0:	e006      	b.n	39f0 <vt_clear_line+0x2c>
+    39e2:	4806      	ldr	r0, [pc, #24]	; (39fc <vt_clear_line+0x38>)
+    39e4:	2108      	movs	r1, #8
+    39e6:	f7ff ff55 	bl	3894 <usart_putc>
+    39ea:	687b      	ldr	r3, [r7, #4]
+    39ec:	3b01      	subs	r3, #1
+    39ee:	607b      	str	r3, [r7, #4]
+    39f0:	687b      	ldr	r3, [r7, #4]
+    39f2:	2b00      	cmp	r3, #0
+    39f4:	d1f5      	bne.n	39e2 <vt_clear_line+0x1e>
 }
-    39ee:	3708      	adds	r7, #8
-    39f0:	46bd      	mov	sp, r7
-    39f2:	bd80      	pop	{r7, pc}
-    39f4:	40004400 	.word	0x40004400
+    39f6:	3708      	adds	r7, #8
+    39f8:	46bd      	mov	sp, r7
+    39fa:	bd80      	pop	{r7, pc}
+    39fc:	40004400 	.word	0x40004400
 
-000039f8 <vt_ready>:
+00003a00 <vt_ready>:
 
 // vérifie si le terminal est prêt
 int vt_ready(){
-    39f8:	b480      	push	{r7}
-    39fa:	af00      	add	r7, sp, #0
+    3a00:	b480      	push	{r7}
+    3a02:	af00      	add	r7, sp, #0
 	return !(VT_PORT->IDR&VT_CTS_BIT);
-    39fc:	4b06      	ldr	r3, [pc, #24]	; (3a18 <vt_ready+0x20>)
-    39fe:	689b      	ldr	r3, [r3, #8]
-    3a00:	f003 0301 	and.w	r3, r3, #1
-    3a04:	2b00      	cmp	r3, #0
-    3a06:	bf0c      	ite	eq
-    3a08:	2301      	moveq	r3, #1
-    3a0a:	2300      	movne	r3, #0
-    3a0c:	b2db      	uxtb	r3, r3
+    3a04:	4b06      	ldr	r3, [pc, #24]	; (3a20 <vt_ready+0x20>)
+    3a06:	689b      	ldr	r3, [r3, #8]
+    3a08:	f003 0301 	and.w	r3, r3, #1
+    3a0c:	2b00      	cmp	r3, #0
+    3a0e:	bf0c      	ite	eq
+    3a10:	2301      	moveq	r3, #1
+    3a12:	2300      	movne	r3, #0
+    3a14:	b2db      	uxtb	r3, r3
 }
-    3a0e:	4618      	mov	r0, r3
-    3a10:	46bd      	mov	sp, r7
-    3a12:	f85d 7b04 	ldr.w	r7, [sp], #4
-    3a16:	4770      	bx	lr
-    3a18:	40010800 	.word	0x40010800
+    3a16:	4618      	mov	r0, r3
+    3a18:	46bd      	mov	sp, r7
+    3a1a:	f85d 7b04 	ldr.w	r7, [sp], #4
+    3a1e:	4770      	bx	lr
+    3a20:	40010800 	.word	0x40010800
 
-00003a1c <vt_rx_enable>:
+00003a24 <vt_rx_enable>:
 
 void vt_rx_enable(int enable){
-    3a1c:	b480      	push	{r7}
-    3a1e:	b085      	sub	sp, #20
-    3a20:	af00      	add	r7, sp, #0
-    3a22:	6078      	str	r0, [r7, #4]
+    3a24:	b480      	push	{r7}
+    3a26:	b085      	sub	sp, #20
+    3a28:	af00      	add	r7, sp, #0
+    3a2a:	6078      	str	r0, [r7, #4]
 	char c;
 	if (enable){
-    3a24:	687b      	ldr	r3, [r7, #4]
-    3a26:	2b00      	cmp	r3, #0
-    3a28:	d006      	beq.n	3a38 <vt_rx_enable+0x1c>
+    3a2c:	687b      	ldr	r3, [r7, #4]
+    3a2e:	2b00      	cmp	r3, #0
+    3a30:	d006      	beq.n	3a40 <vt_rx_enable+0x1c>
 		VT_USART->CR1|=USART_CR1_RXNEIE;
-    3a2a:	4a0a      	ldr	r2, [pc, #40]	; (3a54 <vt_rx_enable+0x38>)
-    3a2c:	4b09      	ldr	r3, [pc, #36]	; (3a54 <vt_rx_enable+0x38>)
-    3a2e:	68db      	ldr	r3, [r3, #12]
-    3a30:	f043 0320 	orr.w	r3, r3, #32
-    3a34:	60d3      	str	r3, [r2, #12]
-    3a36:	e008      	b.n	3a4a <vt_rx_enable+0x2e>
+    3a32:	4a0a      	ldr	r2, [pc, #40]	; (3a5c <vt_rx_enable+0x38>)
+    3a34:	4b09      	ldr	r3, [pc, #36]	; (3a5c <vt_rx_enable+0x38>)
+    3a36:	68db      	ldr	r3, [r3, #12]
+    3a38:	f043 0320 	orr.w	r3, r3, #32
+    3a3c:	60d3      	str	r3, [r2, #12]
+    3a3e:	e008      	b.n	3a52 <vt_rx_enable+0x2e>
 	}else{
 		c=VT_USART->DR;
-    3a38:	4b06      	ldr	r3, [pc, #24]	; (3a54 <vt_rx_enable+0x38>)
-    3a3a:	685b      	ldr	r3, [r3, #4]
-    3a3c:	73fb      	strb	r3, [r7, #15]
+    3a40:	4b06      	ldr	r3, [pc, #24]	; (3a5c <vt_rx_enable+0x38>)
+    3a42:	685b      	ldr	r3, [r3, #4]
+    3a44:	73fb      	strb	r3, [r7, #15]
 		VT_USART->CR1&=~USART_CR1_RXNEIE;
-    3a3e:	4a05      	ldr	r2, [pc, #20]	; (3a54 <vt_rx_enable+0x38>)
-    3a40:	4b04      	ldr	r3, [pc, #16]	; (3a54 <vt_rx_enable+0x38>)
-    3a42:	68db      	ldr	r3, [r3, #12]
-    3a44:	f023 0320 	bic.w	r3, r3, #32
-    3a48:	60d3      	str	r3, [r2, #12]
+    3a46:	4a05      	ldr	r2, [pc, #20]	; (3a5c <vt_rx_enable+0x38>)
+    3a48:	4b04      	ldr	r3, [pc, #16]	; (3a5c <vt_rx_enable+0x38>)
+    3a4a:	68db      	ldr	r3, [r3, #12]
+    3a4c:	f023 0320 	bic.w	r3, r3, #32
+    3a50:	60d3      	str	r3, [r2, #12]
 	}
 }
-    3a4a:	3714      	adds	r7, #20
-    3a4c:	46bd      	mov	sp, r7
-    3a4e:	f85d 7b04 	ldr.w	r7, [sp], #4
-    3a52:	4770      	bx	lr
-    3a54:	40004400 	.word	0x40004400
+    3a52:	3714      	adds	r7, #20
+    3a54:	46bd      	mov	sp, r7
+    3a56:	f85d 7b04 	ldr.w	r7, [sp], #4
+    3a5a:	4770      	bx	lr
+    3a5c:	40004400 	.word	0x40004400
 
-00003a58 <USART2_handler>:
+00003a60 <USART2_handler>:
 
 // interruption serial console
 void VT_handler(){
-    3a58:	b580      	push	{r7, lr}
-    3a5a:	af00      	add	r7, sp, #0
+    3a60:	b580      	push	{r7, lr}
+    3a62:	af00      	add	r7, sp, #0
 	if ((con.dev==SERIAL) && (VT_USART->SR&USART_SR_RXNE)){
-    3a5c:	4b08      	ldr	r3, [pc, #32]	; (3a80 <USART2_handler+0x28>)
-    3a5e:	781b      	ldrb	r3, [r3, #0]
-    3a60:	2b01      	cmp	r3, #1
-    3a62:	d10c      	bne.n	3a7e <USART2_handler+0x26>
-    3a64:	4b07      	ldr	r3, [pc, #28]	; (3a84 <USART2_handler+0x2c>)
-    3a66:	681b      	ldr	r3, [r3, #0]
-    3a68:	f003 0320 	and.w	r3, r3, #32
-    3a6c:	2b00      	cmp	r3, #0
-    3a6e:	d006      	beq.n	3a7e <USART2_handler+0x26>
+    3a64:	4b08      	ldr	r3, [pc, #32]	; (3a88 <USART2_handler+0x28>)
+    3a66:	781b      	ldrb	r3, [r3, #0]
+    3a68:	2b01      	cmp	r3, #1
+    3a6a:	d10c      	bne.n	3a86 <USART2_handler+0x26>
+    3a6c:	4b07      	ldr	r3, [pc, #28]	; (3a8c <USART2_handler+0x2c>)
+    3a6e:	681b      	ldr	r3, [r3, #0]
+    3a70:	f003 0320 	and.w	r3, r3, #32
+    3a74:	2b00      	cmp	r3, #0
+    3a76:	d006      	beq.n	3a86 <USART2_handler+0x26>
 		con.insert(VT_USART->DR);
-    3a70:	4b03      	ldr	r3, [pc, #12]	; (3a80 <USART2_handler+0x28>)
-    3a72:	6adb      	ldr	r3, [r3, #44]	; 0x2c
-    3a74:	4a03      	ldr	r2, [pc, #12]	; (3a84 <USART2_handler+0x2c>)
-    3a76:	6852      	ldr	r2, [r2, #4]
-    3a78:	b2d2      	uxtb	r2, r2
-    3a7a:	4610      	mov	r0, r2
-    3a7c:	4798      	blx	r3
+    3a78:	4b03      	ldr	r3, [pc, #12]	; (3a88 <USART2_handler+0x28>)
+    3a7a:	6adb      	ldr	r3, [r3, #44]	; 0x2c
+    3a7c:	4a03      	ldr	r2, [pc, #12]	; (3a8c <USART2_handler+0x2c>)
+    3a7e:	6852      	ldr	r2, [r2, #4]
+    3a80:	b2d2      	uxtb	r2, r2
+    3a82:	4610      	mov	r0, r2
+    3a84:	4798      	blx	r3
 	}
 }
-    3a7e:	bd80      	pop	{r7, pc}
-    3a80:	200000fc 	.word	0x200000fc
-    3a84:	40004400 	.word	0x40004400
+    3a86:	bd80      	pop	{r7, pc}
+    3a88:	200000fc 	.word	0x200000fc
+    3a8c:	40004400 	.word	0x40004400
 
 Disassembly of section .user_code:
 
@@ -9418,4 +9274,4 @@ void __attribute__((section(".user_code"),noinline,used/*,optimize(0)*/)) blink(
     4484:	f85d 7b04 	ldr.w	r7, [sp], #4
     4488:	4770      	bx	lr
     448a:	bf00      	nop
-    448c:	00003c48 	.word	0x00003c48
+    448c:	00003c50 	.word	0x00003c50

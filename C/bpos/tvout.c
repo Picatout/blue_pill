@@ -9,7 +9,7 @@
  
  #include "../include/blue_pill.h"
  #include "tvout.h"
- 
+ #include "gdi.h"
  
   
 
@@ -26,8 +26,10 @@ uint16_t video_buffer[ROW_SIZE*VRES];
 
 #define _enable_dma()  DMA1[DMACH5].ccr|=DMA_CCR_EN
 #define _disable_dma() DMA1[DMACH5].ccr&=~DMA_CCR_EN
-#define _enable_spi_dma() SPI2->CR2|=SPI_CR2_TXDMAEN;
-#define _disable_spi_dma() SPI2->CR2&=~SPI_CR2_TXDMAEN; 
+#define _enable_spi_dma() SPI2->CR2|=SPI_CR2_TXDMAEN
+#define _disable_spi_dma() SPI2->CR2&=~SPI_CR2_TXDMAEN 
+#define _disable_pixel_int() TIMER1_DIER->fld.cc2ie=0
+#define _enable_pixel_int() ({TIMER1_SR->fld.cc2if=0;TIMER1_DIER->fld.cc2ie=1;})
 
 void tvout_init(){
 	//sortie sync sur PA8
@@ -50,10 +52,15 @@ void tvout_init(){
 	TIMER1_CCER->fld.cc1e=1; // OC1 output enable
 	TIMER1_CCER->fld.cc1p=1; // output polarity
 	TIMER1_BDTR->fld.moe=1;  // main output enable
+	// canal 2 utilisé pour démarrer sortie pixels
+	*TIMER1_CCR2=VIDEO_DELAY;
+	TIMER1_CCMR1_OCM->fld.oc2m=6;
+	//TIMER1_CCMR1_OCM->fld.oc2pe=1;
 	// activation timer1
 	TIMER1_CR1->fld.cen=1;
 	//SPI2-MOSI utilisé pour sérialisaton pixels.
 	SPI2->CR1=(FSPI_DIV4<<SPI_CR1_BR_POS)|SPI_CR1_MSTR|SPI_CR1_SSM|SPI_CR1_SSI|SPI_CR1_SPE|SPI_CR1_DDF;
+	SPI2->DR=0;
 	// configuration du canal dma
 	DMA1[DMACH5].ccr=DMA_CCR_DIR|DMA_CCR_MINC|(3<<DMA_CCR_PL_POS)|DMA_CCR_TCIE|(1<<DMA_CCR_PSIZE_POS)|(1<<DMA_CCR_MSIZE_POS);
 	DMA1[DMACH5].cpar=(uint32_t)SPI2_DR;
@@ -66,6 +73,7 @@ void tvout_init(){
 	enable_interrupt(IRQ_TV_SYNC);
 	//video test
 	gdi_rect(0,0,HRES,VRES,WHITE_BIT);
+	gdi_box(80,60,160,120,WHITE_BIT);
 	// test end */
  }
 
@@ -78,14 +86,45 @@ void tvout_init(){
 volatile static int video=0; // activation sortie pixels
 volatile static int even=0; // odd/even field
 volatile static int line_count=-1; // horizontal line counter 
-__attribute__((optimize("-O3"))) void TV_SYNC_handler(){
-	int i;
-    uint16_t cnt;
-	uint16_t* line_adr;
-	
-    _disable_dma();
-	line_count++;
+ __attribute__((optimize("-O1")))  void TV_SYNC_handler(){
+
+	_disable_dma();
+	if (video && TIMER1_SR->fld.cc2if){ 
+		TIMER1_SR->fld.cc2if=0;
+		DMA1[DMACH5].cmar=(uint32_t)(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
+		DMA1[DMACH5].cndtr=ROW_SIZE;
+/*
+		// réduction de la gigue vidéo
+		asm volatile(
+		"mov r3, %0\n\t"
+		"ldr r3,[r3,#0]\n\t"
+		"and r3,#7\n\t"
+		"lsls r3,r3,#1\n\t"
+		"add pc,pc,r3\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		::"r" (TIMER1_CNT)
+		);
+*/
+		_enable_dma();
+		return;
+	}
 	TIMER1_SR->fld.cc1if=0;
+	line_count++;
 	switch(line_count){
 	case 0: // pré-sync: 6 demi-lignes avec hsync/2
 		*TIMER1_ARR/=2;
@@ -110,10 +149,12 @@ __attribute__((optimize("-O3"))) void TV_SYNC_handler(){
 			*TIMER1_CCR1=(FCLK*HSYNC-1);
 		}
 		break;
-	case TOP_LINE-1:
+	case TOP_LINE:
+		_enable_pixel_int();
 		video=1;
 		break;
 	case (TOP_LINE+VRES):
+		_disable_pixel_int();
 		video=0;
 		break;
 	case FIELD_END:
@@ -129,57 +170,7 @@ __attribute__((optimize("-O3"))) void TV_SYNC_handler(){
 			even=-even;
 		}
 	    break;
-	default: 
-/*chroma_sync:	
-		SPI2->CR1=SPI_CHROMA_SYNC;
-		while (*TIMER1_CNT<300);
-		SPI2->DR=0xaaaa;
-		while (SPI2->SR&SPI_SR_BSY);
-		SPI2->CR1=SPI_PIXELS;
-		SPI2->DR=0;
-*/	
-		if (video){
-			//line_adr=(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
-			//_disable_dma();
-			DMA1[DMACH5].cmar=(uint32_t)(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
-			DMA1[DMACH5].cndtr=ROW_SIZE;
-			cnt=VIDEO_DELAY;
-			while ((*TIMER1_CNT)<cnt){asm volatile("");}
-/*			// réduction de la gigue vidéo
-			asm volatile(
-			"mov r3, %0\n\t"
-			"ldr r3,[r3,#0]\n\t"
-			"and r3,#15\n\t"
-			"lsls r3,r3,#1\n\t"
-			"add pc,pc,r3\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			"nop\n\t"
-			::"r" (TIMER1_CNT)
-			);*/
-			_enable_dma();
-		}
-		break;
 	}//switch (line_count)
-}
-
-// démarre le transfert des pixels
-void TV_PIX_TMR_handler(){
-	TV_PIX_TMR->SR&=~TV_PIX_TMR_CCIF;
-	_enable_dma();
 }
 
 
