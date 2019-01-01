@@ -93,33 +93,6 @@ volatile static int line_count=-1; // horizontal line counter
 		TIMER1_SR->fld.cc2if=0;
 		DMA1[DMACH5].cmar=(uint32_t)(video_buffer+(line_count-TOP_LINE)*ROW_SIZE);
 		DMA1[DMACH5].cndtr=ROW_SIZE;
-/*
-		// réduction de la gigue vidéo
-		asm volatile(
-		"mov r3, %0\n\t"
-		"ldr r3,[r3,#0]\n\t"
-		"and r3,#7\n\t"
-		"lsls r3,r3,#1\n\t"
-		"add pc,pc,r3\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		"nop\n\t"
-		::"r" (TIMER1_CNT)
-		);
-*/
 		_enable_dma();
 		return;
 	}

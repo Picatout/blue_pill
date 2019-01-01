@@ -1,7 +1,7 @@
 #include "../include/stm32f103c8.h"
 #include "../include/nvic.h"
 #include "console.h"
-
+#include "bpos.h"
 
 /* NOTE:
  * A la réinitialisation le µC est en mode thread privilégié
@@ -13,21 +13,7 @@
  * RÉVISIONS:
  *    2018-09-18:  Ajout de la macro _default_handler()
  */
-// MSP Main Stack Pointer
-#define STACK_TOP 0x20005000  // MSP top
-#define MSP_SIZE 1024 // grandeur de la pile MSP
-// PSP Program Stack Pointer
-#define PSP_TOP (STACK_TOP-MSP_SIZE) 
 
-extern unsigned int _BSS_START;
-extern unsigned int _BSS_END;
-extern unsigned int _DATA_ROM_START;
-extern unsigned int _DATA_RAM_START;
-extern unsigned int _DATA_RAM_END;
-extern unsigned int _TCA_START;
-extern unsigned int _FLASH_FREE;
-
-extern uint32_t proga;
 
 void startup();
 void main();
@@ -127,7 +113,7 @@ _default_handler(USART3_handler) // 39
 unsigned int * myvectors[76] 
 __attribute__ ((section("vectors")))= {
 	// --------- core exceptions -----------
-    (unsigned int *)    STACK_TOP,  // 0 stack pointer
+    (unsigned int *)    MSP_TOP,  // 0 stack pointer
     (unsigned int *)    startup,     // 1 reset entry point
     (unsigned int *)  NMI_handler, // 2 NMI
     (unsigned int *)  HARD_FAULT_handler, // 3 Hard fault
@@ -213,7 +199,7 @@ __attribute__ ((section("vectors")))= {
     unsigned int * bss_start_p = &_BSS_START; 
     unsigned int * bss_end_p = &_BSS_END;
 
-    while(bss_start_p != bss_end_p)
+    while(bss_start_p < bss_end_p)
     {
         *bss_start_p = 0;
         bss_start_p++;
@@ -226,14 +212,17 @@ __attribute__ ((section("vectors")))= {
     unsigned int * data_ram_start_p = &_DATA_RAM_START;
     unsigned int * data_ram_end_p = &_DATA_RAM_END;
 
-    while(data_ram_start_p != data_ram_end_p)
+    while(data_ram_start_p < data_ram_end_p)
     {
         *data_ram_start_p = *data_rom_start_p;
         data_ram_start_p++;
         data_rom_start_p++;
     }
-
-	proga=((uint32_t)&_TCA_START)|1;
+	proga=(uint32_t)&_TPA_START|1;
+	here=(uint32_t*)&_TPA_START;
+	*(uint16_t*)here=0x4770;
+	here++;
+	ffa=(uint32_t*)&_FLASH_FREE;
 	// active les interruptions et les fault handler
 	//SCB_CCR->fld_ccr.unalign_trp=1;
 	//SCB_CCR->fld_ccr.div_0_trp=1;

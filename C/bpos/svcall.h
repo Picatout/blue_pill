@@ -36,7 +36,9 @@ typedef enum{
 	SVC_FLASH_WR, // écris un mot de 16 dans la mémoire flash
 	SVC_FLASH_PGER, // efface une page de 1024 octets dans la mémoire flash
 	SVC_TICKS,  // charge la variable ticks
-	SVC_CLS   // efface écran
+	SVC_CLS,   // efface écran
+	SVC_HERE, // retourne l'adresse TPA
+	SVC_FFA, // retourne l'adresse FFA
 } syscall_e;
 
 #define _svc_call(svc_no,arg1,arg2) ({asm volatile (\

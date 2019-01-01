@@ -49,12 +49,11 @@ SECTIONS
     _BSS_END = .;     /* Indicates where BSS section ends in RAM */
 	
 	. = ALIGN(0x100) ;
-	_TCA_START = . ;
+	_TPA_START = . ;
 	
-	.transient : AT(_TCA_START)
+	.transient : AT(_TPA_START)
 	{
         *(.transient) /* transient program in RAM*/
 
 	}
-
 } 

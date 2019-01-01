@@ -31,4 +31,11 @@
 #include "systick.h"
 #include "pwr.h"
 
+#define RAM_SIZE 0x5000
+#define FLASH_SIZE 0x20000  // 128K  (64K non publié, inaccessible à STLINK v2)
+#define PROG_SIZE 0x10000   // 64K  (espace flash visible par STLINK v2)
+#define RAM_START 0x20000000 
+#define RAM_END   0x20005000
+
+
 #endif // STM32F103C8_H

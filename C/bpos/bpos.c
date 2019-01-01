@@ -21,84 +21,22 @@
 #include "vt100.h"
 #include "gdi.h"
 #include "sdcard.h"
-
+#include "ccp.h"
+#include "bpos.h"
 
 #define _pause(tm)  ({do {_svc_call(SVC_GET_TIMER,&tm,NUL);} while (tm);})
 
-extern unsigned int _TCA_START;
-extern unsigned int _FLASH_FREE;
-extern unsigned int _DATA_ROM_START;
+const void* TPA_TOP=(void*)_TPA_TOP;
 
+void* here;
+void* ffa;
 uint32_t proga;
 
-int strcmp(const char *s1, const char *s2){
-	int result=0;
-	while (*s1 && *s2){
-		if (*s1<*s2){
-			result=-1;
-			break;
-		}else if (*s1>*s2){
-			result=1;
-			break;
-		}
-		s1++;
-		s2++;
-	}
-	if (!result){
-		if (!*s1 && *s2){
-			result=-1;
-		}else if (*s1 && !*s2) {
-			result=1;
-		}
-	}
-	return result;
-}
 
 
-int digit(char c){
-   return ((c>='0') && (c<='9'));
-}
-
-int hexdigit(char c){
-	if (c>='a') c-=32;
-	return (digit(c) || (c>='A' && c<='F'));
-}
-
-int atoi(const char *str){
-	int n=0,sign=1,base=10;
-    char c;
-    
-	while (*str && (*str==SPACE)) str++;
-	if (*str=='-'){
-		sign=-1;
-		str++;
-	}
-	if (*str=='0' && ((*(str+1)=='x')||(*(str+1)=='X'))){
-		base=16;
-		str+=2;
-	}
-	while ((c=*str) && base==10?digit(c):hexdigit(c)){
-		if (c>='a'){c-=32;}
-		c-='0';
-		if (c>9){c-=7;}
-		n=n*base+c;
-		str++;
-	}
-	return sign*n;
-}
-
-
-typedef void (*fn)(void);
-
-
-static int skip(char *buffer, int start, char c);
-static int scan(char *buffer, int start, char c);
-static int next(char *buffer, int start, char c);
-static void move(char *src , char *dest, int len);
-static void word();
-
+// ********************
 // routine de services
-
+// ********************
 
 static inline uint8_t peek8(uint8_t *adr){
 	return *adr;
@@ -200,15 +138,12 @@ void __attribute__((__interrupt__)) SVC_handler(){
 	case SVC_CLS:
 		cls();
 		break;
-/*	
-	case SVC_PRIVILIGED:
-		asm volatile(
-		"mrs r0,CONTROL\n"
-		"bic r0,#0\n"       // bit 0 sélectionne le niveau de privilège
-		"msr CONTROL, r0\n"
-		);
+	case SVC_HERE:
+		*(uint32_t*)arg1=(uint32_t)here;
 		break;
-*/ 
+	case SVC_FFA:
+		*(uint32_t*)arg1=(uint32_t)ffa;
+		break;
     case SVC_RESET:
 	    reset_mcu();
 	    break;
@@ -260,371 +195,6 @@ static void set_sysclock(){
 #define _wait_timeout() ({while (timer);})
 
 
-const char *VERSION="bpos version 0.1\n";
-
-#define CMD_MAX_LEN 80
-
-static char tib[CMD_MAX_LEN];
-static volatile char pad[CMD_MAX_LEN];
-static unsigned in;
-
-typedef struct shell_cmd{
-    const char *name;
-    void (*fn)(void);
-}shell_cmd_t;
-
-static const shell_cmd_t commands[];
-int search_command(const char * name);
-
-// redémarre le CPU
-static void cmd_reset(){
-	_svc_call(SVC_RESET,NUL,NUL);
-}
-
-// allume la LED
-static void cmd_led_on(){
-	_svc_call(SVC_LED_ON,NUL,NUL);
-}
-
-// éteint la LED
-static void cmd_led_off(){
-	_svc_call(SVC_LED_OFF,NUL,NUL);
-}
-
-// démarre la minuterie
-static void cmd_set_timer(){
-	volatile int n;
-	word();
-	n=atoi((const char*)pad);
-	_svc_call(SVC_TIMER,&n,NUL);
-}
-
-static void cmd_get_timer(){
-	_svc_call(SVC_GET_TIMER,&pad,NUL);
-}
-
-// attend l'expiration de la minuterie
-static void cmd_pause(){
-	volatile unsigned tm;
-	_pause(tm);
-}
-
-// reçoit un caractère dans pad
-static void cmd_getc(){
-	volatile char n=0;
-	while (!n){
-		_svc_call(SVC_CONIN,&n,NUL);
-	}
-	pad[0]=n;
-	pad[1]=0;
-}
-
-// envoie le caractère en première position du pad
-static void cmd_putc(){
-	int cmd_id;
-	word();
-	cmd_id=search_command((const char*)pad);
-	if (cmd_id>-1) commands[cmd_id].fn();
-	_svc_call(SVC_CONOUT,pad,NUL);
-}
-
-static void cmd_readln(){
-	unsigned llen=80;
-	_svc_call(SVC_READLN,&llen,pad);
-	print((const char*)pad);
-}
-
-static void cmd_print(){
-	word();
-	_svc_call(SVC_PRINT,pad,NUL);
-}
-
-static void cmd_print_dec(){
-	int cmd_id;
-    unsigned u32;
-    
-	word();
-	cmd_id=search_command((const char*)pad);
-	if (cmd_id>-1){
-		 commands[cmd_id].fn();
-	 }else{
-		cmd_id=atoi((const char*)pad);
-		*(int*)pad=cmd_id;
-	 }
-	_svc_call(SVC_PRINT_DEC,pad,NUL);
-}
-
-static void cmd_print_hex(){
-	int cmd_id;
-	word();
-	cmd_id=search_command((const char*)pad);
-	if (cmd_id>-1){
-		 commands[cmd_id].fn();
-	 }else{
-		cmd_id=atoi((const char*)pad);
-		*(int*)pad=cmd_id;
-	 }
-	_svc_call(SVC_PRINT_HEX,pad,NUL);
-}
-
-static void cmd_run(){
-	((fn)proga)();
-	
-}
-
-static void cmd_peek8(){
-	uint32_t u;
-	word();
-	u=atoi((const char*)pad);
-	_svc_call(SVC_PEEK8,&u,NUL);
-	*(uint32_t*)pad=u&0xff;
-}
-
-static void cmd_peek16(){
-	uint32_t u;
-	word();
-	u=atoi((const char*)pad);
-	_svc_call(SVC_PEEK16,&u,NUL);
-	*(uint32_t*)pad=u&0xffff;
-}
-
-static void cmd_peek32(){
-	uint32_t u;
-	int i;
-	word();
-	u=atoi((const char*)pad);
-	_svc_call(SVC_PEEK32,&u,NUL);
-	*(uint32_t*)pad=u;
-}
-
-static void cmd_poke8(){
-	uint32_t adr;
-	uint8_t u8;
-	word();
-	adr=atoi((const char*)pad);
-	word();
-	u8=atoi((const char*)pad);
-	_svc_call(SVC_POKE8,&adr,&u8);
-}
-
-static void cmd_poke16(){
-	uint32_t adr;
-	uint16_t u16;
-	word();
-	adr=atoi((const char*)pad);
-	word();
-	u16=atoi((const char*)pad);
-	_svc_call(SVC_POKE16,&adr,&u16);
-}
-
-static void cmd_poke32(){
-	uint32_t adr,u32;
-	
-	word();
-	adr=atoi((const char*)pad);
-	word();
-	u32=atoi((const char*)pad);
-	_svc_call(SVC_POKE32,&adr,&u32);
-}
-
-static void cmd_fwrite(){
-	uint32_t adr,u32;
-	word();
-	adr=atoi((const char*)pad);
-	word();
-	u32=atoi((const char*)pad);
-	_svc_call(SVC_FLASH_WR,&adr,&u32);
-	if (!adr) print(" failed\n");
-}
-
-static void cmd_pgerase(){
-	uint32_t adr;
-	word();
-	adr=atoi((const char*)pad);
-	_svc_call(SVC_FLASH_PGER,&adr,0);
-	if (!adr) print(" failed\n");
-}
-
-static void cmd_ticks(){
-	_svc_call(SVC_TICKS,&pad,0);
-}
-
-static void cmd_con(){
-	console_dev_t dev;
-	word();
-	if (!strcmp("local",(const char*)pad)){
-		dev=LOCAL;
-	}else{
-		dev=SERIAL;
-	}
-	con_select(dev);
-}
-
-void cmd_cls(){
-	_svc_call(SVC_CLS,0,0);
-}
-
-void cmd_help(){
-	const char *str;
-	int i=0;
-	print("commands list:\n");
-	str=commands[i].name;
-	while (str){
-		print(str);
-		conout('\t');
-		i++;
-		if (!(i%6)) {conout('\n');}
-		str=commands[i].name;	
-	}
-}
-
-void cmd_rect(){
-	int x,y,w,h;
-	word();
-	x=atoi((const char*)pad);
-	word();
-	y=atoi((const char*)pad);
-	word();
-	w=atoi((const char*)pad);
-	word();
-	h=atoi((const char*)pad);
-	gdi_rect(x,y,w,h,WHITE_BIT);		
-}
-
-static const shell_cmd_t commands[]={
-	{"cls",cmd_cls},
-	{"con",cmd_con},
-	{"fwrite",cmd_fwrite},
-	{"getc",cmd_getc},
-	{"help",cmd_help},
-	{"ledoff",cmd_led_off},
-	{"ledon",cmd_led_on},
-	{"pause",cmd_pause},
-	{"peek16",cmd_peek16},
-	{"peek32",cmd_peek32},
-	{"peek8",cmd_peek8},
-	{"pgerase",cmd_pgerase}, 
-	{"poke16",cmd_poke16},
-	{"poke32",cmd_poke32},
-	{"poke8",cmd_poke8},
-	{"print",cmd_print},
-	{"printd",cmd_print_dec},
-	{"printx",cmd_print_hex},
-	{"putc",cmd_putc},
-	{"readln",cmd_readln},
-	{"rect",cmd_rect},
-	{"rst",cmd_reset},
-	{"run",cmd_run},
-	{"ticks",cmd_ticks},
-	{"timer",cmd_set_timer},
-	{NUL,NUL}
-};
-
-
-int search_command(const char * name){
-	int i=0;
-	while (commands[i].fn){
-		if (!strcmp(commands[i].name,name)){
-			break;
-		}
-		i++;
-	}
-	if (!commands[i].fn) i=-1;
-	return i;
-}
-
-
-// saute tous les caractères 'c' à partir de la position 'start'
-// retourne la nouvelle position
-static int skip(char *buffer, int start, char c){
-	while (buffer[start] && buffer[start]==c) start++;
-	return start;
-}
-
-// recherche la première occurance de 'c'
-static int scan(char *buffer, int start, char c){
-	while (buffer[start] && buffer[start]!=c) start++;
-	return start;
-}
-
-// copie une chaîne entre guillemets dans pad.
-// retourne la position finale.
-static int quote(char *buffer, int start){
-	int escaped=0,end=start, i=0, in_quote=1;;
-	while (buffer[end]&& in_quote){
-		switch (buffer[end]){
-		case '"':
-			if (!escaped) {in_quote=0;} else{pad[i++]='"'; escaped=0;}
-			break;
-		case '\\':
-			if (!escaped){
-				escaped=1;
-			}else{
-				escaped=0;
-				pad[i++]=buffer[end];
-			}
-			break;
-		case 'n':
-			if (escaped) buffer[end]=CR;
-		default:
-			escaped=0;
-			pad[i++]=buffer[end];
-		}
-		end++;
-	}
-	pad[i]=0;
-	return end;
-}
-
-// retourne la longueur du prochain mot
-// 'c' est le séparateur de mots
-static int next(char *buffer, int start, char c){
-	int end;
-	end=start;
-	while (buffer[end] && (buffer[end]!=c)) end++;
-	return end-start;
-}
-
-// copie 'len' caractères de src vers dest
-static void move(char *src , char *dest, int len){
-	while (len){
-		*dest++=*src++;
-		len--;
-	}
-	*dest=0;
-}
-
-// extrait le prochain mot du tib
-static void word(){
-		int len;
-		in=skip(tib,in,SPACE);
-		if (tib[in]=='"'){
-			in++;
-			in=quote(tib,in);
-		}else{
-			len=next(tib,in,SPACE);
-			move(&tib[in],(char*)pad,len);
-			in+=len;
-		}
-}
-
-static void parse_line(unsigned llen){
-	int cmd_id;
-	in=0;
-	while (in<llen){
-		word();
-		cmd_id=search_command((const char*) pad);
-		if (cmd_id>-1){
-			commands[cmd_id].fn();
-		}else{
-			conout(CR);
-			print((const char*)pad); conout('?');
-			break;
-		}
-	}//while
-	conout(CR);
-}
-
 
 void __attribute__((section(".user_code"),noinline,used/*,optimize(0)*/)) blink(){
 	volatile unsigned int  delay=500;
@@ -644,19 +214,20 @@ void __attribute__((section(".user_code"),noinline,used/*,optimize(0)*/)) blink(
 	}
 }
 
+
 void copy_blink_in_ram(){
 	volatile uint32_t *start;
 	uint32_t *end,*ram_fn;
 	start=(uint32_t*)&_FLASH_FREE;
 	end=(uint32_t*)&_DATA_ROM_START;
-	ram_fn=(uint32_t*)&_TCA_START;
+	ram_fn=(uint32_t*)&_TPA_START;
 	while (start<end){
 		*ram_fn++=*start++;
 	}
+	here=ram_fn;
 }
 
 extern void print_fault(const char *msg, sfrp_t adr);
-
 
 
 void main(void){
@@ -673,10 +244,7 @@ void main(void){
 	tvout_init();
 	console_init(SERIAL);
 	if (!vt_ready()){con_select(LOCAL);}
-	cls();
-	print(VERSION);
 	copy_blink_in_ram();
-	print("Transient program address: ");_svc_call(SVC_PRINT_HEX,&proga,NUL); conout(CR);
 	_svc_call(SVC_LED_ON,NUL,NUL);
 	print("initializing SDcard\n");
 	if (sdcard_init()){
@@ -684,9 +252,5 @@ void main(void){
 	}else{
 		print("SDcard initialization failed, status code: "); print_hex(sdc_status);conout('\n');
 	} 
-	unsigned llen;
-	while (1){
-		llen=read_line(tib,CMD_MAX_LEN);
-		parse_line(llen);
-	}
+	ccp();
 }

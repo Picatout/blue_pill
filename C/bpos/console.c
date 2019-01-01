@@ -8,11 +8,13 @@
  * 
  */
 
-//#include "../include/usart.h"
+#include "../include/gen_fn.h"
+#include "alloc.h"
 #include "console.h"
 #include "svcall.h"
 #include "gdi.h"
 #include "vt100.h"
+#include "alloc.h"
 
 #define ROW_SPACING (CHAR_HEIGHT*ROW_SIZE)
 
@@ -300,13 +302,23 @@ void delete_back(){
 	con.delete_back();
 }
 
+// efface n caractères
+static void delete_nchar(int n){
+	while (n){
+		con.delete_back();
+		n--;
+	}
+}
+
 static void beep(){
 }
 
 // reçoit une ligne de texte de la console
+// si buffer contient du texte une copie est préservée.
 unsigned read_line(char *buffer,unsigned buf_len){
-	unsigned line_len=0;
+	unsigned ll, line_len=0;
 	char c=0;
+	char *new_buff=alloc(buf_len);
 	
 	buf_len--;
 	if (buf_len>(screen_width-cursor_x-1)){
@@ -322,18 +334,26 @@ unsigned read_line(char *buffer,unsigned buf_len){
 				c=CR;
 				con.crlf();
 				break;
+			case CTRL_R:
+				if (strlen(buffer)){
+					ll=strlen(buffer);
+					move(buffer,new_buff,ll);
+					delete_nchar(line_len);
+					print(new_buff);
+					line_len=ll;
+				}
+				break;
 			case CTRL_X:
 			case CTRL_U: // efface la ligne
-				while (line_len){con.delete_back();line_len--;}
-				//con.clear_line(line_len);
-				//line_len=0;
+				delete_nchar(line_len);
+				line_len=0;
 				break;
 			case CTRL_W: // efacce le dernier mot
-				while (line_len && (buffer[line_len-1]==SPACE)){
+				while (line_len && (new_buff[line_len-1]==SPACE)){
 					con.delete_back();
 					line_len--;
 				}
-				while (line_len && (buffer[line_len-1]!=SPACE)){
+				while (line_len && (new_buff[line_len-1]!=SPACE)){
 					con.delete_back();
 					line_len--;
 				}
@@ -350,16 +370,17 @@ unsigned read_line(char *buffer,unsigned buf_len){
 				break;
 			case TAB:
 				c=SPACE;
-				default:
+			default:
 				if ((line_len<buf_len) && (c>=32)){
-					buffer[line_len++]=c;
+					new_buff[line_len++]=c;
 					con.putc(c);
 				}else{
 					beep();
 				}
 			}
 	}
-	buffer[line_len]=0;
+	move(new_buff,buffer,line_len);
+	free(new_buff);
 	return line_len;
 }
 
